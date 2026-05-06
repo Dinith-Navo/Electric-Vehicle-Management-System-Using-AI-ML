@@ -32,9 +32,16 @@ const initSocket = (io) => {
     // ── Authenticate Socket ────────────────────────────────────────────────
     socket.on('authenticate', async ({ token, vehicleId }) => {
       try {
-        if (!token) throw new Error('No token provided');
+        // Root fix: If the token is not a valid JWT, reject and disconnect the socket
+        if (!token || !token.startsWith('ey') || token.split('.').length !== 3) {
+          logger.error(`🚨 Security Violation: Malformed token from ${socket.id}. Disconnecting.`);
+          socket.emit('auth_error', { success: false, message: 'Invalid token format. Please log in again.' });
+          return socket.disconnect(true); 
+        }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+
         const user    = await User.findById(decoded.id);
         if (!user || !user.isActive) throw new Error('Invalid user');
 

@@ -136,12 +136,14 @@ export default function AIInsights() {
           result.recommendations?.[0] ?? prediction.maintenanceSuggestion,
       });
       setLastRun(new Date());
-      fetchHistory(); // Refresh history
+      await fetchHistory(); // Refresh history
+      Alert.alert('Analysis Complete', 'AI model has processed the latest telemetry and updated your battery health insights.');
     } catch (e) {
       console.warn('Prediction error, using fallback');
     } finally {
       setLoading(false);
     }
+
   }, [telemetry, prediction, setPrediction, token]);
 
   const trainModel = async () => {

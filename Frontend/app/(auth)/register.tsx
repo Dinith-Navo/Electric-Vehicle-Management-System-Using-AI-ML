@@ -98,28 +98,31 @@ export default function Register() {
 
     setLoading(true);
     try {
-      let token = `demo-token-${Date.now()}`;
-      try {
-        const res = await authService.register(name, email, password);
-        token = res.access_token ?? token;
-      } catch (_) {
-        // Use local registration in demo mode
-      }
+      console.log(`[AUTH] Attempting register at: ${authService.register.toString()}`); 
+      // Actually let's just log the result of the call
+      const res = await authService.register(name, email, password);
+      const token = res.access_token;
+      const userData = res.user;
 
-      login(token, {
-        id: String(Date.now()),
-        name,
-        email,
-        phone: '',
-        avatar: '',
-        role: 'EV Owner',
-        memberSince: new Date().getFullYear().toString(),
-      });
-
+      login(token, userData);
       router.replace('/(tabs)/dashboard');
-    } catch (e) {
-      Alert.alert('Error', 'Registration failed. Please try again.');
+    } catch (e: any) {
+      console.error('Registration Error:', e);
+      console.error('Error Config:', e.config);
+      
+      let msg = 'Registration failed. Please check your connection.';
+      let title = 'Registration Error';
+      
+      if (e.response) {
+        msg = e.response.data?.message || `Server Error: ${e.response.status}`;
+      } else if (e.request) {
+        title = 'Connection Error';
+        msg = `No response from server at ${e.config?.url || 'backend'}. Please check if the backend is running and the IP is correct.`;
+      }
+      
+      Alert.alert(title, msg);
     } finally {
+
       setLoading(false);
     }
   };

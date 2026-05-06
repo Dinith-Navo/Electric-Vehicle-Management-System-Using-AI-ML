@@ -77,8 +77,8 @@ export default function Login() {
   const darkMode = useAppStore((s) => s.darkMode);
   const theme = darkMode ? Colors.dark : Colors.light;
 
-  const [email, setEmail] = useState('demo@ev.com');
-  const [password, setPassword] = useState('demo1234');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const shakeAnim = useRef(new Animated.Value(0)).current;
@@ -100,37 +100,14 @@ export default function Login() {
     }
     setLoading(true);
     try {
-      // Try real API; if offline, use demo credentials
-      let token = 'demo-token';
-      let profile = {
-        id: '1',
-        name: 'Dinith Navodya',
-        email: email,
-        phone: '+94 71 123 4567',
-        avatar: '',
-        role: 'EV Owner',
-        memberSince: '2024',
-      };
-
-      try {
-        const res = await authService.login(email, password);
-        token = res.access_token;
-        if (res.user) {
-          profile = res.user;
-        }
-      } catch (_) {
-        // Demo mode when backend is offline
-        if (email !== 'demo@ev.com' || password !== 'demo1234') {
-          shake();
-          Alert.alert('Login Failed', 'Invalid credentials. Use demo@ev.com / demo1234 for demo mode.');
-          setLoading(false);
-          return;
-        }
-      }
+      const res = await authService.login(email, password);
+      const token = res.access_token;
+      const profile = res.user;
 
       login(token, profile);
       router.replace('/(tabs)/dashboard');
     } catch (e) {
+
       shake();
       Alert.alert('Error', 'An unexpected error occurred. Please try again.');
     } finally {
@@ -204,11 +181,6 @@ export default function Login() {
               </LinearGradient>
             </TouchableOpacity>
  
-            {/* Demo hint */}
-            <View style={styles.demoHint}>
-              <Ionicons name="information-circle" size={14} color={theme.textSecondary} />
-              <Text style={[styles.demoHintText, { color: theme.textSecondary }]}>Demo: demo@ev.com / demo1234</Text>
-            </View>
           </Animated.View>
  
           {/* Sign Up Link */}

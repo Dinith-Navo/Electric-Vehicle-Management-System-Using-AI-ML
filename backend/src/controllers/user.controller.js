@@ -10,7 +10,7 @@ exports.getProfile = (req, res) => {
 // ─── PUT /api/users/me ────────────────────────────────────────────────────────
 exports.updateProfile = async (req, res, next) => {
   try {
-    const allowed = ['name', 'phone', 'avatar', 'role'];
+    const allowed = ['name', 'email', 'phone', 'avatar', 'role'];
     const updates = {};
     allowed.forEach((key) => { if (req.body[key] !== undefined) updates[key] = req.body[key]; });
 
@@ -24,6 +24,7 @@ exports.updateProfile = async (req, res, next) => {
     next(err);
   }
 };
+
 
 // ─── PUT /api/users/me/password ───────────────────────────────────────────────
 exports.changePassword = async (req, res, next) => {

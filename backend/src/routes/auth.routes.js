@@ -10,9 +10,9 @@ const router = Router();
 
 // Strict rate limit for auth routes
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 min
-  max     : 20,
-  message : { success: false, message: 'Too many attempts. Try again after 15 minutes.' },
+  windowMs: 1 * 60 * 1000, // 1 min (temporary)
+  max     : 100, // 100 attempts
+  message : { success: false, message: 'Too many attempts. Try again later.' },
 });
 
 // ─── POST /api/auth/register ──────────────────────────────────────────────────

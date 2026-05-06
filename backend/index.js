@@ -4,7 +4,7 @@ require('dotenv').config();
 const express       = require('express');
 const http          = require('http');
 const { Server }    = require('socket.io');
-const mongoose      = require('mongoose');
+const { admin, db } = require('./src/config/firebase');
 const cors          = require('cors');
 const helmet        = require('helmet');
 const morgan        = require('morgan');
@@ -26,13 +26,9 @@ const { initSocket } = require('./src/socket/telemetry.socket');
 const app    = express();
 const server = http.createServer(app);
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(',').map((o) => o.trim())
-  : ['*'];
-
 const io = new Server(server, {
   cors: {
-    origin     : allowedOrigins,
+    origin     : true,
     methods    : ['GET', 'POST'],
     credentials: true,
   },
@@ -41,45 +37,49 @@ const io = new Server(server, {
   pingInterval   : 10000,
 });
 
-// ─── Security Middleware ──────────────────────────────────────────────────────
-app.use(helmet());
-app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+// ─── 1. CORS (Must be at the very top) ─────────────────────────────────────────
 app.use(cors({
-  origin     : allowedOrigins,
+  origin: true, // Echoes the requesting origin
   credentials: true,
 }));
+
+// ─── 2. JSON Parsing ──────────────────────────────────────────────────────────
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// ─── Trust Proxy (needed for rate-limiter behind reverse proxies / Expo) ──────
+// ─── 3. Basic Security & Logging ─────────────────────────────────────────────
+app.use(helmet());
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+
+// ─── 4. Debug Request Logger ──────────────────────────────────────────────────
+app.use((req, res, next) => {
+  const logger = require('./src/utils/logger');
+  logger.info(`[DEBUG] ${req.method} ${req.url}`);
+  if (req.method === 'POST') {
+    const debugBody = { ...req.body };
+    if (debugBody.password) debugBody.password = '********';
+    logger.info(`[DEBUG] Body: ${JSON.stringify(debugBody)}`);
+  }
+  next();
+});
+
+// ─── 5. Trust Proxy ───────────────────────────────────────────────────────────
 app.set('trust proxy', 1);
 
-// ─── Global Rate Limiter ──────────────────────────────────────────────────────
+// ─── 6. Global Rate Limiter (Disabled for Debugging) ──────────────────────────
+/*
 const globalLimiter = rateLimit({
-  windowMs       : parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
-  max            : parseInt(process.env.RATE_LIMIT_MAX       || '200',    10),
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
+  max: parseInt(process.env.RATE_LIMIT_MAX || '200', 10),
   standardHeaders: true,
-  legacyHeaders  : false,
-  handler        : (req, res) =>
-    res.status(429).json({ success: false, message: 'Too many requests. Please try again later.' }),
+  legacyHeaders: false,
 });
 app.use('/api', globalLimiter);
+*/
 
-// ─── Attach Socket.IO to app (controllers access via req.app.get('io')) ───────
 app.set('io', io);
 
-// ─── Health Check ─────────────────────────────────────────────────────────────
-app.get('/health', (req, res) => {
-  res.json({
-    success  : true,
-    status   : 'healthy',
-    uptime   : Math.round(process.uptime()),
-    env      : process.env.NODE_ENV,
-    timestamp: new Date().toISOString(),
-  });
-});
-
-// ─── API Routes ───────────────────────────────────────────────────────────────
+// ─── 7. API Routes ────────────────────────────────────────────────────────────
 app.use('/api/auth',          authRoutes);
 app.use('/api/vehicles',      vehicleRoutes);
 app.use('/api/telemetry',     telemetryRoutes);
@@ -88,36 +88,22 @@ app.use('/api/users',         userRoutes);
 app.use('/api/predictions',   predictionRoutes);
 app.use('/api/analytics',     analyticsRoutes);
 
+// ─── Health Check ─────────────────────────────────────────────────────────────
+app.get('/health', (req, res) => {
+  res.json({ success: true, status: 'healthy', timestamp: new Date().toISOString() });
+});
+
 // ─── 404 Handler ─────────────────────────────────────────────────────────────
 app.use((req, res) => {
   res.status(404).json({ success: false, message: `Route ${req.method} ${req.originalUrl} not found.` });
 });
 
 // ─── Global Error Handler ─────────────────────────────────────────────────────
-// Must have 4 params for Express to treat it as error middleware
-// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
+  const logger = require('./src/utils/logger');
   const status = err.status || err.statusCode || 500;
-
-  // Mongoose validation error
-  if (err.name === 'ValidationError') {
-    const messages = Object.values(err.errors).map((e) => e.message);
-    return res.status(422).json({ success: false, message: messages.join(', ') });
-  }
-
-  // Mongoose duplicate key
-  if (err.code === 11000) {
-    const field = Object.keys(err.keyValue || {})[0] || 'field';
-    return res.status(409).json({ success: false, message: `${field} already exists.` });
-  }
-
-  // JWT errors
-  if (err.name === 'JsonWebTokenError')
-    return res.status(401).json({ success: false, message: 'Invalid token.' });
-  if (err.name === 'TokenExpiredError')
-    return res.status(401).json({ success: false, message: 'Token expired. Please log in again.' });
-
-  console.error(`[ERROR] ${status} — ${err.message}`);
+  logger.error(`[ERROR] ${status} — ${err.message}`);
+  if (process.env.NODE_ENV === 'development') logger.error(err.stack);
 
   res.status(status).json({
     success: false,
@@ -131,37 +117,29 @@ initSocket(io);
 
 const logger = require('./src/utils/logger');
 
-// ─── MongoDB + Server Start ─────────────────────────────────────────────
+// ─── Firebase + Server Start ─────────────────────────────────────────────
 const PORT = parseInt(process.env.PORT || '5000', 10);
 
-mongoose
-  .connect(process.env.MONGO_URI, {
-    serverSelectionTimeoutMS: 10000,
-    socketTimeoutMS         : 45000,
-  })
-  .then(() => {
-    logger.info('✅ MongoDB Atlas connected');
-    server.listen(PORT, () => {
-      logger.info(`🚀 Server running on http://localhost:${PORT} [${process.env.NODE_ENV}]`);
-      logger.info(`📡 Socket.IO ready on ws://localhost:${PORT}`);
-    });
-  })
-  .catch((err) => {
-    logger.error(`❌ MongoDB connection failed: ${err.message}`);
-    logger.warn('⚠️ Server starting in OFFLINE mode (Database unavailable).');
-    server.listen(PORT, () => {
-      logger.info(`🚀 Server (Limited) running on http://localhost:${PORT}`);
-    });
+if (db) {
+  logger.info('✅ Firebase Realtime Database connected');
+  server.listen(PORT, () => {
+    logger.info(`🚀 Server running on http://localhost:${PORT} [${process.env.NODE_ENV}]`);
+    logger.info(`📡 Socket.IO ready on ws://localhost:${PORT}`);
   });
+} else {
+  logger.error('❌ Firebase connection failed.');
+  logger.warn('⚠️ Server starting in OFFLINE mode (Database unavailable).');
+  server.listen(PORT, () => {
+    logger.info(`🚀 Server (Limited) running on http://localhost:${PORT}`);
+  });
+}
 
 // ─── Graceful Shutdown ────────────────────────────────────────────────────────
 process.on('SIGTERM', () => {
   console.log('🛑 SIGTERM received. Shutting down gracefully...');
   server.close(() => {
-    mongoose.connection.close(false, () => {
-      console.log('✅ Server and DB connection closed.');
-      process.exit(0);
-    });
+    console.log('✅ Server and connections closed.');
+    process.exit(0);
   });
 });
 

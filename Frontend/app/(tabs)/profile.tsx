@@ -75,14 +75,26 @@ export default function Profile() {
   const [name, setName] = useState(userProfile?.name ?? '');
   const [email, setEmail] = useState(userProfile?.email ?? '');
   const [phone, setPhone] = useState(userProfile?.phone ?? '');
+  const [role, setRole] = useState(userProfile?.role ?? 'EV Owner');
 
   React.useEffect(() => {
     if (userProfile) {
       setName(userProfile.name);
       setEmail(userProfile.email);
       setPhone(userProfile.phone || '');
+      setRole(userProfile.role || 'EV Owner');
     }
-  }, [userProfile, editModal]);
+  }, [userProfile]);
+
+  const openEditModal = () => {
+    if (userProfile) {
+      setName(userProfile.name);
+      setEmail(userProfile.email);
+      setPhone(userProfile.phone || '');
+      setRole(userProfile.role || 'EV Owner');
+    }
+    setEditModal(true);
+  };
   
   // Password change states
   const [passwordModal, setPasswordModal] = useState(false);
@@ -119,17 +131,24 @@ export default function Profile() {
   const [saving, setSaving] = useState(false);
 
   const handleSaveProfile = async () => {
+    if (!name || !email) {
+      Alert.alert('Error', 'Name and Email are required.');
+      return;
+    }
     setSaving(true);
     try {
-      if (useAppStore.getState().token) {
-        await userService.updateProfile(useAppStore.getState().token!, { name, email, phone });
+      const token = useAppStore.getState().token;
+      if (token) {
+        const res = await userService.updateProfile(token, { name, email, phone, role });
+        if (res.success) {
+          updateProfile({ name, email, phone, role });
+          setEditModal(false);
+          Alert.alert('Success', 'Profile updated successfully.');
+        }
       }
-      updateProfile({ name, email, phone });
-      setEditModal(false);
-      Alert.alert('Success', 'Profile updated successfully.');
-    } catch (err) {
-      console.error('Update failed:', err);
-      Alert.alert('Error', 'Failed to update profile on server.');
+    } catch (err: any) {
+      const msg = err.response?.data?.message || 'Failed to update profile on server.';
+      Alert.alert('Error', msg);
     } finally {
       setSaving(false);
     }
@@ -179,7 +198,7 @@ export default function Profile() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={[styles.title, { color: theme.text }]}>Profile</Text>
-          <TouchableOpacity onPress={() => setEditModal(true)} style={[styles.editBtn, { backgroundColor: `${theme.accent}15`, borderColor: `${theme.accent}30` }]}>
+          <TouchableOpacity onPress={openEditModal} style={[styles.editBtn, { backgroundColor: `${theme.accent}15`, borderColor: `${theme.accent}30` }]}>
             <Ionicons name="create-outline" size={18} color={theme.accent} />
             <Text style={[styles.editBtnText, { color: theme.accent }]}>Edit</Text>
           </TouchableOpacity>
@@ -239,7 +258,7 @@ export default function Profile() {
             icon="call" 
             label={userProfile?.phone || 'Add Phone Number'} 
             color={theme.success} 
-            onPress={() => setEditModal(true)}
+            onPress={openEditModal}
             theme={theme}
           />
           <SettingsRow
@@ -402,18 +421,34 @@ export default function Profile() {
                 />
               </View>
               <View style={styles.formField}>
-                <Text style={[styles.formLabel, { color: theme.textSecondary }]}>Phone Number</Text>
-                <TextInput
-                  style={[styles.formInput, { backgroundColor: theme.background, color: theme.text, borderColor: theme.border }]}
-                  value={phone}
-                  onChangeText={setPhone}
-                  keyboardType="phone-pad"
-                  placeholderTextColor={theme.textSecondary}
-                />
+                <Text style={[styles.formLabel, { color: theme.textSecondary }]}>Account Role</Text>
+                <View style={styles.rolePicker}>
+                  {['EV Owner', 'Fleet Manager', 'Service Provider'].map((r) => (
+                    <TouchableOpacity
+                      key={r}
+                      onPress={() => setRole(r)}
+                      style={[
+                        styles.roleOption,
+                        { backgroundColor: theme.background, borderColor: theme.border },
+                        role === r && { borderColor: theme.accent, backgroundColor: `${theme.accent}15` }
+                      ]}
+                    >
+                      <Text style={[styles.roleOptionText, { color: theme.textSecondary }, role === r && { color: theme.accent }]}>{r}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
               </View>
  
-              <TouchableOpacity onPress={handleSaveProfile} style={[styles.saveBtn, { backgroundColor: theme.accent }]}>
-                <Text style={[styles.saveBtnText, { color: darkMode ? '#080F1F' : '#FFFFFF' }]}>Save Changes</Text>
+              <TouchableOpacity 
+                onPress={handleSaveProfile} 
+                style={[styles.saveBtn, { backgroundColor: theme.accent }, saving && { opacity: 0.7 }]}
+                disabled={saving}
+              >
+                {saving ? (
+                  <ActivityIndicator color={darkMode ? '#080F1F' : '#FFFFFF'} />
+                ) : (
+                  <Text style={[styles.saveBtnText, { color: darkMode ? '#080F1F' : '#FFFFFF' }]}>Save Changes</Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>
@@ -574,10 +609,14 @@ const styles = StyleSheet.create({
   formField: { marginBottom: 14 },
   formLabel: { color: '#94A3B8', fontSize: 12, fontWeight: '600', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.8 },
   formInput: { backgroundColor: '#080F1F', borderRadius: 12, borderWidth: 1, borderColor: '#1E293B', paddingHorizontal: 14, paddingVertical: 12, color: '#F8FAFC', fontSize: 15 },
-  saveBtn: { backgroundColor: '#00F0FF', borderRadius: 14, paddingVertical: 16, alignItems: 'center', marginTop: 8 },
+  rolePicker: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 4 },
+  roleOption: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10, borderWidth: 1, minWidth: 80, alignItems: 'center' },
+  roleOptionText: { fontSize: 12, fontWeight: '600' },
+  saveBtn: { backgroundColor: '#00F0FF', borderRadius: 14, paddingVertical: 16, alignItems: 'center', marginTop: 8, height: 56, justifyContent: 'center' },
   saveBtnText: { color: '#080F1F', fontSize: 16, fontWeight: '800' },
   faqItem: { marginBottom: 20 },
   faqQuestion: { fontSize: 16, fontWeight: '700', marginBottom: 6 },
   faqAnswer: { fontSize: 14, lineHeight: 22 },
   privacyText: { fontSize: 14, lineHeight: 24 },
 });
+

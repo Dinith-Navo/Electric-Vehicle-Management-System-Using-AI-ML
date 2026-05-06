@@ -151,14 +151,24 @@ export default function Dashboard() {
   const userProfile = useAppStore((s) => s.userProfile);
   const darkMode = useAppStore((s) => s.darkMode);
   const theme = darkMode ? Colors.dark : Colors.light;
+  const [showWelcome, setShowWelcome] = React.useState(true);
+  const welcomeAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    // Fade in dashboard
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 800,
       useNativeDriver: true,
     }).start();
+
+    // Welcome message sequence
+    Animated.sequence([
+      Animated.timing(welcomeAnim, { toValue: 1, duration: 1000, useNativeDriver: true }),
+      Animated.delay(2000),
+      Animated.timing(welcomeAnim, { toValue: 0, duration: 800, useNativeDriver: true }),
+    ]).start(() => setShowWelcome(false));
   }, []);
 
   const getRiskColor = (risk: string) =>
@@ -233,6 +243,20 @@ export default function Dashboard() {
 
         <View style={{ height: 30 }} />
       </Animated.ScrollView>
+
+      {/* Welcome Message Overlay */}
+      {showWelcome && (
+        <Animated.View style={[styles.welcomeOverlay, { opacity: welcomeAnim, pointerEvents: 'none' }]}>
+          <LinearGradient
+            colors={darkMode ? ['rgba(0, 240, 255, 0.9)', 'rgba(0, 122, 144, 0.9)'] : ['rgba(14, 165, 233, 0.9)', 'rgba(2, 132, 199, 0.9)']}
+            style={styles.welcomeGradient}
+          >
+            <Ionicons name="sparkles" size={32} color="#FFFFFF" />
+            <Text style={styles.welcomeTitle}>Welcome Back!</Text>
+            <Text style={styles.welcomeName}>{userProfile?.name ?? 'EV Pioneer'}</Text>
+          </LinearGradient>
+        </Animated.View>
+      )}
     </SafeAreaView>
   );
 }
@@ -282,4 +306,9 @@ const styles = StyleSheet.create({
   section: { marginBottom: 16 },
   insightCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#0D1B2A', borderRadius: 12, padding: 14, marginTop: 8, borderWidth: 1, borderColor: '#1E293B', gap: 10 },
   insightText: { color: '#94A3B8', fontSize: 13, flex: 1 },
+
+  welcomeOverlay: { position: 'absolute', top: 100, left: 40, right: 40, zIndex: 999, alignItems: 'center' },
+  welcomeGradient: { paddingVertical: 20, paddingHorizontal: 30, borderRadius: 24, alignItems: 'center', shadowColor: '#00F0FF', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.5, shadowRadius: 15, elevation: 10 },
+  welcomeTitle: { color: '#FFFFFF', fontSize: 14, fontWeight: '700', marginTop: 8, textTransform: 'uppercase', letterSpacing: 1 },
+  welcomeName: { color: '#FFFFFF', fontSize: 24, fontWeight: '900', marginTop: 4 },
 });

@@ -2,8 +2,11 @@ import axios from 'axios';
 
 // For Expo Go on physical device, use your machine's LAN IP.
 // For emulator, use 10.0.2.2 (Android) or localhost (iOS)
-export const BASE_URL = 'http://localhost:5000/api';
-export const ML_URL = 'http://localhost:8000';
+export const BASE_URL = 'http://192.168.8.104:5000/api';
+export const ML_URL = 'http://192.168.8.104:8000';
+
+console.log('[API] Using BASE_URL:', BASE_URL);
+
 
 const api = axios.create({
   baseURL: BASE_URL,

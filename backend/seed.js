@@ -1,6 +1,5 @@
 'use strict';
 require('dotenv').config();
-const mongoose = require('mongoose');
 const User = require('./src/models/User.model');
 const Vehicle = require('./src/models/Vehicle.model');
 const Telemetry = require('./src/models/Telemetry.model');
@@ -9,8 +8,8 @@ const logger = require('./src/utils/logger');
 
 const seedData = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
-    logger.info('Connected to MongoDB for seeding...');
+    logger.info('Starting Firebase seeding...');
+
 
     // Clear existing data
     await User.deleteMany({});

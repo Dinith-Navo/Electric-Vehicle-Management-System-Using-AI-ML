@@ -1,63 +1,84 @@
-'use strict';
-const mongoose = require('mongoose');
+const { db } = require('../config/firebase');
+const MockQuery = require('../utils/rtdb-query');
 
-const notificationSchema = new mongoose.Schema(
-  {
-    owner: {
-      type    : mongoose.Schema.Types.ObjectId,
-      ref     : 'User',
-      required: true,
-      index   : true,
-    },
-    vehicle: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref : 'Vehicle',
-    },
-    title: {
-      type    : String,
-      required: [true, 'Title is required'],
-      trim    : true,
-      maxlength: 120,
-    },
-    message: {
-      type    : String,
-      required: [true, 'Message is required'],
-      trim    : true,
-      maxlength: 500,
-    },
-    type: {
-      type   : String,
-      enum   : ['warning', 'critical', 'info', 'success'],
-      default: 'info',
-    },
-    priority: {
-      type   : String,
-      enum   : ['high', 'medium', 'low'],
-      default: 'medium',
-    },
-    read: {
-      type   : Boolean,
-      default: false,
-    },
-    timestamp: {
-      type   : Date,
-      default: Date.now,
-    },
-  },
-  {
-    timestamps: true,
-    toJSON: {
-      virtuals: true,
-      transform(_, ret) {
-        ret.id = ret._id;
-        delete ret.__v;
-        return ret;
-      },
-    },
+
+/**
+ * Mongoose-like wrapper for Firebase Realtime Database 'notifications'
+ */
+class NotificationModel {
+  constructor() {
+    this.ref = db.ref('notifications');
   }
-);
 
-// Compound index for efficient unread-first queries
-notificationSchema.index({ owner: 1, read: 1, timestamp: -1 });
+  find(query = {}) {
+    return new MockQuery(async () => {
+      const key = Object.keys(query)[0];
+      let snapshot;
+      if (key) {
+        snapshot = await this.ref.orderByChild(key).equalTo(query[key]).once('value');
+      } else {
+        snapshot = await this.ref.once('value');
+      }
 
-module.exports = mongoose.model('Notification', notificationSchema);
+      if (!snapshot.exists()) return [];
+      const data = snapshot.val();
+      return Object.keys(data)
+        .map(id => this._mapNotification(id, data[id]))
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    });
+  }
+
+
+  async create(data) {
+    const newNotif = {
+      ...data,
+      read: false,
+      timestamp: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    const newRef = this.ref.push();
+    await newRef.set(newNotif);
+    return this._mapNotification(newRef.key, newNotif);
+  }
+
+  async findByIdAndUpdate(id, updates, options = {}) {
+    const nRef = this.ref.child(id);
+    await nRef.update({ ...updates, updatedAt: new Date().toISOString() });
+    if (options.new) {
+      const snapshot = await nRef.once('value');
+      return this._mapNotification(id, snapshot.val());
+    }
+    return true;
+  }
+
+  async updateMany(query, updates) {
+    const key = Object.keys(query)[0];
+    const snapshot = await this.ref.orderByChild(key).equalTo(query[key]).once('value');
+    if (!snapshot.exists()) return { nModified: 0 };
+    
+    const data = snapshot.val();
+    const batchUpdates = {};
+    Object.keys(data).forEach(id => {
+      batchUpdates[`${id}`] = { ...data[id], ...updates, updatedAt: new Date().toISOString() };
+    });
+    await this.ref.update(batchUpdates);
+    return { nModified: Object.keys(data).length };
+  }
+
+  async deleteMany(query = {}) {
+    await this.ref.remove();
+    return { deletedCount: 'all' };
+  }
+
+  _mapNotification(id, data) {
+    return {
+      ...data,
+      _id: id,
+      id: id,
+      toJSON: () => ({ id, ...data })
+    };
+  }
+}
+
+module.exports = new NotificationModel();

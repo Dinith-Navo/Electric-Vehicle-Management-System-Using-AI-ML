@@ -119,6 +119,11 @@ exports.postTelemetry = async (req, res, next) => {
       }
     }
 
+    // Emit live telemetry update
+    if (req.app.get('io')) {
+      req.app.get('io').to(`user_${req.user._id}`).emit('telemetry_update', telemetry);
+    }
+
     res.status(201).json({ success: true, telemetry });
   } catch (err) {
     next(err);

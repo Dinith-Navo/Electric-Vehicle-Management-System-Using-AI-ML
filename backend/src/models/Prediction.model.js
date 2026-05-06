@@ -1,92 +1,64 @@
-'use strict';
-const mongoose = require('mongoose');
+const { db } = require('../config/firebase');
+const MockQuery = require('../utils/rtdb-query');
 
-const predictionSchema = new mongoose.Schema(
-  {
-    owner: {
-      type    : mongoose.Schema.Types.ObjectId,
-      ref     : 'User',
-      required: true,
-      index   : true,
-    },
-    vehicle: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref : 'Vehicle',
-    },
-    // ML output fields
-    batteryHealth: {
-      type   : Number,
-      default: 90,
-      min    : 0,
-      max    : 100,
-    },
-    failureRisk: {
-      type   : String,
-      enum   : ['Low', 'Medium', 'High'],
-      default: 'Low',
-    },
-    predictedLife: {
-      type   : String,
-      default: '3 Years',
-    },
-    maintenanceSuggestion: {
-      type   : String,
-      default: '',
-    },
-    confidence: {
-      type   : Number,
-      default: 85,
-      min    : 0,
-      max    : 100,
-    },
-    riskScore: {
-      type   : Number,
-      default: 20,
-      min    : 0,
-      max    : 100,
-    },
-    insights: {
-      type   : [String],
-      default: [],
-    },
-    failureProbability: {
-      type   : Number,
-      default: 0.1,
-      min    : 0,
-      max    : 1,
-    },
-    remainingLifeMonths: {
-      type   : Number,
-      default: 36,
-      min    : 0,
-    },
-    predictedSoc: {
-      type: Number,
-    },
-    // The telemetry snapshot used for prediction
-    inputSnapshot: {
-      soc              : Number,
-      soh              : Number,
-      voltage          : Number,
-      current          : Number,
-      temperature      : Number,
-      chargingCycles   : Number,
-      chargingFrequency: Number,
-    },
-  },
-  {
-    timestamps: true,
-    toJSON: {
-      virtuals: true,
-      transform(_, ret) {
-        ret.id = ret._id;
-        delete ret.__v;
-        return ret;
-      },
-    },
+
+/**
+ * Mongoose-like wrapper for Firebase Realtime Database 'predictions'
+ */
+class PredictionModel {
+  constructor() {
+    this.ref = db.ref('predictions');
   }
-);
 
-predictionSchema.index({ owner: 1, createdAt: -1 });
+  find(query = {}) {
+    return new MockQuery(async () => {
+      const key = Object.keys(query)[0];
+      let snapshot;
+      if (key) {
+        snapshot = await this.ref.orderByChild(key).equalTo(query[key]).once('value');
+      } else {
+        snapshot = await this.ref.once('value');
+      }
 
-module.exports = mongoose.model('Prediction', predictionSchema);
+      if (!snapshot.exists()) return [];
+      const data = snapshot.val();
+      return Object.keys(data)
+        .map(id => this._mapPrediction(id, data[id]))
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    });
+  }
+
+  findOne(query) {
+    return new MockQuery(async () => {
+      const key = Object.keys(query)[0];
+      const snapshot = await this.ref.orderByChild(key).equalTo(query[key]).limitToLast(1).once('value');
+      if (!snapshot.exists()) return null;
+      const data = snapshot.val();
+      const id = Object.keys(data)[0];
+      return this._mapPrediction(id, data[id]);
+    });
+  }
+
+
+  async create(data) {
+    const newPred = {
+      ...data,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    const newRef = this.ref.push();
+    await newRef.set(newPred);
+    return this._mapPrediction(newRef.key, newPred);
+  }
+
+  _mapPrediction(id, data) {
+    return {
+      ...data,
+      _id: id,
+      id: id,
+      toJSON: () => ({ id, ...data })
+    };
+  }
+}
+
+module.exports = new PredictionModel();

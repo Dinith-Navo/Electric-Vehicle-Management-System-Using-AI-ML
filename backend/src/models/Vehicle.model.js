@@ -1,91 +1,102 @@
-'use strict';
-const mongoose = require('mongoose');
+const { db } = require('../config/firebase');
+const MockQuery = require('../utils/rtdb-query');
 
-const vehicleSchema = new mongoose.Schema(
-  {
-    owner: {
-      type    : mongoose.Schema.Types.ObjectId,
-      ref     : 'User',
-      required: true,
-      index   : true,
-    },
-    make: {
-      type    : String,
-      required: [true, 'Vehicle make is required'],
-      trim    : true,
-    },
-    model: {
-      type    : String,
-      required: [true, 'Vehicle model is required'],
-      trim    : true,
-    },
-    year: {
-      type    : Number,
-      required: [true, 'Vehicle year is required'],
-      min     : [2000, 'Year too old'],
-      max     : [new Date().getFullYear() + 1, 'Invalid future year'],
-    },
-    vin: {
-      type     : String,
-      uppercase: true,
-      trim     : true,
-      default  : () => `EV${Date.now()}`,
-    },
-    batteryCapacity: {
-      type   : Number,
-      default: 75,
-      min    : 10,
-      max    : 250,
-    },
-    color: {
-      type   : String,
-      default: 'White',
-      trim   : true,
-    },
-    licensePlate: {
-      type     : String,
-      uppercase: true,
-      trim     : true,
-      default  : '',
-    },
-    odometer: {
-      type   : Number,
-      default: 0,
-      min    : 0,
-    },
-    category: {
-      type   : String,
-      enum   : ['Sedan', 'SUV', 'Truck', 'Van', 'Sports', 'Hatchback', 'Other'],
-      default: 'Sedan',
-    },
-    isActive: {
-      type   : Boolean,
-      default: true,
-    },
-    // Last known telemetry snapshot (denormalized for quick access)
-    lastTelemetry: {
-      soc        : { type: Number },
-      soh        : { type: Number },
-      temperature: { type: Number },
-      updatedAt  : { type: Date },
-    },
-  },
-  {
-    timestamps: true,
-    toJSON: {
-      virtuals : true,
-      transform(_, ret) {
-        ret.id = ret._id;
-        delete ret.__v;
-        return ret;
-      },
-    },
+
+/**
+ * Mongoose-like wrapper for Firebase Realtime Database 'vehicles'
+ */
+class VehicleModel {
+  constructor() {
+    this.ref = db.ref('vehicles');
   }
-);
 
-// ─── Virtual: display name ────────────────────────────────────────────────────
-vehicleSchema.virtual('displayName').get(function () {
-  return `${this.year} ${this.make} ${this.model}`;
-});
+  find(query = {}) {
+    return new MockQuery(async () => {
+      let snapshot;
+      const key = Object.keys(query)[0];
+      if (key) {
+        snapshot = await this.ref.orderByChild(key).equalTo(query[key]).once('value');
+      } else {
+        snapshot = await this.ref.once('value');
+      }
+      
+      if (!snapshot.exists()) return [];
+      const data = snapshot.val();
+      return Object.keys(data).map(id => this._mapVehicle(id, data[id]));
+    });
+  }
 
-module.exports = mongoose.model('Vehicle', vehicleSchema);
+  findById(id) {
+    return new MockQuery(async () => {
+      const snapshot = await this.ref.child(id).once('value');
+      if (!snapshot.exists()) return null;
+      return this._mapVehicle(id, snapshot.val());
+    });
+  }
+
+  findOne(query) {
+    return new MockQuery(async () => {
+      const key = Object.keys(query)[0];
+      const snapshot = await this.ref.orderByChild(key).equalTo(query[key]).limitToFirst(1).once('value');
+      if (!snapshot.exists()) return null;
+      const data = snapshot.val();
+      const id = Object.keys(data)[0];
+      return this._mapVehicle(id, data[id]);
+    });
+  }
+
+
+  async create(data) {
+    const sanitizedData = { ...data };
+    // Remove undefined fields which Firebase doesn't allow
+    Object.keys(sanitizedData).forEach(key => sanitizedData[key] === undefined && delete sanitizedData[key]);
+    
+    const newVehicle = {
+      category: 'Electric', // Default category
+      ...sanitizedData,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    const newRef = this.ref.push();
+    await newRef.set(newVehicle);
+    return this._mapVehicle(newRef.key, newVehicle);
+  }
+
+  async findOneAndUpdate(query, updates, options = {}) {
+    const vehicle = await this.findOne(query);
+    if (!vehicle) return null;
+    return this.findByIdAndUpdate(vehicle._id, updates, options);
+  }
+
+  async findByIdAndUpdate(id, updates, options = {}) {
+    const vRef = this.ref.child(id);
+    await vRef.update({ ...updates, updatedAt: new Date().toISOString() });
+    if (options.new) {
+      const snapshot = await vRef.once('value');
+      return this._mapVehicle(id, snapshot.val());
+    }
+    return true;
+  }
+
+  async findByIdAndDelete(id) {
+    await this.ref.child(id).remove();
+    return true;
+  }
+
+  async deleteMany(query = {}) {
+    await this.ref.remove();
+    return { deletedCount: 'all' };
+  }
+
+  _mapVehicle(id, data) {
+    return {
+      ...data,
+      _id: id,
+      id: id,
+      toJSON: () => ({ id, ...data })
+    };
+  }
+}
+
+module.exports = new VehicleModel();

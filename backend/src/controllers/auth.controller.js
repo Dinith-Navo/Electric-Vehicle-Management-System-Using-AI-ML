@@ -6,23 +6,40 @@ const jwt                               = require('jsonwebtoken');
 
 // ─── POST /api/auth/register ──────────────────────────────────────────────────
 exports.register = async (req, res, next) => {
+  const logger = require('../utils/logger');
   try {
     const { name, email, password } = req.body;
+    logger.info(`[AUTH] Registration attempt: ${email}`);
+
+    if (!name || !email || !password) {
+      logger.warn(`[AUTH] Registration failed: Missing fields for ${email}`);
+      return res.status(400).json({ success: false, message: 'All fields are required.' });
+    }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
+      logger.warn(`[AUTH] Registration failed: Email ${email} already in use.`);
       return res.status(409).json({ success: false, message: 'Email already in use.' });
     }
 
+    logger.info(`[AUTH] Creating user in database: ${email}`);
     const user = await User.create({ name, email, password });
+    
+    if (!user) {
+      throw new Error('User creation failed - no user object returned');
+    }
+
+    logger.info(`[AUTH] User created successfully: ${user.id || user._id}. Generating tokens...`);
 
     const accessToken  = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user._id);
 
+    logger.info(`[AUTH] Tokens generated. Updating user with refresh token...`);
     user.refreshToken = refreshToken;
     user.lastLogin    = new Date();
-    await user.save({ validateModifiedOnly: true });
+    await user.save();
 
+    logger.info(`[AUTH] Registration complete for ${email}. Sending response.`);
     res.status(201).json({
       success     : true,
       message     : 'Registration successful',
@@ -31,9 +48,12 @@ exports.register = async (req, res, next) => {
       user        : user.toJSON(),
     });
   } catch (err) {
+    logger.error(`❌ [AUTH] Registration Error: ${err.message}`);
+    logger.error(err.stack);
     next(err);
   }
 };
+
 
 // ─── POST /api/auth/login ─────────────────────────────────────────────────────
 exports.login = async (req, res, next) => {

@@ -297,10 +297,12 @@ export default function Vehicles() {
         }
       }
       setModalVisible(false);
+      Alert.alert('Success', `Vehicle ${editingVehicle ? 'updated' : 'added'} successfully.`);
     } finally {
       setSaving(false);
     }
   };
+
 
   const handleDelete = (id: string) => {
     console.log('[DEBUG] handleDelete called for ID:', id);

@@ -7,7 +7,9 @@ import {
   StyleSheet,
   RefreshControl,
   Animated,
+  Alert,
 } from 'react-native';
+
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore, Notification } from '../../store/useAppStore';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -140,7 +142,9 @@ export default function Notifications() {
 
   const handleMarkAllRead = async () => {
     markAllReadLocally(); // Optimistic update
+    Alert.alert('Success', 'All notifications have been marked as read.');
     if (token) {
+
       try {
         await notificationService.markAllRead(token);
       } catch (error) {

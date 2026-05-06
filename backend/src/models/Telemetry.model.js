@@ -1,91 +1,86 @@
-'use strict';
-const mongoose = require('mongoose');
+const { db } = require('../config/firebase');
+const MockQuery = require('../utils/rtdb-query');
 
-const telemetrySchema = new mongoose.Schema(
-  {
-    vehicle: {
-      type : mongoose.Schema.Types.ObjectId,
-      ref  : 'Vehicle',
-      index: true,
-    },
-    owner: {
-      type : mongoose.Schema.Types.ObjectId,
-      ref  : 'User',
-      index: true,
-    },
-    // Core battery metrics
-    soc: {
-      type   : Number,
-      default: 80,
-      min    : 0,
-      max    : 100,
-    },
-    soh: {
-      type   : Number,
-      default: 95,
-      min    : 0,
-      max    : 100,
-    },
-    voltage: {
-      type   : Number,
-      default: 380,
-    },
-    current: {
-      type   : Number,
-      default: 0,
-    },
-    temperature: {
-      type   : Number,
-      default: 25,
-    },
-    efficiency: {
-      type   : Number,
-      default: 3.8,
-    },
-    power: {
-      type   : Number,
-      default: 0,
-    },
-    range: {
-      type   : Number,
-      default: 250,
-    },
-    chargingCycles: {
-      type   : Number,
-      default: 0,
-      min    : 0,
-    },
-    chargingFrequency: {
-      type   : Number,
-      default: 0,
-    },
-    isCharging: {
-      type   : Boolean,
-      default: false,
-    },
-    // Metadata
-    source: {
-      type   : String,
-      enum   : ['realtime', 'simulation', 'manual'],
-      default: 'realtime',
-    },
-  },
-  {
-    timestamps: true,
-    toJSON: {
-      virtuals: true,
-      transform(_, ret) {
-        ret.id = ret._id;
-        delete ret.__v;
-        return ret;
-      },
-    },
+
+/**
+ * Mongoose-like wrapper for Firebase Realtime Database 'telemetry'
+ */
+class TelemetryModel {
+  constructor() {
+    this.ref = db.ref('battery_logs');
   }
-);
 
-// Index for efficient range queries on time
-telemetrySchema.index({ createdAt: -1 });
-telemetrySchema.index({ vehicle: 1, createdAt: -1 });
-telemetrySchema.index({ owner: 1, createdAt: -1 });
+  find(query = {}) {
+    return new MockQuery(async () => {
+      let snapshot;
+      
+      if (query.owner) {
+        snapshot = await this.ref.orderByChild('owner').equalTo(query.owner).once('value');
+      } else if (query.vehicle) {
+        snapshot = await this.ref.orderByChild('vehicle').equalTo(query.vehicle).once('value');
+      } else {
+        snapshot = await this.ref.once('value');
+      }
 
-module.exports = mongoose.model('Telemetry', telemetrySchema);
+      if (!snapshot.exists()) return [];
+      
+      const data = snapshot.val();
+      let results = Object.keys(data).map(id => this._mapTelemetry(id, data[id]));
+      
+      results.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      return results;
+    });
+  }
+
+  findOne(query) {
+    return new MockQuery(async () => {
+      const key = Object.keys(query)[0];
+      const snapshot = await this.ref.orderByChild(key).equalTo(query[key]).limitToLast(1).once('value');
+      if (!snapshot.exists()) return null;
+      const data = snapshot.val();
+      const id = Object.keys(data)[0];
+      return this._mapTelemetry(id, data[id]);
+    });
+  }
+
+
+  async create(data) {
+    const newTelemetry = {
+      ...data,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    const newRef = this.ref.push();
+    await newRef.set(newTelemetry);
+    return this._mapTelemetry(newRef.key, newTelemetry);
+  }
+
+  async deleteMany(query = {}) {
+    await this.ref.remove();
+    return { deletedCount: 'all' };
+  }
+
+  async insertMany(docs) {
+    const updates = {};
+    const results = [];
+    docs.forEach(doc => {
+      const newKey = this.ref.push().key;
+      const data = { ...doc, createdAt: doc.createdAt ? new Date(doc.createdAt).toISOString() : new Date().toISOString() };
+      updates[newKey] = data;
+      results.push({ id: newKey, ...data });
+    });
+    await this.ref.update(updates);
+    return results;
+  }
+
+  _mapTelemetry(id, data) {
+    return {
+      ...data,
+      _id: id,
+      id: id,
+      toJSON: () => ({ id, ...data })
+    };
+  }
+}
+
+module.exports = new TelemetryModel();

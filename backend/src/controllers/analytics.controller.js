@@ -6,37 +6,35 @@ const Vehicle = require('../models/Vehicle.model');
 // Get aggregated stats for the dashboard
 exports.getSummary = async (req, res, next) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
     
-    // Aggregation for average SoH, Temp, Voltage across user's vehicles
-    const stats = await Telemetry.aggregate([
-      { $match: { owner: userId } },
-      { $sort: { createdAt: -1 } },
-      {
-        $group: {
-          _id: "$vehicle",
-          latestSoH: { $first: "$soh" },
-          latestTemp: { $first: "$temperature" },
-          latestVoltage: { $first: "$voltage" },
-          avgEfficiency: { $avg: "$efficiency" }
-        }
-      },
-      {
-        $group: {
-          _id: null,
-          avgSoH: { $avg: "$latestSoH" },
-          avgTemp: { $avg: "$latestTemp" },
-          avgVoltage: { $avg: "$latestVoltage" },
-          avgEfficiency: { $avg: "$avgEfficiency" }
-        }
-      }
-    ]);
+    // Fetch all telemetry for this owner
+    const allTelemetry = await Telemetry.find({ owner: userId });
+    
+    if (allTelemetry.length === 0) {
+      return res.json({ 
+        success: true, 
+        summary: { avgSoH: 0, avgTemp: 0, avgVoltage: 0, avgEfficiency: 0 } 
+      });
+    }
 
-    const summary = stats[0] || {
-      avgSoH: 0,
-      avgTemp: 0,
-      avgVoltage: 0,
-      avgEfficiency: 0
+    // Manual aggregation: Get latest for each vehicle
+    const vehicleStats = {};
+    allTelemetry.forEach(t => {
+      const vid = t.vehicle;
+      if (!vehicleStats[vid] || t.createdAt > vehicleStats[vid].createdAt) {
+        vehicleStats[vid] = t;
+      }
+    });
+
+    const latestLogs = Object.values(vehicleStats);
+    const count = latestLogs.length;
+
+    const summary = {
+      avgSoH: latestLogs.reduce((acc, curr) => acc + (curr.soh || 0), 0) / count,
+      avgTemp: latestLogs.reduce((acc, curr) => acc + (curr.temperature || 0), 0) / count,
+      avgVoltage: latestLogs.reduce((acc, curr) => acc + (curr.voltage || 0), 0) / count,
+      avgEfficiency: allTelemetry.reduce((acc, curr) => acc + (curr.efficiency || 0), 0) / allTelemetry.length
     };
 
     res.json({ success: true, summary });
@@ -52,32 +50,27 @@ exports.getTrends = async (req, res, next) => {
     const { vehicleId, type, days = 7 } = req.query;
     const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
     
-    const filter = { 
-      owner: req.user._id, 
-      createdAt: { $gte: since } 
-    };
-    if (vehicleId) filter.vehicle = vehicleId;
+    const query = { owner: req.user.id };
+    if (vehicleId) query.vehicle = vehicleId;
 
-    // Group by day and calculate average for the requested metric
-    const trends = await Telemetry.aggregate([
-      { $match: filter },
-      {
-        $group: {
-          _id: {
-            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
-          },
-          value: { $avg: `$${type || 'soh'}` }
-        }
-      },
-      { $sort: { "_id": 1 } }
-    ]);
+    const logs = await Telemetry.find(query);
+    const filtered = logs.filter(l => new Date(l.createdAt) >= since);
 
-    const formattedTrends = trends.map(t => ({
-      date: t._id,
-      value: parseFloat(t.value.toFixed(2))
+    // Group by day in JS
+    const groups = {};
+    filtered.forEach(log => {
+      const date = new Date(log.createdAt).toISOString().split('T')[0];
+      if (!groups[date]) groups[date] = { sum: 0, count: 0 };
+      groups[date].sum += log[type || 'soh'] || 0;
+      groups[date].count += 1;
+    });
+
+    const trends = Object.keys(groups).sort().map(date => ({
+      date,
+      value: parseFloat((groups[date].sum / groups[date].count).toFixed(2))
     }));
 
-    res.json({ success: true, trends: formattedTrends });
+    res.json({ success: true, trends });
   } catch (err) {
     next(err);
   }
@@ -86,8 +79,6 @@ exports.getTrends = async (req, res, next) => {
 // ─── GET /api/analytics/energy-usage ──────────────────────────────────────────
 exports.getEnergyUsage = async (req, res, next) => {
   try {
-    const userId = req.user._id;
-    // Mocking energy distribution for now (Drive, AC, Electronics, Idle)
     res.json({
       success: true,
       usage: [
@@ -101,3 +92,4 @@ exports.getEnergyUsage = async (req, res, next) => {
     next(err);
   }
 };
+
