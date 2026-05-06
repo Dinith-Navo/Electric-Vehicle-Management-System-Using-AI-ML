@@ -55,36 +55,20 @@ export const telemetryService = {
 
 // ─── ML Predictions ───────────────────────────────────────────────────────────
 export const predictionService = {
-  predictSoH: async (payload: {
-    voltage: number;
-    current: number;
-    temperature: number;
-    charging_cycles: number;
-    charging_frequency: number;
-  }) => {
-    try {
-      const res = await axios.post(`${ML_URL}/predict-soh`, payload, {
-        timeout: 8000,
-      });
-      return res.data;
-    } catch (err) {
-      // Fallback mock when ML service is offline
-      return {
-        predicted_soh: 88.5,
-        health_status: 'Good',
-        risk_level: 'Medium',
-        confidence: 91.4,
-        risk_score: 42,
-        recommendations: [
-          'Reduce DC fast charging frequency.',
-          'Keep SoC between 20-80% for longevity.',
-          'Avoid deep discharge cycles.',
-        ],
-      };
-    }
+  predictSoH: async (payload: object) => {
+    const res = await api.post('/predictions', payload);
+    return res.data;
+  },
+  train: async (token: string) => {
+    const res = await withAuth(token).post('/predictions/train');
+    return res.data;
   },
   getHistory: async (token: string) => {
     const res = await withAuth(token).get('/predictions');
+    return res.data;
+  },
+  getLatest: async (token: string) => {
+    const res = await withAuth(token).get('/predictions/latest');
     return res.data;
   },
 };
@@ -113,6 +97,27 @@ export const userService = {
   },
   updateProfile: async (token: string, data: object) => {
     const res = await withAuth(token).put('/users/me', data);
+    return res.data;
+  },
+  changePassword: async (token: string, data: object) => {
+    const res = await withAuth(token).put('/users/me/password', data);
+    return res.data;
+  },
+};
+// ─── Analytics ────────────────────────────────────────────────────────────────
+export const analyticsService = {
+  getSummary: async (token: string) => {
+    const res = await withAuth(token).get('/analytics/summary');
+    return res.data;
+  },
+  getTrends: async (token: string, type: string, days = 7, vehicleId?: string) => {
+    let url = `/analytics/trends?type=${type}&days=${days}`;
+    if (vehicleId) url += `&vehicleId=${vehicleId}`;
+    const res = await withAuth(token).get(url);
+    return res.data;
+  },
+  getEnergy: async (token: string) => {
+    const res = await withAuth(token).get('/analytics/energy');
     return res.data;
   },
 };

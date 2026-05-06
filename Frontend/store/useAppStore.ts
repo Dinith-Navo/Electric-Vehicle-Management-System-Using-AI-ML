@@ -161,9 +161,12 @@ export const useAppStore = create<AppState>((set) => ({
     })),
 
   removeVehicle: (id) =>
-    set((state) => ({
-      vehicles: state.vehicles.filter((v) => v._id !== id),
-    })),
+    set((state) => {
+      console.log('[STORE] removeVehicle action triggered for ID:', id);
+      return {
+        vehicles: state.vehicles.filter((v) => v._id !== id),
+      };
+    }),
 
   setNotifications: (notifications) => set({ notifications }),
 

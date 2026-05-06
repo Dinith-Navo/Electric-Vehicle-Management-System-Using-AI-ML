@@ -12,11 +12,12 @@ import {
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, Link } from 'expo-router';
 import { useAppStore } from '../../store/useAppStore';
 import { authService } from '../../services';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Colors from '../../constants/Colors';
 
 function InputField({
   icon,
@@ -27,6 +28,7 @@ function InputField({
   secureTextEntry,
   keyboardType,
   autoCapitalize,
+  theme,
 }: {
   icon: any;
   label: string;
@@ -36,20 +38,22 @@ function InputField({
   secureTextEntry?: boolean;
   keyboardType?: any;
   autoCapitalize?: any;
+  theme: typeof Colors.dark;
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const [focused, setFocused] = useState(false);
+
   return (
     <View style={styles.inputGroup}>
-      <Text style={styles.inputLabel}>{label}</Text>
-      <View style={[styles.inputWrapper, focused && styles.inputWrapperFocused]}>
-        <Ionicons name={icon} size={18} color={focused ? '#00F0FF' : '#475569'} />
+      <Text style={[styles.inputLabel, { color: theme.textSecondary }]}>{label}</Text>
+      <View style={[styles.inputWrapper, { backgroundColor: theme.background, borderColor: theme.border }, focused && { borderColor: theme.accent, backgroundColor: `${theme.accent}05` }]}>
+        <Ionicons name={icon} size={18} color={focused ? theme.accent : theme.textSecondary} />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { color: theme.text }]}
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          placeholderTextColor="#475569"
+          placeholderTextColor={theme.textSecondary}
           secureTextEntry={secureTextEntry && !showPassword}
           keyboardType={keyboardType ?? 'default'}
           autoCapitalize={autoCapitalize ?? 'none'}
@@ -58,7 +62,7 @@ function InputField({
         />
         {secureTextEntry && (
           <TouchableOpacity onPress={() => setShowPassword((v) => !v)}>
-            <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={18} color="#475569" />
+            <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={18} color={theme.textSecondary} />
           </TouchableOpacity>
         )}
       </View>
@@ -69,6 +73,8 @@ function InputField({
 export default function Register() {
   const router = useRouter();
   const login = useAppStore((s) => s.login);
+  const darkMode = useAppStore((s) => s.darkMode);
+  const theme = darkMode ? Colors.dark : Colors.light;
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -119,7 +125,7 @@ export default function Register() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={{ flex: 1 }}
@@ -129,29 +135,27 @@ export default function Register() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Back */}
-          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={20} color="#94A3B8" />
-          </TouchableOpacity>
-
           {/* Logo */}
           <View style={styles.logoSection}>
-            <LinearGradient colors={['#00F0FF', '#0070A0']} style={styles.logoCircle}>
-              <Ionicons name="person-add" size={32} color="#080F1F" />
+            <LinearGradient colors={darkMode ? ['#00F0FF', '#0070A0'] : ['#0EA5E9', '#0284C7']} style={styles.logoCircle}>
+              <Ionicons name="person-add" size={32} color={darkMode ? '#080F1F' : '#FFFFFF'} />
             </LinearGradient>
-            <Text style={styles.appName}>Create Account</Text>
-            <Text style={styles.appTagline}>Join the AI EV Intelligence Platform</Text>
+            <Text style={[styles.appName, { color: theme.accent }]}>PSEVPIFPS</Text>
+            <Text style={[styles.appTagline, { color: theme.textSecondary }]}>Join the Future of EV Intelligence</Text>
           </View>
-
+ 
           {/* Card */}
-          <View style={styles.card}>
+          <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.cardTitle, { color: theme.text }]}>Create Account</Text>
+            <Text style={[styles.cardSubtitle, { color: theme.textSecondary }]}>Start monitoring your EV performance</Text>
+ 
             <InputField
               icon="person"
               label="Full Name"
               value={name}
               onChangeText={setName}
-              placeholder="Your full name"
-              autoCapitalize="words"
+              placeholder="John Doe"
+              theme={theme}
             />
             <InputField
               icon="mail"
@@ -160,6 +164,7 @@ export default function Register() {
               onChangeText={setEmail}
               placeholder="your@email.com"
               keyboardType="email-address"
+              theme={theme}
             />
             <InputField
               icon="lock-closed"
@@ -168,6 +173,7 @@ export default function Register() {
               onChangeText={setPassword}
               placeholder="Min. 6 characters"
               secureTextEntry
+              theme={theme}
             />
             <InputField
               icon="shield-checkmark"
@@ -176,33 +182,36 @@ export default function Register() {
               onChangeText={setConfirmPassword}
               placeholder="Repeat password"
               secureTextEntry
+              theme={theme}
             />
-
+ 
             <TouchableOpacity onPress={handleRegister} disabled={loading} style={styles.registerBtn}>
               <LinearGradient
-                colors={loading ? ['#1E293B', '#1E293B'] : ['#00F0FF', '#007A90']}
+                colors={loading ? [theme.border, theme.border] : (darkMode ? ['#00F0FF', '#007A90'] : ['#0EA5E9', '#0284C7'])}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.registerBtnGradient}
               >
                 {loading ? (
-                  <ActivityIndicator color="#fff" />
+                  <ActivityIndicator color={theme.text} />
                 ) : (
                   <>
-                    <Ionicons name="rocket" size={20} color="#080F1F" />
-                    <Text style={styles.registerBtnText}>Create Account</Text>
+                    <Ionicons name="rocket" size={20} color={darkMode ? '#080F1F' : '#FFFFFF'} />
+                    <Text style={[styles.registerBtnText, { color: darkMode ? '#080F1F' : '#FFFFFF' }]}>Sign Up</Text>
                   </>
                 )}
               </LinearGradient>
             </TouchableOpacity>
           </View>
-
-          {/* Login Link */}
+ 
+          {/* Sign In Link */}
           <View style={styles.loginRow}>
-            <Text style={styles.loginText}>Already have an account? </Text>
-            <TouchableOpacity onPress={() => router.back()}>
-              <Text style={styles.loginLink}>Sign In</Text>
-            </TouchableOpacity>
+            <Text style={[styles.signupText, { color: theme.textSecondary }]}>Already have an account? </Text>
+            <Link href="/(auth)/login" asChild>
+              <TouchableOpacity>
+                <Text style={[styles.signupLink, { color: theme.accent }]}>Sign In</Text>
+              </TouchableOpacity>
+            </Link>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -212,22 +221,27 @@ export default function Register() {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#080F1F' },
-  scrollContent: { flexGrow: 1, paddingHorizontal: 24, paddingVertical: 20 },
-  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#0D1B2A', alignItems: 'center', justifyContent: 'center', marginBottom: 24, borderWidth: 1, borderColor: '#1E293B' },
+  scrollContent: { flexGrow: 1, justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 40 },
+
   logoSection: { alignItems: 'center', marginBottom: 32 },
-  logoCircle: { width: 72, height: 72, borderRadius: 36, alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
-  appName: { color: '#F8FAFC', fontSize: 24, fontWeight: '800', marginBottom: 4 },
-  appTagline: { color: '#475569', fontSize: 13, letterSpacing: 0.3 },
-  card: { backgroundColor: '#0D1B2A', borderRadius: 24, padding: 24, borderWidth: 1, borderColor: '#1E293B' },
+  logoCircle: { width: 70, height: 70, borderRadius: 35, alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
+  appName: { fontSize: 28, fontWeight: '900', letterSpacing: 3 },
+  appTagline: { fontSize: 13, marginTop: 6, letterSpacing: 0.5 },
+
+  card: { borderRadius: 24, padding: 24, borderWidth: 1 },
+  cardTitle: { fontSize: 22, fontWeight: '800', marginBottom: 4 },
+  cardSubtitle: { fontSize: 13, marginBottom: 24 },
+
   inputGroup: { marginBottom: 16 },
-  inputLabel: { color: '#94A3B8', fontSize: 12, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 6 },
-  inputWrapper: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#080F1F', borderRadius: 12, borderWidth: 1, borderColor: '#1E293B', paddingHorizontal: 14, paddingVertical: 12, gap: 10 },
-  inputWrapperFocused: { borderColor: '#00F0FF', backgroundColor: 'rgba(0,240,255,0.04)' },
-  input: { flex: 1, color: '#F8FAFC', fontSize: 15 },
-  registerBtn: { borderRadius: 14, overflow: 'hidden', marginTop: 8 },
+  inputLabel: { fontSize: 12, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 6 },
+  inputWrapper: { flexDirection: 'row', alignItems: 'center', borderRadius: 12, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 12, gap: 10 },
+  input: { flex: 1, fontSize: 15 },
+
+  registerBtn: { borderRadius: 14, overflow: 'hidden', marginTop: 8, marginBottom: 8 },
   registerBtnGradient: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, gap: 10 },
-  registerBtnText: { color: '#080F1F', fontSize: 16, fontWeight: '800' },
+  registerBtnText: { fontSize: 16, fontWeight: '800' },
+
   loginRow: { flexDirection: 'row', justifyContent: 'center', marginTop: 24 },
-  loginText: { color: '#94A3B8', fontSize: 14 },
-  loginLink: { color: '#00F0FF', fontSize: 14, fontWeight: '700' },
+  signupText: { fontSize: 14 },
+  signupLink: { fontSize: 14, fontWeight: '700' },
 });

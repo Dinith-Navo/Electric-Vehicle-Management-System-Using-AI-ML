@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,44 +6,19 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../../store/useAppStore';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { VictoryLine, VictoryChart, VictoryTheme, VictoryArea, VictoryAxis, VictoryPie } from 'victory-native';
+import { analyticsService } from '../../services';
+import Colors from '../../constants/Colors';
 
 const { width } = Dimensions.get('window');
 
-const SOH_DATA = [
-  { x: 'Mon', y: 96.2 },
-  { x: 'Tue', y: 95.8 },
-  { x: 'Wed', y: 95.1 },
-  { x: 'Thu', y: 94.7 },
-  { x: 'Fri', y: 94.2 },
-  { x: 'Sat', y: 93.8 },
-  { x: 'Sun', y: 94.0 },
-];
-
-const ENERGY_DATA = [
-  { x: 'Mon', y: 12.4 },
-  { x: 'Tue', y: 9.8 },
-  { x: 'Wed', y: 15.2 },
-  { x: 'Thu', y: 11.1 },
-  { x: 'Fri', y: 13.5 },
-  { x: 'Sat', y: 10.2 },
-  { x: 'Sun', y: 14.8 },
-];
-
-const TEMP_DATA = [
-  { x: 'Mon', y: 28 },
-  { x: 'Tue', y: 31 },
-  { x: 'Wed', y: 34 },
-  { x: 'Thu', y: 29 },
-  { x: 'Fri', y: 27 },
-  { x: 'Sat', y: 33 },
-  { x: 'Sun', y: 30 },
-];
+const TABS = ['Battery', 'Charging', 'Temperature', 'Energy'];
 
 function StatSummary({
   icon,
@@ -51,184 +26,212 @@ function StatSummary({
   value,
   delta,
   color,
+  theme,
 }: {
   icon: any;
   label: string;
   value: string;
   delta: string;
   color: string;
+  theme: typeof Colors.dark;
 }) {
   const isPositive = delta.startsWith('+');
   return (
-    <View style={styles.summaryCard}>
+    <View style={[styles.summaryCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
       <View style={[styles.summaryIcon, { backgroundColor: `${color}22` }]}>
         <Ionicons name={icon} size={18} color={color} />
       </View>
-      <Text style={styles.summaryLabel}>{label}</Text>
-      <Text style={styles.summaryValue}>{value}</Text>
-      <Text style={[styles.summaryDelta, { color: isPositive ? '#10B981' : '#EF4444' }]}>{delta}</Text>
+      <Text style={[styles.summaryLabel, { color: theme.textSecondary }]}>{label}</Text>
+      <Text style={[styles.summaryValue, { color: theme.text }]}>{value}</Text>
+      <Text style={[styles.summaryDelta, { color: isPositive ? theme.success : theme.danger }]}>{delta}</Text>
     </View>
   );
 }
 
-const TABS = ['Battery', 'Charging', 'Temperature', 'Energy'];
-
 export default function Analytics() {
+  const token = useAppStore((s) => s.token);
   const telemetry = useAppStore((s) => s.telemetry);
+  const darkMode = useAppStore((s) => s.darkMode);
+  const theme = darkMode ? Colors.dark : Colors.light;
   const [activeTab, setActiveTab] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [summary, setSummary] = useState<any>(null);
+  const [chartData, setChartData] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (token) {
+      fetchAnalytics();
+    }
+  }, [token, activeTab]);
+
+  const fetchAnalytics = async () => {
+    if (!token) return;
+    try {
+      setLoading(true);
+      // Fetch summary
+      const summaryData = await analyticsService.getSummary(token);
+      setSummary(summaryData.summary);
+
+      // Fetch trends based on active tab
+      const types = ['soh', 'current', 'temperature', 'efficiency'];
+      const trendData = await analyticsService.getTrends(token, types[activeTab]);
+      
+      const formatted = trendData.trends.map((t: any) => ({
+        x: t.date.split('-').slice(1).join('/'), // Format MM/DD
+        y: t.value
+      }));
+      setChartData(formatted);
+    } catch (error) {
+      console.error('Failed to fetch analytics:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
+      <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.title}>Analytics</Text>
-            <Text style={styles.subtitle}>Historical Performance Data</Text>
+            <Text style={[styles.title, { color: theme.text }]}>Analytics</Text>
+            <Text style={[styles.subtitle, { color: theme.textSecondary }]}>Historical Performance Data</Text>
           </View>
-          <Ionicons name="stats-chart" size={28} color="#00F0FF" />
+          <Ionicons name="stats-chart" size={28} color={theme.accent} />
         </View>
-
+ 
         {/* Summary Cards */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 20 }}>
-          <StatSummary icon="battery-full" label="Avg SoH" value="94.3%" delta="+0.2%" color="#10B981" />
-          <StatSummary icon="flash" label="Avg Voltage" value="383V" delta="-1.2V" color="#00F0FF" />
-          <StatSummary icon="thermometer" label="Avg Temp" value="30.3°C" delta="+1.8°C" color="#F59E0B" />
-          <StatSummary icon="leaf" label="Energy Used" value="86.5 kWh" delta="+4.1%" color="#8B5CF6" />
+          <StatSummary 
+            icon="battery-full" 
+            label="Live SoH" 
+            value={`${(telemetry.soh || summary?.avgSoH || 0).toFixed(1)}%`} 
+            delta={summary?.avgSoH ? `${(telemetry.soh - summary.avgSoH).toFixed(1)}%` : '+0.0%'} 
+            color={theme.success} 
+            theme={theme} 
+          />
+          <StatSummary 
+            icon="flash" 
+            label="Live Voltage" 
+            value={`${(telemetry.voltage || summary?.avgVoltage || 0).toFixed(0)}V`} 
+            delta={summary?.avgVoltage ? `${(telemetry.voltage - summary.avgVoltage).toFixed(1)}V` : '+0.0V'} 
+            color={theme.accent} 
+            theme={theme} 
+          />
+          <StatSummary 
+            icon="thermometer" 
+            label="Live Temp" 
+            value={`${(telemetry.temperature || summary?.avgTemp || 0).toFixed(1)}°C`} 
+            delta={summary?.avgTemp ? `${(telemetry.temperature - summary.avgTemp).toFixed(1)}°C` : '+0.0°C'} 
+            color={theme.warning} 
+            theme={theme} 
+          />
+          <StatSummary 
+            icon="leaf" 
+            label="Efficiency" 
+            value={`${(telemetry.efficiency || summary?.avgEfficiency || 0).toFixed(2)}`} 
+            delta={summary?.avgEfficiency ? `${(telemetry.efficiency - summary.avgEfficiency).toFixed(2)}` : '+0.00'} 
+            color="#8B5CF6" 
+            theme={theme} 
+          />
         </ScrollView>
-
+ 
         {/* Tab Selector */}
-        <View style={styles.tabContainer}>
+        <View style={[styles.tabContainer, { backgroundColor: theme.card }]}>
           {TABS.map((tab, i) => (
             <TouchableOpacity
               key={tab}
               onPress={() => setActiveTab(i)}
-              style={[styles.tab, activeTab === i && styles.tabActive]}
+              style={[styles.tab, activeTab === i && { backgroundColor: theme.background }]}
             >
-              <Text style={[styles.tabText, activeTab === i && styles.tabTextActive]}>{tab}</Text>
+              <Text style={[styles.tabText, { color: theme.textSecondary }, activeTab === i && { color: theme.accent }]}>{tab}</Text>
             </TouchableOpacity>
           ))}
         </View>
-
+ 
         {/* Charts Section */}
-        <View style={styles.chartCard}>
-          <Text style={styles.chartCardTitle}>
+        <View style={[styles.chartCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.chartCardTitle, { color: theme.text }]}>
             {TABS[activeTab]} {activeTab === 3 ? 'Consumption' : 'Trends'}
           </Text>
           
-          <View style={{ width: '100%', height: 220, overflow: 'hidden' }}>
-            {activeTab === 0 && (
-              <VictoryChart width={width - 48} height={220} theme={VictoryTheme.material}>
-              <VictoryAxis
-                style={{
-                  axis: { stroke: '#1E293B' },
-                  tickLabels: { fill: '#94A3B8', fontSize: 10 },
-                  grid: { stroke: 'transparent' },
-                }}
-              />
-              <VictoryAxis
-                dependentAxis
-                style={{
-                  axis: { stroke: 'transparent' },
-                  tickLabels: { fill: '#94A3B8', fontSize: 10 },
-                  grid: { stroke: '#1E293B', strokeDasharray: '4, 4' },
-                }}
-              />
-              <VictoryLine
-                data={SOH_DATA}
-                style={{
-                  data: { stroke: '#10B981', strokeWidth: 3 },
-                }}
-                animate={{ duration: 1000, onLoad: { duration: 500 } }}
-              />
-            </VictoryChart>
-          )}
-
-            {activeTab === 1 && (
-              <VictoryChart width={width - 48} height={220} theme={VictoryTheme.material}>
-              <VictoryAxis
-                 style={{
-                  axis: { stroke: '#1E293B' },
-                  tickLabels: { fill: '#94A3B8', fontSize: 10 },
-                  grid: { stroke: 'transparent' },
-                }}
-              />
-              <VictoryAxis
-                dependentAxis
-                style={{
-                  axis: { stroke: 'transparent' },
-                  tickLabels: { fill: '#94A3B8', fontSize: 10 },
-                  grid: { stroke: '#1E293B', strokeDasharray: '4, 4' },
-                }}
-              />
-              <VictoryArea
-                data={ENERGY_DATA}
-                style={{
-                  data: { fill: 'rgba(0, 240, 255, 0.2)', stroke: '#00F0FF', strokeWidth: 2 },
-                }}
-                animate={{ duration: 1000 }}
-              />
-            </VictoryChart>
-          )}
-
-            {activeTab === 2 && (
-              <VictoryChart width={width - 48} height={220} theme={VictoryTheme.material}>
-              <VictoryAxis
-                 style={{
-                  axis: { stroke: '#1E293B' },
-                  tickLabels: { fill: '#94A3B8', fontSize: 10 },
-                  grid: { stroke: 'transparent' },
-                }}
-              />
-              <VictoryAxis
-                dependentAxis
-                style={{
-                  axis: { stroke: 'transparent' },
-                  tickLabels: { fill: '#94A3B8', fontSize: 10 },
-                  grid: { stroke: '#1E293B', strokeDasharray: '4, 4' },
-                }}
-              />
-              <VictoryLine
-                data={TEMP_DATA}
-                style={{
-                  data: { stroke: '#F59E0B', strokeWidth: 3 },
-                }}
-                animate={{ duration: 1000 }}
-              />
-            </VictoryChart>
-          )}
-
-            {activeTab === 3 && (
-              <View style={{ alignItems: 'center', height: 220, justifyContent: 'center' }}>
-                <VictoryPie
-                  data={[
-                    { x: 'Drive', y: 65 },
-                    { x: 'AC', y: 15 },
-                    { x: 'Elec', y: 10 },
-                    { x: 'Idle', y: 10 },
-                  ]}
-                  width={250}
-                  height={250}
-                  innerRadius={60}
-                  colorScale={['#00F0FF', '#10B981', '#8B5CF6', '#F59E0B']}
-                  style={{
-                    labels: { fill: '#94A3B8', fontSize: 10, fontWeight: 'bold' },
-                  }}
-                  animate={{ duration: 1000 }}
-                />
+          <View style={{ width: '100%', height: 220, overflow: 'hidden', justifyContent: 'center' }}>
+            {loading ? (
+              <ActivityIndicator size="large" color={theme.accent} />
+            ) : chartData.length > 0 ? (
+              <>
+                {activeTab < 3 ? (
+                  <VictoryChart width={width - 48} height={220} theme={VictoryTheme.material}>
+                    <VictoryAxis
+                      style={{
+                        axis: { stroke: theme.border },
+                        tickLabels: { fill: theme.textSecondary, fontSize: 10 },
+                        grid: { stroke: 'transparent' },
+                      }}
+                    />
+                    <VictoryAxis
+                      dependentAxis
+                      style={{
+                        axis: { stroke: 'transparent' },
+                        tickLabels: { fill: theme.textSecondary, fontSize: 10 },
+                        grid: { stroke: theme.border, strokeDasharray: '4, 4' },
+                      }}
+                    />
+                    {activeTab === 1 ? (
+                      <VictoryArea
+                        data={chartData}
+                        style={{
+                          data: { fill: `${theme.accent}33`, stroke: theme.accent, strokeWidth: 2 },
+                        }}
+                        animate={{ duration: 1000 }}
+                      />
+                    ) : (
+                      <VictoryLine
+                        data={chartData}
+                        style={{
+                          data: { stroke: activeTab === 0 ? theme.success : theme.warning, strokeWidth: 3 },
+                        }}
+                        animate={{ duration: 1000, onLoad: { duration: 500 } }}
+                      />
+                    )}
+                  </VictoryChart>
+                ) : (
+                  <View style={{ alignItems: 'center', height: 220, justifyContent: 'center' }}>
+                    <VictoryPie
+                      data={[
+                        { x: 'Drive', y: 65 },
+                        { x: 'AC', y: 15 },
+                        { x: 'Elec', y: 10 },
+                        { x: 'Idle', y: 10 },
+                      ]}
+                      width={250}
+                      height={250}
+                      innerRadius={60}
+                      colorScale={[theme.accent, theme.success, '#8B5CF6', theme.warning]}
+                      style={{
+                        labels: { fill: theme.textSecondary, fontSize: 10, fontWeight: 'bold' },
+                      }}
+                      animate={{ duration: 1000 }}
+                    />
+                  </View>
+                )}
+              </>
+            ) : (
+              <View style={{ alignItems: 'center' }}>
+                <Text style={{ color: theme.textSecondary }}>No data available for this period</Text>
               </View>
             )}
           </View>
         </View>
-
+ 
         {/* Insight Card */}
-        <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>📊 Performance Insight</Text>
-          <Text style={styles.infoText}>
-            Your battery efficiency has improved by <Text style={styles.highlight}>4.1%</Text> this week due to optimal thermal management. Keep charging between 20-80% for maximum longevity.
+        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.infoTitle, { color: theme.text }]}>📊 Performance Insight</Text>
+          <Text style={[styles.infoText, { color: theme.textSecondary }]}>
+            Your battery efficiency has improved by <Text style={[styles.highlight, { color: theme.accent }]}>4.1%</Text> this week due to optimal thermal management. Keep charging between 20-80% for maximum longevity.
           </Text>
         </View>
-
+ 
         <View style={{ height: 30 }} />
       </ScrollView>
     </SafeAreaView>

@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { View, Text, StyleSheet } from 'react-native';
 import { useAppStore } from '../../store/useAppStore';
+import Colors from '../../constants/Colors';
 
 function TabIcon({
   name,
@@ -9,16 +10,18 @@ function TabIcon({
   focused,
   label,
   badge,
+  theme,
 }: {
   name: any;
   color: string;
   focused: boolean;
   label: string;
   badge?: number;
+  theme: typeof Colors.dark;
 }) {
   return (
     <View style={styles.iconContainer}>
-      <View style={[styles.iconWrapper, focused && styles.iconWrapperActive]}>
+      <View style={[styles.iconWrapper, focused && { backgroundColor: `${theme.accent}1F` }]}>
         <Ionicons name={name} size={22} color={color} />
         {badge != null && badge > 0 && (
           <View style={styles.badge}>
@@ -34,21 +37,23 @@ function TabIcon({
 export default function TabLayout() {
   const notifications = useAppStore((s) => s.notifications);
   const unreadCount = notifications.filter((n) => !n.read).length;
+  const darkMode = useAppStore((s) => s.darkMode);
+  const theme = darkMode ? Colors.dark : Colors.light;
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#0D1B2A',
+          backgroundColor: theme.card,
           borderTopWidth: 1,
-          borderTopColor: '#1E293B',
+          borderTopColor: theme.border,
           height: 70,
           paddingBottom: 8,
           paddingTop: 4,
         },
-        tabBarActiveTintColor: '#00F0FF',
-        tabBarInactiveTintColor: '#475569',
+        tabBarActiveTintColor: theme.accent,
+        tabBarInactiveTintColor: theme.textSecondary,
         tabBarShowLabel: false,
       }}
     >
@@ -56,7 +61,7 @@ export default function TabLayout() {
         name="dashboard"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="home" color={color} focused={focused} label="Home" />
+            <TabIcon name="home" color={color} focused={focused} label="Home" theme={theme} />
           ),
         }}
       />
@@ -64,7 +69,7 @@ export default function TabLayout() {
         name="ai-insights"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="pulse" color={color} focused={focused} label="AI" />
+            <TabIcon name="pulse" color={color} focused={focused} label="AI" theme={theme} />
           ),
         }}
       />
@@ -72,7 +77,7 @@ export default function TabLayout() {
         name="vehicles"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="car-sport" color={color} focused={focused} label="Vehicles" />
+            <TabIcon name="car-sport" color={color} focused={focused} label="Vehicles" theme={theme} />
           ),
         }}
       />
@@ -80,7 +85,7 @@ export default function TabLayout() {
         name="analytics"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="stats-chart" color={color} focused={focused} label="Analytics" />
+            <TabIcon name="stats-chart" color={color} focused={focused} label="Analytics" theme={theme} />
           ),
         }}
       />
@@ -94,6 +99,7 @@ export default function TabLayout() {
               focused={focused}
               label="Alerts"
               badge={unreadCount}
+              theme={theme}
             />
           ),
         }}
@@ -102,7 +108,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="person" color={color} focused={focused} label="Profile" />
+            <TabIcon name="person" color={color} focused={focused} label="Profile" theme={theme} />
           ),
         }}
       />

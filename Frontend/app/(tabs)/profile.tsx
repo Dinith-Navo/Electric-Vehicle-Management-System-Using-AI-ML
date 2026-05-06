@@ -11,20 +11,24 @@ import {
   Modal,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../../store/useAppStore';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import { userService, telemetryService } from '../../services';
+import Colors from '../../constants/Colors';
 
 function SettingsRow({
   icon,
   label,
   onPress,
   rightElement,
-  color = '#94A3B8',
+  color,
   destructive = false,
+  theme,
 }: {
   icon: any;
   label: string;
@@ -32,19 +36,25 @@ function SettingsRow({
   rightElement?: React.ReactNode;
   color?: string;
   destructive?: boolean;
+  theme: typeof Colors.dark;
 }) {
+  const iconColor = color || theme.textSecondary;
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={[styles.settingsRow, destructive && styles.destructiveRow]}
+      style={[
+        styles.settingsRow, 
+        { borderBottomColor: theme.border },
+        destructive && { backgroundColor: `${theme.danger}11`, borderColor: `${theme.danger}44`, borderWidth: 1, borderRadius: 16, marginBottom: 8 }
+      ]}
       activeOpacity={onPress ? 0.7 : 1}
     >
-      <View style={[styles.settingsIconWrap, { backgroundColor: destructive ? 'rgba(239,68,68,0.1)' : 'rgba(0,240,255,0.08)' }]}>
-        <Ionicons name={icon} size={18} color={destructive ? '#EF4444' : color} />
+      <View style={[styles.settingsIconWrap, { backgroundColor: destructive ? `${theme.danger}22` : `${theme.accent}11` }]}>
+        <Ionicons name={icon} size={18} color={destructive ? theme.danger : iconColor} />
       </View>
-      <Text style={[styles.settingsLabel, destructive && { color: '#EF4444' }]}>{label}</Text>
+      <Text style={[styles.settingsLabel, { color: destructive ? theme.danger : theme.text }]}>{label}</Text>
       {rightElement ?? (
-        onPress ? <Ionicons name="chevron-forward" size={16} color="#475569" /> : null
+        onPress ? <Ionicons name="chevron-forward" size={16} color={theme.textSecondary} /> : null
       )}
     </TouchableOpacity>
   );
@@ -54,6 +64,7 @@ export default function Profile() {
   const router = useRouter();
   const userProfile = useAppStore((s) => s.userProfile);
   const darkMode = useAppStore((s) => s.darkMode);
+  const theme = darkMode ? Colors.dark : Colors.light;
   const notificationsEnabled = useAppStore((s) => s.notificationsEnabled);
   const toggleDarkMode = useAppStore((s) => s.toggleDarkMode);
   const toggleNotifications = useAppStore((s) => s.toggleNotifications);
@@ -61,9 +72,27 @@ export default function Profile() {
   const logout = useAppStore((s) => s.logout);
 
   const [editModal, setEditModal] = useState(false);
-  const [name, setName] = useState(userProfile?.name ?? 'Dinith Navodya');
-  const [email, setEmail] = useState(userProfile?.email ?? 'dinith@ev.com');
-  const [phone, setPhone] = useState(userProfile?.phone ?? '+94 71 123 4567');
+  const [name, setName] = useState(userProfile?.name ?? '');
+  const [email, setEmail] = useState(userProfile?.email ?? '');
+  const [phone, setPhone] = useState(userProfile?.phone ?? '');
+
+  React.useEffect(() => {
+    if (userProfile) {
+      setName(userProfile.name);
+      setEmail(userProfile.email);
+      setPhone(userProfile.phone || '');
+    }
+  }, [userProfile, editModal]);
+  
+  // Password change states
+  const [passwordModal, setPasswordModal] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [helpModal, setHelpModal] = useState(false);
+  const [privacyModal, setPrivacyModal] = useState(false);
 
   const handleLogout = () => {
     const performLogout = () => {
@@ -87,102 +116,166 @@ export default function Profile() {
     }
   };
 
-  const handleSaveProfile = () => {
-    updateProfile({ name, email, phone });
-    setEditModal(false);
+  const [saving, setSaving] = useState(false);
+
+  const handleSaveProfile = async () => {
+    setSaving(true);
+    try {
+      if (useAppStore.getState().token) {
+        await userService.updateProfile(useAppStore.getState().token!, { name, email, phone });
+      }
+      updateProfile({ name, email, phone });
+      setEditModal(false);
+      Alert.alert('Success', 'Profile updated successfully.');
+    } catch (err) {
+      console.error('Update failed:', err);
+      Alert.alert('Error', 'Failed to update profile on server.');
+    } finally {
+      setSaving(false);
+    }
   };
 
+  const handleUpdatePassword = async () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      Alert.alert('Error', 'Please fill all password fields.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      Alert.alert('Error', 'New passwords do not match.');
+      return;
+    }
+    if (newPassword.length < 6) {
+      Alert.alert('Error', 'New password must be at least 6 characters.');
+      return;
+    }
+
+    setPasswordSaving(true);
+    try {
+      const token = useAppStore.getState().token;
+      if (token) {
+        await userService.changePassword(token, { currentPassword, newPassword });
+        Alert.alert('Success', 'Password updated successfully.');
+        setPasswordModal(false);
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+      }
+    } catch (err: any) {
+      const msg = err.response?.data?.message || 'Failed to update password.';
+      Alert.alert('Error', msg);
+    } finally {
+      setPasswordSaving(false);
+    }
+  };
+
+  const telemetry = useAppStore((s) => s.telemetry);
+  const vehicles = useAppStore((s) => s.vehicles);
   const displayName = userProfile?.name ?? name;
   const displayEmail = userProfile?.email ?? email;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
+      <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>Profile</Text>
-          <TouchableOpacity onPress={() => setEditModal(true)} style={styles.editBtn}>
-            <Ionicons name="create-outline" size={18} color="#00F0FF" />
-            <Text style={styles.editBtnText}>Edit</Text>
+          <Text style={[styles.title, { color: theme.text }]}>Profile</Text>
+          <TouchableOpacity onPress={() => setEditModal(true)} style={[styles.editBtn, { backgroundColor: `${theme.accent}15`, borderColor: `${theme.accent}30` }]}>
+            <Ionicons name="create-outline" size={18} color={theme.accent} />
+            <Text style={[styles.editBtnText, { color: theme.accent }]}>Edit</Text>
           </TouchableOpacity>
         </View>
-
+ 
         {/* Profile Hero */}
-        <LinearGradient colors={['#0D1B2A', '#1A2744']} style={styles.profileCard}>
+        <LinearGradient colors={darkMode ? ['#0D1B2A', '#1A2744'] : ['#FFFFFF', '#F1F5F9']} style={[styles.profileCard, { borderColor: `${theme.accent}20` }]}>
           <View style={styles.avatarContainer}>
             <LinearGradient
-              colors={['#00F0FF', '#0090A0']}
+              colors={darkMode ? ['#00F0FF', '#0090A0'] : ['#0EA5E9', '#0284C7']}
               style={styles.avatarGradient}
             >
-              <Text style={styles.avatarInitial}>
+              <Text style={[styles.avatarInitial, { color: darkMode ? '#080F1F' : '#FFFFFF' }]}>
                 {displayName.charAt(0).toUpperCase()}
               </Text>
             </LinearGradient>
-            <View style={styles.statusDot} />
+            <View style={[styles.statusDot, { borderColor: theme.card }]} />
           </View>
-          <Text style={styles.profileName}>{displayName}</Text>
-          <Text style={styles.profileEmail}>{displayEmail}</Text>
-          <View style={styles.roleChip}>
-            <Ionicons name="car-sport" size={12} color="#00F0FF" />
-            <Text style={styles.roleText}>{userProfile?.role ?? 'EV Owner'}</Text>
+          <Text style={[styles.profileName, { color: theme.text }]}>{displayName}</Text>
+          <Text style={[styles.profileEmail, { color: theme.textSecondary }]}>{displayEmail}</Text>
+          <View style={[styles.roleChip, { backgroundColor: `${theme.accent}15`, borderColor: `${theme.accent}25` }]}>
+            <Ionicons name="car-sport" size={12} color={theme.accent} />
+            <Text style={[styles.roleText, { color: theme.accent }]}>{userProfile?.role ?? 'EV Owner'}</Text>
           </View>
-
+ 
           {/* Stats row */}
           <View style={styles.profileStats}>
             <View style={styles.profileStat}>
-              <Text style={styles.profileStatValue}>2</Text>
+              <Text style={[styles.profileStatValue, { color: theme.text }]}>
+                {vehicles.length || 0}
+              </Text>
               <Text style={styles.profileStatLabel}>Vehicles</Text>
             </View>
-            <View style={styles.profileStatDivider} />
+            <View style={[styles.profileStatDivider, { backgroundColor: theme.border }]} />
             <View style={styles.profileStat}>
-              <Text style={styles.profileStatValue}>156</Text>
+              <Text style={[styles.profileStatValue, { color: theme.text }]}>
+                {telemetry.chargingCycles}
+              </Text>
               <Text style={styles.profileStatLabel}>Cycles</Text>
             </View>
-            <View style={styles.profileStatDivider} />
+            <View style={[styles.profileStatDivider, { backgroundColor: theme.border }]} />
             <View style={styles.profileStat}>
-              <Text style={styles.profileStatValue}>94%</Text>
+              <Text style={[styles.profileStatValue, { color: theme.text }]}>
+                {telemetry.soh.toFixed(0)}%
+              </Text>
               <Text style={styles.profileStatLabel}>SoH</Text>
             </View>
           </View>
         </LinearGradient>
-
+ 
         {/* Account Section */}
         <Text style={styles.sectionTitle}>Account</Text>
-        <View style={styles.sectionCard}>
-          <SettingsRow icon="person-circle" label={displayName} color="#00F0FF" />
-          <SettingsRow icon="mail" label={displayEmail} color="#8B5CF6" />
-          <SettingsRow icon="call" label={userProfile?.phone ?? phone} color="#10B981" />
+        <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <SettingsRow icon="person-circle" label={displayName} color={theme.accent} theme={theme} />
+          <SettingsRow icon="mail" label={displayEmail} color="#8B5CF6" theme={theme} />
+          <SettingsRow 
+            icon="call" 
+            label={userProfile?.phone || 'Add Phone Number'} 
+            color={theme.success} 
+            onPress={() => setEditModal(true)}
+            theme={theme}
+          />
           <SettingsRow
             icon="shield-checkmark"
             label="Change Password"
-            onPress={() => Alert.alert('Change Password', 'Password change email sent to ' + displayEmail)}
+            onPress={() => setPasswordModal(true)}
+            theme={theme}
           />
         </View>
-
+ 
         {/* App Preferences */}
         <Text style={styles.sectionTitle}>Preferences</Text>
-        <View style={styles.sectionCard}>
+        <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <SettingsRow
             icon="moon"
             label="Dark Mode"
+            theme={theme}
             rightElement={
               <Switch
                 value={darkMode}
                 onValueChange={toggleDarkMode}
-                trackColor={{ false: '#1E293B', true: 'rgba(0,240,255,0.3)' }}
-                thumbColor={darkMode ? '#00F0FF' : '#475569'}
+                trackColor={{ false: '#CBD5E1', true: `${theme.accent}40` }}
+                thumbColor={darkMode ? theme.accent : '#F8FAFC'}
               />
             }
           />
           <SettingsRow
             icon="notifications"
             label="Push Notifications"
+            theme={theme}
             rightElement={
               <Switch
                 value={notificationsEnabled}
                 onValueChange={toggleNotifications}
-                trackColor={{ false: '#1E293B', true: 'rgba(0,240,255,0.3)' }}
-                thumbColor={notificationsEnabled ? '#00F0FF' : '#475569'}
+                trackColor={{ false: '#CBD5E1', true: `${theme.accent}40` }}
+                thumbColor={notificationsEnabled ? theme.accent : '#F8FAFC'}
               />
             }
           />
@@ -190,115 +283,253 @@ export default function Profile() {
             icon="location"
             label="Location Services"
             onPress={() => Alert.alert('Location', 'Location services enabled for route optimization.')}
+            theme={theme}
           />
         </View>
-
+ 
         {/* EV Intelligence */}
         <Text style={styles.sectionTitle}>EV Intelligence</Text>
-        <View style={styles.sectionCard}>
+        <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <SettingsRow
             icon="car"
             label="Vehicle Management"
             onPress={() => router.push('/(tabs)/vehicles')}
+            theme={theme}
           />
           <SettingsRow
             icon="pulse"
             label="AI Prediction Settings"
-            onPress={() => Alert.alert('AI Settings', 'Random Forest model v2.1 active. Auto-predictions every 6 hours.')}
+            onPress={() => router.push('/(tabs)/ai-insights')}
+            theme={theme}
           />
           <SettingsRow
             icon="sync"
             label="Sync Telemetry"
-            onPress={() => Alert.alert('Sync', 'Telemetry synced successfully!')}
+            onPress={async () => {
+              setSyncing(true);
+              try {
+                const token = useAppStore.getState().token;
+                if (token) {
+                  await telemetryService.getLatest(token);
+                  Alert.alert('Sync Successful', 'All vehicle telemetry data is up to date.');
+                }
+              } catch (e) {
+                Alert.alert('Sync Failed', 'Could not reach the server. Please check your connection.');
+              } finally {
+                setSyncing(false);
+              }
+            }}
+            rightElement={syncing ? <ActivityIndicator size="small" color={theme.accent} /> : null}
+            theme={theme}
           />
           <SettingsRow
             icon="cloud-download"
             label="Export Data (CSV)"
-            onPress={() => Alert.alert('Export', 'Export initiated. Data will be emailed to ' + displayEmail)}
+            onPress={() => {
+              Alert.alert('Exporting...', 'Generating your encrypted data report. You will receive it at ' + displayEmail + ' shortly.');
+            }}
+            theme={theme}
           />
         </View>
-
+ 
         {/* Support */}
         <Text style={styles.sectionTitle}>Support</Text>
-        <View style={styles.sectionCard}>
+        <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <SettingsRow
             icon="help-circle"
             label="Help & FAQ"
-            onPress={() => Alert.alert('Help', 'PSEVPIFPS v1.0 — AI-powered EV management system.')}
+            onPress={() => setHelpModal(true)}
+            theme={theme}
           />
           <SettingsRow
             icon="document-text"
             label="Privacy Policy"
-            onPress={() => Alert.alert('Privacy', 'Your data is encrypted and never sold.')}
+            onPress={() => setPrivacyModal(true)}
+            theme={theme}
           />
           <SettingsRow
             icon="information-circle"
             label="App Version"
-            rightElement={<Text style={styles.versionText}>v1.0.0</Text>}
+            onPress={() => Alert.alert('Update', 'You are on the latest version (v1.0.0).')}
+            rightElement={<Text style={[styles.versionText, { color: theme.textSecondary }]}>v1.0.0</Text>}
+            theme={theme}
           />
         </View>
-
+ 
         {/* Logout */}
         <SettingsRow
           icon="log-out"
           label="Secure Logout"
           onPress={handleLogout}
           destructive
+          theme={theme}
         />
-
+ 
         <View style={{ height: 40 }} />
       </ScrollView>
-
+ 
       {/* Edit Profile Modal */}
       <Modal visible={editModal} animationType="slide" transparent presentationStyle="pageSheet">
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
           <View style={styles.modalOverlay}>
-            <View style={styles.modalSheet}>
-              <View style={styles.modalHandle} />
+            <View style={[styles.modalSheet, { backgroundColor: theme.card }]}>
+              <View style={[styles.modalHandle, { backgroundColor: theme.border }]} />
               <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Edit Profile</Text>
+                <Text style={[styles.modalTitle, { color: theme.text }]}>Edit Profile</Text>
                 <TouchableOpacity onPress={() => setEditModal(false)}>
-                  <Ionicons name="close" size={24} color="#94A3B8" />
+                  <Ionicons name="close" size={24} color={theme.textSecondary} />
                 </TouchableOpacity>
               </View>
-
+ 
               <View style={styles.formField}>
-                <Text style={styles.formLabel}>Full Name</Text>
+                <Text style={[styles.formLabel, { color: theme.textSecondary }]}>Full Name</Text>
                 <TextInput
-                  style={styles.formInput}
+                  style={[styles.formInput, { backgroundColor: theme.background, color: theme.text, borderColor: theme.border }]}
                   value={name}
                   onChangeText={setName}
-                  placeholderTextColor="#475569"
+                  placeholderTextColor={theme.textSecondary}
                 />
               </View>
               <View style={styles.formField}>
-                <Text style={styles.formLabel}>Email Address</Text>
+                <Text style={[styles.formLabel, { color: theme.textSecondary }]}>Email Address</Text>
                 <TextInput
-                  style={styles.formInput}
+                  style={[styles.formInput, { backgroundColor: theme.background, color: theme.text, borderColor: theme.border }]}
                   value={email}
                   onChangeText={setEmail}
                   keyboardType="email-address"
                   autoCapitalize="none"
-                  placeholderTextColor="#475569"
+                  placeholderTextColor={theme.textSecondary}
                 />
               </View>
               <View style={styles.formField}>
-                <Text style={styles.formLabel}>Phone Number</Text>
+                <Text style={[styles.formLabel, { color: theme.textSecondary }]}>Phone Number</Text>
                 <TextInput
-                  style={styles.formInput}
+                  style={[styles.formInput, { backgroundColor: theme.background, color: theme.text, borderColor: theme.border }]}
                   value={phone}
                   onChangeText={setPhone}
                   keyboardType="phone-pad"
-                  placeholderTextColor="#475569"
+                  placeholderTextColor={theme.textSecondary}
                 />
               </View>
-
-              <TouchableOpacity onPress={handleSaveProfile} style={styles.saveBtn}>
-                <Text style={styles.saveBtnText}>Save Changes</Text>
+ 
+              <TouchableOpacity onPress={handleSaveProfile} style={[styles.saveBtn, { backgroundColor: theme.accent }]}>
+                <Text style={[styles.saveBtnText, { color: darkMode ? '#080F1F' : '#FFFFFF' }]}>Save Changes</Text>
               </TouchableOpacity>
             </View>
           </View>
         </KeyboardAvoidingView>
+      </Modal>
+ 
+      {/* Change Password Modal */}
+      <Modal visible={passwordModal} animationType="slide" transparent presentationStyle="pageSheet">
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+          <View style={styles.modalOverlay}>
+            <View style={[styles.modalSheet, { backgroundColor: theme.card }]}>
+              <View style={[styles.modalHandle, { backgroundColor: theme.border }]} />
+              <View style={styles.modalHeader}>
+                <Text style={[styles.modalTitle, { color: theme.text }]}>Change Password</Text>
+                <TouchableOpacity onPress={() => setPasswordModal(false)}>
+                  <Ionicons name="close" size={24} color={theme.textSecondary} />
+                </TouchableOpacity>
+              </View>
+ 
+              <View style={styles.formField}>
+                <Text style={[styles.formLabel, { color: theme.textSecondary }]}>Current Password</Text>
+                <TextInput
+                  style={[styles.formInput, { backgroundColor: theme.background, color: theme.text, borderColor: theme.border }]}
+                  value={currentPassword}
+                  onChangeText={setCurrentPassword}
+                  secureTextEntry
+                  placeholder="Enter current password"
+                  placeholderTextColor={theme.textSecondary}
+                />
+              </View>
+              <View style={styles.formField}>
+                <Text style={[styles.formLabel, { color: theme.textSecondary }]}>New Password</Text>
+                <TextInput
+                  style={[styles.formInput, { backgroundColor: theme.background, color: theme.text, borderColor: theme.border }]}
+                  value={newPassword}
+                  onChangeText={setNewPassword}
+                  secureTextEntry
+                  placeholder="Min. 6 characters"
+                  placeholderTextColor={theme.textSecondary}
+                />
+              </View>
+              <View style={styles.formField}>
+                <Text style={[styles.formLabel, { color: theme.textSecondary }]}>Confirm New Password</Text>
+                <TextInput
+                  style={[styles.formInput, { backgroundColor: theme.background, color: theme.text, borderColor: theme.border }]}
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  secureTextEntry
+                  placeholder="Repeat new password"
+                  placeholderTextColor={theme.textSecondary}
+                />
+              </View>
+ 
+              <TouchableOpacity 
+                onPress={handleUpdatePassword} 
+                style={[styles.saveBtn, { backgroundColor: theme.accent }, passwordSaving && { opacity: 0.7 }]}
+                disabled={passwordSaving}
+              >
+                <Text style={[styles.saveBtnText, { color: darkMode ? '#080F1F' : '#FFFFFF' }]}>
+                  {passwordSaving ? 'Updating...' : 'Update Password'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+      {/* Help & FAQ Modal */}
+      <Modal visible={helpModal} animationType="slide" transparent presentationStyle="pageSheet">
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalSheet, { backgroundColor: theme.card, height: '70%' }]}>
+            <View style={[styles.modalHandle, { backgroundColor: theme.border }]} />
+            <View style={styles.modalHeader}>
+              <Text style={[styles.modalTitle, { color: theme.text }]}>Help & FAQ</Text>
+              <TouchableOpacity onPress={() => setHelpModal(false)}>
+                <Ionicons name="close" size={24} color={theme.textSecondary} />
+              </TouchableOpacity>
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <View style={styles.faqItem}>
+                <Text style={[styles.faqQuestion, { color: theme.text }]}>What is PSEVPIFPS?</Text>
+                <Text style={[styles.faqAnswer, { color: theme.textSecondary }]}>It stands for Post-Sale Electric Vehicle Performance Intelligence & Failure Prediction System. It uses AI to monitor your battery health in real-time.</Text>
+              </View>
+              <View style={styles.faqItem}>
+                <Text style={[styles.faqQuestion, { color: theme.text }]}>How accurate is the SoH prediction?</Text>
+                <Text style={[styles.faqAnswer, { color: theme.textSecondary }]}>Our Random Forest model achieves over 94% accuracy by analyzing voltage, temperature, and charging cycles.</Text>
+              </View>
+              <View style={styles.faqItem}>
+                <Text style={[styles.faqQuestion, { color: theme.text }]}>How do I sync my data?</Text>
+                <Text style={[styles.faqAnswer, { color: theme.textSecondary }]}>The app syncs automatically every time you open it. You can also use the "Sync Telemetry" button in your profile.</Text>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Privacy Policy Modal */}
+      <Modal visible={privacyModal} animationType="slide" transparent presentationStyle="pageSheet">
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalSheet, { backgroundColor: theme.card, height: '60%' }]}>
+            <View style={[styles.modalHandle, { backgroundColor: theme.border }]} />
+            <View style={styles.modalHeader}>
+              <Text style={[styles.modalTitle, { color: theme.text }]}>Privacy Policy</Text>
+              <TouchableOpacity onPress={() => setPrivacyModal(false)}>
+                <Ionicons name="close" size={24} color={theme.textSecondary} />
+              </TouchableOpacity>
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Text style={[styles.privacyText, { color: theme.textSecondary }]}>
+                Your privacy is our priority. All vehicle telemetry data is encrypted using industry-standard protocols.
+                \n\n1. We do not sell your personal data to third parties.
+                \n2. Location data is only used for route optimization and range estimation.
+                \n3. AI models are trained on anonymized data to improve system-wide accuracy.
+              </Text>
+            </ScrollView>
+          </View>
+        </View>
       </Modal>
     </SafeAreaView>
   );
@@ -345,4 +576,8 @@ const styles = StyleSheet.create({
   formInput: { backgroundColor: '#080F1F', borderRadius: 12, borderWidth: 1, borderColor: '#1E293B', paddingHorizontal: 14, paddingVertical: 12, color: '#F8FAFC', fontSize: 15 },
   saveBtn: { backgroundColor: '#00F0FF', borderRadius: 14, paddingVertical: 16, alignItems: 'center', marginTop: 8 },
   saveBtnText: { color: '#080F1F', fontSize: 16, fontWeight: '800' },
+  faqItem: { marginBottom: 20 },
+  faqQuestion: { fontSize: 16, fontWeight: '700', marginBottom: 6 },
+  faqAnswer: { fontSize: 14, lineHeight: 22 },
+  privacyText: { fontSize: 14, lineHeight: 24 },
 });

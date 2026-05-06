@@ -14,6 +14,7 @@ import { useTelemetrySimulation } from '../../hooks/useTelemetrySimulation';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LottieView from 'lottie-react-native';
+import Colors from '../../constants/Colors';
 
 const { width } = Dimensions.get('window');
 
@@ -24,6 +25,7 @@ function MetricCard({
   suffix,
   color,
   subLabel,
+  theme,
 }: {
   icon: any;
   label: string;
@@ -31,6 +33,7 @@ function MetricCard({
   suffix: string;
   color: string;
   subLabel?: string;
+  theme: typeof Colors.dark;
 }) {
   const pulse = useRef(new Animated.Value(1)).current;
 
@@ -42,21 +45,21 @@ function MetricCard({
   }, [value]);
 
   return (
-    <Animated.View style={[styles.metricCard, { transform: [{ scale: pulse }] }]}>
+    <Animated.View style={[styles.metricCard, { transform: [{ scale: pulse }], backgroundColor: theme.card, borderColor: theme.border }]}>
       <View style={[styles.iconCircle, { backgroundColor: `${color}22` }]}>
         <Ionicons name={icon} size={18} color={color} />
       </View>
-      <Text style={styles.metricLabel}>{label}</Text>
+      <Text style={[styles.metricLabel, { color: theme.textSecondary }]}>{label}</Text>
       <Text style={[styles.metricValue, { color }]}>
         {value.toFixed(value % 1 === 0 ? 0 : 1)}
         <Text style={styles.metricSuffix}>{suffix}</Text>
       </Text>
-      {subLabel && <Text style={styles.metricSub}>{subLabel}</Text>}
+      {subLabel && <Text style={[styles.metricSub, { color: theme.textSecondary }]}>{subLabel}</Text>}
     </Animated.View>
   );
 }
 
-function BatteryGauge({ soc, isCharging }: { soc: number; isCharging: boolean }) {
+function BatteryGauge({ soc, isCharging, theme, darkMode }: { soc: number; isCharging: boolean; theme: typeof Colors.dark; darkMode: boolean }) {
   const fillAnim = useRef(new Animated.Value(soc)).current;
 
   useEffect(() => {
@@ -67,17 +70,20 @@ function BatteryGauge({ soc, isCharging }: { soc: number; isCharging: boolean })
     }).start();
   }, [soc]);
 
-  const color = soc > 60 ? '#10B981' : soc > 30 ? '#F59E0B' : '#EF4444';
+  const color = soc > 60 ? theme.success : soc > 30 ? theme.warning : theme.danger;
   const barWidth = fillAnim.interpolate({
     inputRange: [0, 100],
     outputRange: ['0%', '100%'],
   });
 
   return (
-    <LinearGradient colors={['#0D1B2A', '#1A2744']} style={styles.batteryCard}>
+    <LinearGradient 
+      colors={darkMode ? ['#0D1B2A', '#1A2744'] : ['#FFFFFF', '#F1F5F9']} 
+      style={[styles.batteryCard, { borderColor: `${theme.accent}20` }]}
+    >
       <View style={styles.batteryHeader}>
         <View>
-          <Text style={styles.batteryTitle}>Battery Status</Text>
+          <Text style={[styles.batteryTitle, { color: theme.textSecondary }]}>Battery Status</Text>
           <Text style={[styles.batteryPercent, { color }]}>{soc.toFixed(1)}%</Text>
         </View>
         <View style={styles.lottieContainer}>
@@ -94,43 +100,45 @@ function BatteryGauge({ soc, isCharging }: { soc: number; isCharging: boolean })
         </View>
       </View>
 
-      <Text style={styles.batterySubText}>
+      <Text style={[styles.batterySubText, { color: theme.textSecondary }]}>
         {isCharging ? '⚡ Charging in progress...' : 'System discharging'}
       </Text>
 
-      <View style={styles.batteryBar}>
+      <View style={[styles.batteryBar, { backgroundColor: theme.background }]}>
         <Animated.View
           style={[styles.batteryFill, { width: barWidth, backgroundColor: color }]}
         />
       </View>
 
       <View style={styles.batteryLegend}>
-        <Text style={styles.legendText}>0%</Text>
-        <Text style={styles.legendText}>50%</Text>
-        <Text style={styles.legendText}>100%</Text>
+        <Text style={[styles.legendText, { color: theme.textSecondary }]}>0%</Text>
+        <Text style={[styles.legendText, { color: theme.textSecondary }]}>50%</Text>
+        <Text style={[styles.legendText, { color: theme.textSecondary }]}>100%</Text>
       </View>
     </LinearGradient>
   );
 }
 
-function LiveIndicator() {
+function LiveIndicator({ theme }: { theme: typeof Colors.dark }) {
   const blink = useRef(new Animated.Value(1)).current;
   const isLive = useAppStore((s) => s.isLiveConnected);
 
   useEffect(() => {
-    Animated.loop(
+    const animation = Animated.loop(
       Animated.sequence([
-        Animated.timing(blink, { toValue: 0.2, duration: 800, useNativeDriver: true }),
-        Animated.timing(blink, { toValue: 1, duration: 800, useNativeDriver: true }),
+        Animated.timing(blink, { toValue: 0.3, duration: 1000, useNativeDriver: true }),
+        Animated.timing(blink, { toValue: 1, duration: 1000, useNativeDriver: true }),
       ])
-    ).start();
+    );
+    animation.start();
+    return () => animation.stop();
   }, []);
 
   return (
-    <View style={styles.liveIndicator}>
-      <Animated.View style={[styles.liveDot, { opacity: blink, backgroundColor: isLive ? '#10B981' : '#EF4444' }]} />
-      <Text style={[styles.liveText, { color: isLive ? '#10B981' : '#EF4444' }]}>
-        {isLive ? 'LIVE' : 'OFFLINE'}
+    <View style={[styles.liveIndicator, { borderColor: theme.border, backgroundColor: `${theme.card}99` }]}>
+      <Animated.View style={[styles.liveDot, { opacity: isLive ? blink : 1, backgroundColor: isLive ? theme.success : theme.danger }]} />
+      <Text style={[styles.liveText, { color: isLive ? theme.success : theme.textSecondary }]}>
+        {isLive ? 'ONLINE' : 'OFFLINE'}
       </Text>
     </View>
   );
@@ -141,6 +149,8 @@ export default function Dashboard() {
   const telemetry = useAppStore((s) => s.telemetry);
   const prediction = useAppStore((s) => s.prediction);
   const userProfile = useAppStore((s) => s.userProfile);
+  const darkMode = useAppStore((s) => s.darkMode);
+  const theme = darkMode ? Colors.dark : Colors.light;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -152,37 +162,37 @@ export default function Dashboard() {
   }, []);
 
   const getRiskColor = (risk: string) =>
-    risk === 'High' ? '#EF4444' : risk === 'Medium' ? '#F59E0B' : '#10B981';
+    risk === 'High' ? theme.danger : risk === 'Medium' ? theme.warning : theme.success;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <Animated.ScrollView style={[styles.container, { opacity: fadeAnim }]} showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
+      <Animated.ScrollView style={[styles.container, { opacity: fadeAnim, backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.greeting}>
+            <Text style={[styles.greeting, { color: theme.textSecondary }]}>
               Hello, {userProfile?.name?.split(' ')[0] ?? 'Driver'} 👋
             </Text>
-            <Text style={styles.headerTitle}>EV Intelligence</Text>
+            <Text style={[styles.headerTitle, { color: theme.text }]}>EV Intelligence</Text>
           </View>
-          <LiveIndicator />
+          <LiveIndicator theme={theme} />
         </View>
 
         {/* Battery Gauge with Lottie */}
-        <BatteryGauge soc={telemetry.soc} isCharging={telemetry.isCharging} />
+        <BatteryGauge soc={telemetry.soc} isCharging={telemetry.isCharging} theme={theme} darkMode={darkMode} />
 
         {/* 4 Metric Cards */}
         <View style={styles.metricsGrid}>
-          <MetricCard icon="flash" label="SoH" value={telemetry.soh} suffix="%" color="#00F0FF" subLabel="State of Health" />
-          <MetricCard icon="thermometer" label="Temp" value={telemetry.temperature} suffix="°C" color="#F59E0B" subLabel="Pack Temp" />
-          <MetricCard icon="speedometer" label="Voltage" value={telemetry.voltage} suffix="V" color="#8B5CF6" subLabel="Pack Voltage" />
-          <MetricCard icon="cellular" label="Current" value={Math.abs(telemetry.current)} suffix="A" color="#E94560" subLabel="Pack Current" />
+          <MetricCard icon="flash" label="SoH" value={telemetry.soh} suffix="%" color={theme.success} subLabel="State of Health" theme={theme} />
+          <MetricCard icon="thermometer" label="Temp" value={telemetry.temperature} suffix="°C" color={theme.warning} subLabel="Pack Temp" theme={theme} />
+          <MetricCard icon="speedometer" label="Voltage" value={telemetry.voltage} suffix="V" color="#8B5CF6" subLabel="Pack Voltage" theme={theme} />
+          <MetricCard icon="cellular" label="Current" value={Math.abs(telemetry.current)} suffix="A" color="#E94560" subLabel="Pack Current" theme={theme} />
         </View>
 
         {/* AI Prediction Summary */}
-        <LinearGradient colors={['#1A2744', '#0D1B2A']} style={styles.predictionCard}>
+        <LinearGradient colors={darkMode ? ['#1A2744', '#0D1B2A'] : ['#FFFFFF', '#F1F5F9']} style={[styles.predictionCard, { borderColor: `${theme.accent}15` }]}>
           <View style={styles.predictionHeader}>
-            <Text style={styles.sectionTitle}>🤖 AI Diagnostics</Text>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>🤖 AI Diagnostics</Text>
             <View style={[styles.riskBadge, { backgroundColor: `${getRiskColor(prediction.failureRisk)}22`, borderColor: getRiskColor(prediction.failureRisk) }]}>
               <Text style={[styles.riskText, { color: getRiskColor(prediction.failureRisk) }]}>
                 {prediction.failureRisk} Risk
@@ -192,31 +202,31 @@ export default function Dashboard() {
 
           <View style={styles.predictionRow}>
             <View style={styles.predictionStat}>
-              <Text style={styles.predStatLabel}>Health</Text>
-              <Text style={styles.predStatValue}>{prediction.batteryHealth}%</Text>
+              <Text style={[styles.predStatLabel, { color: theme.textSecondary }]}>Health</Text>
+              <Text style={[styles.predStatValue, { color: theme.text }]}>{prediction.batteryHealth}%</Text>
             </View>
             <View style={styles.predictionStat}>
-              <Text style={styles.predStatLabel}>Life</Text>
-              <Text style={styles.predStatValue}>{prediction.predictedLife}</Text>
+              <Text style={[styles.predStatLabel, { color: theme.textSecondary }]}>Life</Text>
+              <Text style={[styles.predStatValue, { color: theme.text }]}>{prediction.predictedLife}</Text>
             </View>
             <View style={styles.predictionStat}>
-              <Text style={styles.predStatLabel}>Score</Text>
-              <Text style={styles.predStatValue}>{prediction.riskScore}</Text>
+              <Text style={[styles.predStatLabel, { color: theme.textSecondary }]}>Score</Text>
+              <Text style={[styles.predStatValue, { color: theme.text }]}>{prediction.riskScore}</Text>
             </View>
           </View>
 
-          <View style={styles.healthBarBg}>
+          <View style={[styles.healthBarBg, { backgroundColor: theme.background }]}>
             <View style={[styles.healthBarFill, { width: `${prediction.batteryHealth}%`, backgroundColor: getRiskColor(prediction.failureRisk) }]} />
           </View>
         </LinearGradient>
 
         {/* AI Recommendations */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>💡 Smart Suggestions</Text>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>💡 Smart Suggestions</Text>
           {prediction.insights.slice(0, 2).map((insight, i) => (
-            <View key={i} style={styles.insightCard}>
-              <Ionicons name="bulb" size={16} color="#00F0FF" />
-              <Text style={styles.insightText}>{insight}</Text>
+            <View key={i} style={[styles.insightCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <Ionicons name="bulb" size={16} color={theme.accent} />
+              <Text style={[styles.insightText, { color: theme.textSecondary }]}>{insight}</Text>
             </View>
           ))}
         </View>

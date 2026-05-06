@@ -14,15 +14,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { notificationService } from '../../services';
+import Colors from '../../constants/Colors';
 
-const TYPE_CONFIG = {
-  critical: { icon: 'alert-circle' as const, color: '#EF4444', bg: 'rgba(239,68,68,0.1)' },
-  warning: { icon: 'warning' as const, color: '#F59E0B', bg: 'rgba(245,158,11,0.1)' },
-  success: { icon: 'checkmark-circle' as const, color: '#10B981', bg: 'rgba(16,185,129,0.1)' },
-  info: { icon: 'information-circle' as const, color: '#00F0FF', bg: 'rgba(0,240,255,0.1)' },
-};
+function NotificationCard({ item, onRead, theme }: { item: Notification; onRead: (id: string) => void; theme: typeof Colors.dark }) {
+  const TYPE_CONFIG = {
+    critical: { icon: 'alert-circle' as const, color: theme.danger, bg: `${theme.danger}22` },
+    warning: { icon: 'warning' as const, color: theme.warning, bg: `${theme.warning}22` },
+    success: { icon: 'checkmark-circle' as const, color: theme.success, bg: `${theme.success}22` },
+    info: { icon: 'information-circle' as const, color: theme.accent, bg: `${theme.accent}22` },
+  };
 
-function NotificationCard({ item, onRead }: { item: Notification; onRead: (id: string) => void }) {
   const config = TYPE_CONFIG[item.type as keyof typeof TYPE_CONFIG] || TYPE_CONFIG.info;
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -49,7 +50,11 @@ function NotificationCard({ item, onRead }: { item: Notification; onRead: (id: s
     <Animated.View style={{ opacity }}>
       <TouchableOpacity
         onPress={() => onRead(item._id)}
-        style={[styles.notifCard, !item.read && styles.unreadCard]}
+        style={[
+          styles.notifCard, 
+          { backgroundColor: theme.card, borderColor: theme.border },
+          !item.read && { borderColor: `${theme.accent}44`, backgroundColor: `${theme.accent}08` }
+        ]}
         activeOpacity={0.7}
       >
         <View style={[styles.notifIcon, { backgroundColor: config.bg }]}>
@@ -57,34 +62,34 @@ function NotificationCard({ item, onRead }: { item: Notification; onRead: (id: s
         </View>
         <View style={styles.notifContent}>
           <View style={styles.notifHeader}>
-            <Text style={styles.notifTitle}>{item.title}</Text>
-            <View style={[styles.priorityBadge, { borderColor: item.priority === 'high' ? '#EF4444' : '#475569' }]}>
-              <Text style={[styles.priorityText, { color: item.priority === 'high' ? '#EF4444' : '#475569' }]}>
+            <Text style={[styles.notifTitle, { color: theme.text }]}>{item.title}</Text>
+            <View style={[styles.priorityBadge, { borderColor: item.priority === 'high' ? theme.danger : theme.textSecondary }]}>
+              <Text style={[styles.priorityText, { color: item.priority === 'high' ? theme.danger : theme.textSecondary }]}>
                 {(item.priority || 'medium').toUpperCase()}
               </Text>
             </View>
           </View>
-          <Text style={styles.notifMessage}>{item.message}</Text>
-          <Text style={styles.notifTime}>{formatDate(item.timestamp)}</Text>
+          <Text style={[styles.notifMessage, { color: theme.textSecondary }]}>{item.message}</Text>
+          <Text style={[styles.notifTime, { color: theme.textSecondary }]}>{formatDate(item.timestamp)}</Text>
         </View>
-        {!item.read && <View style={styles.unreadDot} />}
+        {!item.read && <View style={[styles.unreadDot, { backgroundColor: theme.accent }]} />}
       </TouchableOpacity>
     </Animated.View>
   );
 }
 
-function AuthGuard({ onLogin }: { onLogin: () => void }) {
+function AuthGuard({ onLogin, theme, darkMode }: { onLogin: () => void; theme: typeof Colors.dark; darkMode: boolean }) {
   return (
     <View style={styles.guardContainer}>
-      <LinearGradient colors={['#0D1B2A', '#1A2744']} style={styles.guardCard}>
-        <View style={styles.guardIconCircle}>
-          <Ionicons name="notifications-off" size={32} color="#00F0FF" />
+      <LinearGradient colors={darkMode ? ['#0D1B2A', '#1A2744'] : ['#FFFFFF', '#F1F5F9']} style={[styles.guardCard, { borderColor: `${theme.accent}33` }]}>
+        <View style={[styles.guardIconCircle, { backgroundColor: `${theme.accent}15` }]}>
+          <Ionicons name="notifications-off" size={32} color={theme.accent} />
         </View>
-        <Text style={styles.guardTitle}>Unlock Live Alerts</Text>
-        <Text style={styles.guardMessage}>Sign in to receive real-time failure predictions and critical battery health notifications.</Text>
+        <Text style={[styles.guardTitle, { color: theme.text }]}>Unlock Live Alerts</Text>
+        <Text style={[styles.guardMessage, { color: theme.textSecondary }]}>Sign in to receive real-time failure predictions and critical battery health notifications.</Text>
         <TouchableOpacity onPress={onLogin} style={styles.guardBtn}>
-          <LinearGradient colors={['#00F0FF', '#0090A0']} style={styles.guardBtnGradient}>
-            <Text style={styles.guardBtnText}>Join Now</Text>
+          <LinearGradient colors={darkMode ? ['#00F0FF', '#0090A0'] : ['#0EA5E9', '#0284C7']} style={styles.guardBtnGradient}>
+            <Text style={[styles.guardBtnText, { color: darkMode ? '#080F1F' : '#FFFFFF' }]}>Join Now</Text>
           </LinearGradient>
         </TouchableOpacity>
       </LinearGradient>
@@ -97,6 +102,8 @@ export default function Notifications() {
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const token = useAppStore((s) => s.token);
   const notifications = useAppStore((s) => s.notifications);
+  const darkMode = useAppStore((s) => s.darkMode);
+  const theme = darkMode ? Colors.dark : Colors.light;
   const setNotifications = useAppStore((s) => s.setNotifications);
   const markAsReadLocally = useAppStore((s) => s.markNotificationRead);
   const markAllReadLocally = useAppStore((s) => s.markAllNotificationsRead);
@@ -152,61 +159,61 @@ export default function Notifications() {
 
   if (!isAuthenticated) {
     return (
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
+      <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
           <View style={styles.header}>
-            <Text style={styles.title}>Alerts</Text>
+            <Text style={[styles.title, { color: theme.text }]}>Alerts</Text>
           </View>
-          <AuthGuard onLogin={() => router.replace('/login')} />
+          <AuthGuard onLogin={() => router.replace('/login')} theme={theme} darkMode={darkMode} />
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.title}>Alerts</Text>
-            <Text style={styles.subtitle}>{notifications.filter(n => !n.read).length} Unread Notifications</Text>
+            <Text style={[styles.title, { color: theme.text }]}>Alerts</Text>
+            <Text style={[styles.subtitle, { color: theme.textSecondary }]}>{notifications.filter(n => !n.read).length} Unread Notifications</Text>
           </View>
-          <TouchableOpacity onPress={handleMarkAllRead} style={styles.clearBtn}>
-            <Text style={styles.clearBtnText}>Mark all read</Text>
+          <TouchableOpacity onPress={handleMarkAllRead} style={[styles.clearBtn, { backgroundColor: `${theme.accent}15` }]}>
+            <Text style={[styles.clearBtnText, { color: theme.accent }]}>Mark all read</Text>
           </TouchableOpacity>
         </View>
-
+ 
         {/* Filter */}
         <View style={styles.filterBar}>
           <TouchableOpacity
             onPress={() => setFilter('all')}
-            style={[styles.filterTab, filter === 'all' && styles.filterActive]}
+            style={[styles.filterTab, { backgroundColor: theme.card, borderColor: theme.border }, filter === 'all' && { backgroundColor: theme.border, borderColor: theme.accent }]}
           >
-            <Text style={[styles.filterText, filter === 'all' && styles.filterTextActive]}>All</Text>
+            <Text style={[styles.filterText, { color: theme.textSecondary }, filter === 'all' && { color: theme.accent }]}>All</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setFilter('unread')}
-            style={[styles.filterTab, filter === 'unread' && styles.filterActive]}
+            style={[styles.filterTab, { backgroundColor: theme.card, borderColor: theme.border }, filter === 'unread' && { backgroundColor: theme.border, borderColor: theme.accent }]}
           >
-            <Text style={[styles.filterText, filter === 'unread' && styles.filterTextActive]}>Unread</Text>
+            <Text style={[styles.filterText, { color: theme.textSecondary }, filter === 'unread' && { color: theme.accent }]}>Unread</Text>
           </TouchableOpacity>
         </View>
-
+ 
         {/* List */}
         <FlatList
           data={filteredNotifs}
           keyExtractor={(item) => item._id}
-          renderItem={({ item }) => <NotificationCard item={item} onRead={handleMarkRead} />}
+          renderItem={({ item }) => <NotificationCard item={item} onRead={handleMarkRead} theme={theme} />}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#00F0FF" />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.accent} />
           }
           ListEmptyComponent={
             <View style={styles.emptyState}>
-              <Ionicons name="notifications-off-outline" size={64} color="#1E293B" />
-              <Text style={styles.emptyText}>No notifications found</Text>
+              <Ionicons name="notifications-off-outline" size={64} color={theme.border} />
+              <Text style={[styles.emptyText, { color: theme.textSecondary }]}>No notifications found</Text>
             </View>
           }
         />
