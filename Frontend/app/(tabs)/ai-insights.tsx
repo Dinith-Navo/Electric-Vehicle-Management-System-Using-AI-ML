@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   Animated,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../../store/useAppStore';
@@ -77,11 +78,37 @@ export default function AIInsights() {
   const prediction = useAppStore((s) => s.prediction);
   const darkMode = useAppStore((s) => s.darkMode);
   const theme = darkMode ? Colors.dark : Colors.light;
+  const token = useAppStore((s) => s.token);
   const setPrediction = useAppStore((s) => s.setPrediction);
+  const predictionHistory = useAppStore((s) => s.predictionHistory);
+  const setPredictionHistory = useAppStore((s) => s.setPredictionHistory);
  
   const [loading, setLoading] = useState(false);
   const [training, setTraining] = useState(false);
   const [lastRun, setLastRun] = useState<Date | null>(null);
+
+  useEffect(() => {
+    if (token) {
+      fetchHistory();
+    }
+  }, [token]);
+
+  const fetchHistory = async () => {
+    if (!token) return;
+    try {
+      const res = await predictionService.getHistory(token);
+      if (res.success) {
+        const formatted = res.predictions.map((p: any) => ({
+          soh: p.batteryHealth,
+          risk: p.failureRisk,
+          date: new Date(p.createdAt).toLocaleDateString(),
+        }));
+        setPredictionHistory(formatted);
+      }
+    } catch (e) {
+      console.warn('Failed to fetch prediction history');
+    }
+  };
  
   const getRiskColor = (risk: string) =>
     risk === 'High' ? theme.danger : risk === 'Medium' ? theme.warning : theme.success;
@@ -109,12 +136,13 @@ export default function AIInsights() {
           result.recommendations?.[0] ?? prediction.maintenanceSuggestion,
       });
       setLastRun(new Date());
+      fetchHistory(); // Refresh history
     } catch (e) {
       console.warn('Prediction error, using fallback');
     } finally {
       setLoading(false);
     }
-  }, [telemetry, prediction, setPrediction]);
+  }, [telemetry, prediction, setPrediction, token]);
 
   const trainModel = async () => {
     setTraining(true);
@@ -122,11 +150,14 @@ export default function AIInsights() {
       if (token) {
         const res = await predictionService.train(token);
         if (res.success) {
-          Alert.alert('Training Complete', 'The AI model has been optimized for your driving patterns.');
+          Alert.alert('Training Complete', res.message || 'The AI model has been optimized for your driving patterns.');
+        } else {
+          Alert.alert('Training Failed', res.message || 'Could not complete AI retraining.');
         }
       }
-    } catch (e) {
-      Alert.alert('Info', 'Using baseline model optimizations for your vehicle profile.');
+    } catch (e: any) {
+      const msg = e.response?.data?.message || e.message || 'Using baseline model optimizations.';
+      Alert.alert('Training Error', msg);
     } finally {
       setTraining(false);
     }
@@ -266,9 +297,12 @@ export default function AIInsights() {
         {/* Prediction History */}
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Text style={[styles.sectionTitle, { color: theme.text }]}>📜 Prediction History</Text>
-          {MOCK_HISTORY.map((item, i) => (
+          {predictionHistory.map((item, i) => (
             <HistoryItem key={i} soh={item.soh} risk={item.risk} date={item.date} theme={theme} />
           ))}
+          {predictionHistory.length === 0 && (
+            <Text style={{ color: theme.textSecondary, textAlign: 'center', marginTop: 10 }}>No prediction history found.</Text>
+          )}
         </View>
  
         <View style={{ height: 30 }} />

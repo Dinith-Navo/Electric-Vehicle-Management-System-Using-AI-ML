@@ -69,6 +69,7 @@ interface AppState {
   darkMode: boolean;
   notificationsEnabled: boolean;
   isLiveConnected: boolean;
+  predictionHistory: any[];
 
   login: (token: string, profile: UserProfile) => void;
   logout: () => void;
@@ -86,6 +87,7 @@ interface AppState {
   toggleNotifications: () => void;
   setLiveConnected: (connected: boolean) => void;
   updateProfile: (profile: Partial<UserProfile>) => void;
+  setPredictionHistory: (history: any[]) => void;
 }
 
 const DEFAULT_TELEMETRY: Telemetry = {
@@ -130,6 +132,7 @@ export const useAppStore = create<AppState>((set) => ({
   darkMode: true,
   notificationsEnabled: true,
   isLiveConnected: false,
+  predictionHistory: [],
 
   login: (token, profile) =>
     set({ isAuthenticated: true, token, userProfile: profile }),
@@ -198,4 +201,5 @@ export const useAppStore = create<AppState>((set) => ({
         ? { ...state.userProfile, ...profile }
         : null,
     })),
+  setPredictionHistory: (history) => set({ predictionHistory: history }),
 }));

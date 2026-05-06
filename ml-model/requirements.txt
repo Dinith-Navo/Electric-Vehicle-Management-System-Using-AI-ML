@@ -1,5 +1,4 @@
 pandas
 numpy
 scikit-learn
-flask
-pickle-mixin
+pickle5

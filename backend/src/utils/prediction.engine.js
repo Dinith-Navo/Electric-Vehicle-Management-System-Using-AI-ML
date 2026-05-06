@@ -1,5 +1,54 @@
 'use strict';
 
+const { spawn } = require('child_process');
+const path = require('path');
+
+/**
+ * Calls the Python ML model for high-precision SoC prediction.
+ * @param {Object} telemetry - voltage, current, temperature
+ * @returns {Promise<number>} - Predicted SoC
+ */
+const predictSoC = (telemetry) => {
+  return new Promise((resolve, reject) => {
+    const pythonProcess = spawn('python', [path.join(__dirname, '../../../ml-model/predict.py')], { shell: true });
+    
+    let output = '';
+    
+    pythonProcess.stdin.write(JSON.stringify(telemetry));
+    pythonProcess.stdin.end();
+    
+    pythonProcess.stdout.on('data', (data) => {
+      output += data.toString();
+    });
+    
+    pythonProcess.on('error', (err) => {
+      console.error('[AI ENGINE] Failed to start Python process:', err.message);
+      // Fallback to simple logic if Python fails
+      resolve(parseFloat(((telemetry.voltage - 300) / 1.2).toFixed(1)));
+    });
+
+    pythonProcess.on('close', (code) => {
+      try {
+        if (code !== 0) {
+          console.error(`[AI ENGINE] Python prediction failed with exit code ${code}`);
+          // Fallback to simple logic if Python fails
+          return resolve(parseFloat(((telemetry.voltage - 300) / 1.2).toFixed(1)));
+        }
+        const result = JSON.parse(output);
+        if (result.success) {
+          resolve(result.predicted_soc);
+        } else {
+          console.error(`[AI ENGINE] Python script error: ${result.error}`);
+          resolve(parseFloat(((telemetry.voltage - 300) / 1.2).toFixed(1)));
+        }
+      } catch (e) {
+        console.error('[AI ENGINE] JSON Parse Error in prediction:', e.message);
+        resolve(80.0); // Safe default
+      }
+    });
+  });
+};
+
 /**
  * Lightweight rule-based + statistical AI prediction engine.
  * Mimics an LSTM/Random Forest model until the Python ML service is integrated.
@@ -111,4 +160,4 @@ const predictBatteryHealth = (telemetry) => {
   };
 };
 
-module.exports = { predictBatteryHealth };
+module.exports = { predictBatteryHealth, predictSoC };

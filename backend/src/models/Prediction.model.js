@@ -60,6 +60,9 @@ const predictionSchema = new mongoose.Schema(
       default: 36,
       min    : 0,
     },
+    predictedSoc: {
+      type: Number,
+    },
     // The telemetry snapshot used for prediction
     inputSnapshot: {
       soc              : Number,

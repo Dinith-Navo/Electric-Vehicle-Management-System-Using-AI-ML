@@ -2,27 +2,61 @@
 const Prediction            = require('../models/Prediction.model');
 const Telemetry             = require('../models/Telemetry.model');
 const Notification          = require('../models/Notification.model');
-const { predictBatteryHealth } = require('../utils/prediction.engine');
+const { predictBatteryHealth, predictSoC } = require('../utils/prediction.engine');
 const trainer                 = require('../utils/model.trainer');
 
 // ─── POST /api/predictions/train ─────────────────────────────────────────────
 // Trigger an AI 'Training' session based on historical data
 exports.trainModel = async (req, res, next) => {
   try {
+    const { spawn } = require('child_process');
+    const path = require('path');
+
     const historicalData = await Telemetry.find({ owner: req.user._id })
       .sort({ createdAt: -1 })
       .limit(500);
 
+    // 1. Internal Node.js weight optimization
     const weights = await trainer.train(historicalData);
 
-    res.json({
-      success: true,
-      message: 'AI Model trained and optimized for your vehicle profile.',
-      weights,
-      timestamp: new Date(),
+    // 2. Trigger Python Random Forest Training for SoC model
+    const trainScript = path.join(__dirname, '../../../ml-model/train.py');
+    
+    // On Windows, shell: true helps with finding the executable and handling paths
+    const pythonProcess = spawn('python', [trainScript], { shell: true });
+
+    let stderr = '';
+    pythonProcess.stderr.on('data', (data) => {
+      stderr += data.toString();
     });
+
+    pythonProcess.on('close', (code) => {
+      if (code === 0) {
+        console.log('✅ Python SoC Model retrained successfully.');
+        res.json({
+          success: true,
+          message: 'AI Model trained and optimized for your vehicle profile.',
+          weights,
+          timestamp: new Date(),
+        });
+      } else {
+        console.error('❌ Python Training failed:', stderr);
+        res.status(500).json({ 
+          success: false, 
+          message: 'AI Training script failed. Please ensure dependencies are installed.',
+          error: stderr 
+        });
+      }
+    });
+
+    pythonProcess.on('error', (err) => {
+      console.error('❌ Failed to start Python Training:', err.message);
+      res.status(500).json({ success: false, message: 'Could not start AI Training engine.' });
+    });
+
   } catch (err) {
-    next(err);
+    console.error('Training Controller Error:', err);
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
@@ -48,6 +82,10 @@ exports.runPrediction = async (req, res, next) => {
       chargingFrequency: charging_frequency ?? 3,
     };
 
+    // Call Python-based SoC AI model
+    const aiSoc = await predictSoC(snapshot);
+    snapshot.aiPredictedSoc = aiSoc;
+
     const result = predictBatteryHealth(snapshot);
 
     // Persist prediction to DB
@@ -56,6 +94,7 @@ exports.runPrediction = async (req, res, next) => {
       vehicle              : vehicleId || undefined,
       ...result,
       inputSnapshot        : snapshot,
+      predictedSoc         : aiSoc,
     });
 
     // Auto-generate a notification if risk is High
