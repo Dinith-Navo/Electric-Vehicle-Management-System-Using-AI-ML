@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { Alert } from 'react-native';
 import { useAppStore } from '../store/useAppStore';
 import { io, Socket } from 'socket.io-client';
 import { BASE_URL } from '../services/api';
@@ -64,6 +65,14 @@ export function useTelemetrySimulation(enabled = true) {
 
       socketRef.current.on('new_notification', (data) => {
         useAppStore.getState().addNotification(data);
+        // Show an immediate alert for critical/warning notifications
+        if (data.type === 'critical' || data.type === 'warning') {
+          Alert.alert(
+            `🚨 ${data.title}`,
+            data.message,
+            [{ text: 'View Details', onPress: () => {} }]
+          );
+        }
       });
 
       socketRef.current.on('disconnect', () => {

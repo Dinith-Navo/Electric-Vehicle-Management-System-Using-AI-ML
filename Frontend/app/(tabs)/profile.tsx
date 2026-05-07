@@ -421,6 +421,17 @@ export default function Profile() {
                 />
               </View>
               <View style={styles.formField}>
+                <Text style={[styles.formLabel, { color: theme.textSecondary }]}>Mobile Number</Text>
+                <TextInput
+                  style={[styles.formInput, { backgroundColor: theme.background, color: theme.text, borderColor: theme.border }]}
+                  value={phone}
+                  onChangeText={setPhone}
+                  keyboardType="phone-pad"
+                  placeholder="+1 (555) 000-0000"
+                  placeholderTextColor={theme.textSecondary}
+                />
+              </View>
+              <View style={styles.formField}>
                 <Text style={[styles.formLabel, { color: theme.textSecondary }]}>Account Role</Text>
                 <View style={styles.rolePicker}>
                   {['EV Owner', 'Fleet Manager', 'Service Provider'].map((r) => (

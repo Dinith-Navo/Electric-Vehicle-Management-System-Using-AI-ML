@@ -296,6 +296,27 @@ export default function AIInsights() {
           ))}
         </View>
  
+        {/* Predictive Roadmap */}
+        <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.sectionTitle, { color: theme.text, marginBottom: 12 }]}>🗺️ Maintenance Roadmap</Text>
+          <View style={styles.roadmapContainer}>
+            {[
+              { label: 'Battery Health Optimization', date: 'In 3 Months', status: 'Optimal', color: theme.success },
+              { label: 'Coolant System Inspection', date: 'In 8 Months', status: 'Planned', color: theme.accent },
+              { label: 'Tire Integrity Check', date: 'In 12 Months', status: 'Scheduled', color: theme.warning },
+            ].map((step, i) => (
+              <View key={i} style={styles.roadmapStep}>
+                <View style={[styles.roadmapLine, { backgroundColor: theme.border }, i === 2 && { height: 0 }]} />
+                <View style={[styles.roadmapDot, { backgroundColor: step.color }]} />
+                <View style={styles.roadmapContent}>
+                  <Text style={[styles.roadmapLabel, { color: theme.text }]}>{step.label}</Text>
+                  <Text style={[styles.roadmapDate, { color: theme.textSecondary }]}>{step.date} • {step.status}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        </View>
+
         {/* Prediction History */}
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Text style={[styles.sectionTitle, { color: theme.text }]}>📜 Prediction History</Text>
@@ -367,4 +388,11 @@ const styles = StyleSheet.create({
   actionRow: { flexDirection: 'row', gap: 12, marginBottom: 8 },
   trainBtn: { borderRadius: 14, borderWidth: 1, paddingHorizontal: 16, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, height: 58 },
   trainBtnText: { fontSize: 14, fontWeight: '700' },
+  roadmapContainer: { marginTop: 8, paddingLeft: 8 },
+  roadmapStep: { flexDirection: 'row', gap: 16, minHeight: 60 },
+  roadmapLine: { position: 'absolute', left: 5, top: 10, bottom: -10, width: 2 },
+  roadmapDot: { width: 12, height: 12, borderRadius: 6, marginTop: 4, zIndex: 1 },
+  roadmapContent: { flex: 1, paddingBottom: 20 },
+  roadmapLabel: { fontSize: 14, fontWeight: '700' },
+  roadmapDate: { fontSize: 12, marginTop: 2 },
 });

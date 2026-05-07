@@ -36,7 +36,9 @@ function TabIcon({
 
 export default function TabLayout() {
   const notifications = useAppStore((s) => s.notifications);
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = Array.isArray(notifications) 
+    ? notifications.filter((n) => !n.read).length 
+    : 0;
   const darkMode = useAppStore((s) => s.darkMode);
   const theme = darkMode ? Colors.dark : Colors.light;
 

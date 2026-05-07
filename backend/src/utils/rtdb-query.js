@@ -10,10 +10,24 @@ class MockQuery {
   }
 
   async _exec() {
-    if (typeof this.dataOrFn === 'function') {
-      return await this.dataOrFn();
+    let data = typeof this.dataOrFn === 'function' ? await this.dataOrFn() : this.dataOrFn;
+    
+    // Handle stubs like sort, limit, etc.
+    if (Array.isArray(data)) {
+      if (this._sortParams) {
+        const key = Object.keys(this._sortParams)[0];
+        const dir = this._sortParams[key];
+        data.sort((a, b) => {
+          if (a[key] < b[key]) return dir === -1 ? 1 : -1;
+          if (a[key] > b[key]) return dir === -1 ? -1 : 1;
+          return 0;
+        });
+      }
+      if (this._limitVal) {
+        data = data.slice(0, this._limitVal);
+      }
     }
-    return this.dataOrFn;
+    return data;
   }
 
   then(onFulfilled, onRejected) {
@@ -21,12 +35,12 @@ class MockQuery {
   }
 
   sort(sortObj) {
-    // Note: sorting is already handled in some RTDB queries, 
-    // but for find() we might want in-memory sort
+    this._sortParams = sortObj;
     return this;
   }
 
   limit(n) {
+    this._limitVal = n;
     return this;
   }
 

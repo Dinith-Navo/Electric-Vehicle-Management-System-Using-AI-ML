@@ -1,0 +1,27 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    "users": {
+      ".indexOn": ["email"]
+    },
+    "vehicles": {
+      ".indexOn": ["owner", "vin"]
+    },
+    "battery_logs": {
+      ".indexOn": ["owner", "vehicle", "createdAt"]
+    },
+    "predictions": {
+      ".indexOn": ["owner", "vehicle", "createdAt"]
+    },
+    "notifications": {
+      ".indexOn": ["owner", "vehicle", "timestamp"]
+    },
+    "charging_sessions": {
+      ".indexOn": ["owner", "vehicle"]
+    },
+    "maintenance_records": {
+      ".indexOn": ["owner", "vehicle"]
+    }
+  }
+}

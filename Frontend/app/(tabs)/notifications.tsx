@@ -123,7 +123,11 @@ export default function Notifications() {
     if (!token) return;
     try {
       const data = await notificationService.getAll(token);
-      setNotifications(data);
+      if (data.success && Array.isArray(data.notifications)) {
+        setNotifications(data.notifications);
+      } else if (Array.isArray(data)) {
+        setNotifications(data);
+      }
     } catch (error) {
       console.error('Failed to fetch notifications:', error);
     }

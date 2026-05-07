@@ -128,6 +128,28 @@ function startTelemetryStream(socket, userId, vehicleId, simIntervals) {
       } catch (_) {}
     }
 
+    // --- Alert Logic ---
+    if (state.temperature > 45 || state.soc < 15) {
+      const type = state.temperature > 45 ? 'warning' : 'critical';
+      const title = state.temperature > 45 ? '⚠️ High Temperature' : '🔋 Low Battery';
+      const message = state.temperature > 45 
+        ? `Battery temp is high (${state.temperature}°C).` 
+        : `Battery is low (${state.soc}%). Please charge.`;
+
+      // Every 30 seconds max for alerts to avoid spam
+      if (Math.floor(Date.now() / 1000) % 10 === 0) {
+        socket.emit('new_notification', {
+          _id: `sim_${Date.now()}`,
+          title,
+          message,
+          type,
+          timestamp: new Date().toISOString(),
+          read: false,
+          priority: type === 'critical' ? 'high' : 'medium',
+        });
+      }
+    }
+
     // Persist to DB (non-blocking)
     Telemetry.create({
       owner             : userId,

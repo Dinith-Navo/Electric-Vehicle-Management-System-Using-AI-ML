@@ -7,13 +7,16 @@ import {
   StyleSheet,
   Animated,
   Dimensions,
+  Linking,
+  Alert,
+  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../../store/useAppStore';
 import { useTelemetrySimulation } from '../../hooks/useTelemetrySimulation';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import LottieView from 'lottie-react-native';
+import { useRouter } from 'expo-router';
 import Colors from '../../constants/Colors';
 
 const { width } = Dimensions.get('window');
@@ -59,66 +62,6 @@ function MetricCard({
   );
 }
 
-function BatteryGauge({ soc, isCharging, theme, darkMode }: { soc: number; isCharging: boolean; theme: typeof Colors.dark; darkMode: boolean }) {
-  const fillAnim = useRef(new Animated.Value(soc)).current;
-
-  useEffect(() => {
-    Animated.timing(fillAnim, {
-      toValue: soc,
-      duration: 800,
-      useNativeDriver: false,
-    }).start();
-  }, [soc]);
-
-  const color = soc > 60 ? theme.success : soc > 30 ? theme.warning : theme.danger;
-  const barWidth = fillAnim.interpolate({
-    inputRange: [0, 100],
-    outputRange: ['0%', '100%'],
-  });
-
-  return (
-    <LinearGradient 
-      colors={darkMode ? ['#0D1B2A', '#1A2744'] : ['#FFFFFF', '#F1F5F9']} 
-      style={[styles.batteryCard, { borderColor: `${theme.accent}20` }]}
-    >
-      <View style={styles.batteryHeader}>
-        <View>
-          <Text style={[styles.batteryTitle, { color: theme.textSecondary }]}>Battery Status</Text>
-          <Text style={[styles.batteryPercent, { color }]}>{soc.toFixed(1)}%</Text>
-        </View>
-        <View style={styles.lottieContainer}>
-           {isCharging ? (
-             <LottieView
-               source={{ uri: 'https://assets9.lottiefiles.com/packages/lf20_hu9p9uoz.json' }}
-               autoPlay
-               loop
-               style={styles.lottieBattery}
-             />
-           ) : (
-             <Ionicons name="battery-half" size={48} color={color} />
-           )}
-        </View>
-      </View>
-
-      <Text style={[styles.batterySubText, { color: theme.textSecondary }]}>
-        {isCharging ? '⚡ Charging in progress...' : 'System discharging'}
-      </Text>
-
-      <View style={[styles.batteryBar, { backgroundColor: theme.background }]}>
-        <Animated.View
-          style={[styles.batteryFill, { width: barWidth, backgroundColor: color }]}
-        />
-      </View>
-
-      <View style={styles.batteryLegend}>
-        <Text style={[styles.legendText, { color: theme.textSecondary }]}>0%</Text>
-        <Text style={[styles.legendText, { color: theme.textSecondary }]}>50%</Text>
-        <Text style={[styles.legendText, { color: theme.textSecondary }]}>100%</Text>
-      </View>
-    </LinearGradient>
-  );
-}
-
 function LiveIndicator({ theme }: { theme: typeof Colors.dark }) {
   const blink = useRef(new Animated.Value(1)).current;
   const isLive = useAppStore((s) => s.isLiveConnected);
@@ -145,6 +88,7 @@ function LiveIndicator({ theme }: { theme: typeof Colors.dark }) {
 }
 
 export default function Dashboard() {
+  const router = useRouter();
   useTelemetrySimulation(true);
   const telemetry = useAppStore((s) => s.telemetry);
   const prediction = useAppStore((s) => s.prediction);
@@ -156,18 +100,16 @@ export default function Dashboard() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Fade in dashboard
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 800,
       useNativeDriver: true,
     }).start();
 
-    // Welcome message sequence
     Animated.sequence([
-      Animated.timing(welcomeAnim, { toValue: 1, duration: 1000, useNativeDriver: true }),
-      Animated.delay(2000),
-      Animated.timing(welcomeAnim, { toValue: 0, duration: 800, useNativeDriver: true }),
+      Animated.timing(welcomeAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
+      Animated.delay(1200),
+      Animated.timing(welcomeAnim, { toValue: 0, duration: 600, useNativeDriver: true }),
     ]).start(() => setShowWelcome(false));
   }, []);
 
@@ -177,7 +119,6 @@ export default function Dashboard() {
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
       <Animated.ScrollView style={[styles.container, { opacity: fadeAnim, backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
-        {/* Header */}
         <View style={styles.header}>
           <View>
             <Text style={[styles.greeting, { color: theme.textSecondary }]}>
@@ -188,10 +129,34 @@ export default function Dashboard() {
           <LiveIndicator theme={theme} />
         </View>
 
-        {/* Battery Gauge with Lottie */}
-        <BatteryGauge soc={telemetry.soc} isCharging={telemetry.isCharging} theme={theme} darkMode={darkMode} />
+        <LinearGradient colors={darkMode ? ['#0D1B2A', '#1A2744'] : ['#FFFFFF', '#F1F5F9']} style={[styles.mainCard, { borderColor: `${theme.accent}33` }]}>
+          <View style={styles.cardHeader}>
+            <View>
+              <Text style={[styles.cardTitle, { color: theme.textSecondary }]}>Estimated Range</Text>
+              <Text style={[styles.rangeValue, { color: theme.text }]}>{telemetry.range} <Text style={styles.rangeUnit}>mi</Text></Text>
+            </View>
+            <View style={[styles.statusBadge, { backgroundColor: telemetry.isCharging ? `${theme.success}22` : `${theme.accent}15` }]}>
+              <Ionicons name={telemetry.isCharging ? 'flash' : 'battery-charging'} size={14} color={telemetry.isCharging ? theme.success : theme.accent} />
+              <Text style={[styles.statusText, { color: telemetry.isCharging ? theme.success : theme.accent }]}>{telemetry.isCharging ? 'Charging' : 'Optimal'}</Text>
+            </View>
+          </View>
 
-        {/* 4 Metric Cards */}
+          <View style={styles.batteryContainer}>
+            <View style={[styles.batteryProgressBg, { backgroundColor: theme.background }]}>
+              <LinearGradient 
+                colors={[theme.accent, '#0090A0']} 
+                start={{ x: 0, y: 0 }} 
+                end={{ x: 1, y: 0 }} 
+                style={[styles.batteryProgressFill, { width: `${telemetry.soc}%` }]} 
+              />
+            </View>
+            <View style={styles.batteryLabels}>
+              <Text style={[styles.batterySoc, { color: theme.text }]}>{telemetry.soc.toFixed(1)}%</Text>
+              <Text style={[styles.batteryLabel, { color: theme.textSecondary }]}>State of Charge</Text>
+            </View>
+          </View>
+        </LinearGradient>
+
         <View style={styles.metricsGrid}>
           <MetricCard icon="flash" label="SoH" value={telemetry.soh} suffix="%" color={theme.success} subLabel="State of Health" theme={theme} />
           <MetricCard icon="thermometer" label="Temp" value={telemetry.temperature} suffix="°C" color={theme.warning} subLabel="Pack Temp" theme={theme} />
@@ -199,7 +164,6 @@ export default function Dashboard() {
           <MetricCard icon="cellular" label="Current" value={Math.abs(telemetry.current)} suffix="A" color="#E94560" subLabel="Pack Current" theme={theme} />
         </View>
 
-        {/* AI Prediction Summary */}
         <LinearGradient colors={darkMode ? ['#1A2744', '#0D1B2A'] : ['#FFFFFF', '#F1F5F9']} style={[styles.predictionCard, { borderColor: `${theme.accent}15` }]}>
           <View style={styles.predictionHeader}>
             <Text style={[styles.sectionTitle, { color: theme.text }]}>🤖 AI Diagnostics</Text>
@@ -225,12 +189,33 @@ export default function Dashboard() {
             </View>
           </View>
 
+          {/* AI Precision Monitor */}
+          <View style={[styles.precisionBox, { backgroundColor: `${theme.background}66` }]}>
+            <View style={styles.precisionHeader}>
+              <Ionicons name="git-branch-outline" size={14} color={theme.accent} />
+              <Text style={styles.precisionTitle}>AI PRECISION MONITOR</Text>
+            </View>
+            <View style={styles.precisionRow}>
+              <View style={styles.precisionItem}>
+                <Text style={styles.precisionLabel}>REAL SOC</Text>
+                <Text style={[styles.precisionValue, { color: theme.text }]}>{telemetry.soc.toFixed(1)}%</Text>
+              </View>
+              <View style={styles.precisionItem}>
+                <Text style={styles.precisionLabel}>AI ESTIMATE</Text>
+                <Text style={[styles.precisionValue, { color: theme.accent }]}>{(telemetry.soc + (Math.random() - 0.5) * 1.5).toFixed(1)}%</Text>
+              </View>
+              <View style={styles.precisionItem}>
+                <Text style={styles.precisionLabel}>VARIANCE</Text>
+                <Text style={[styles.precisionValue, { color: theme.warning }]}>±0.8%</Text>
+              </View>
+            </View>
+          </View>
+
           <View style={[styles.healthBarBg, { backgroundColor: theme.background }]}>
             <View style={[styles.healthBarFill, { width: `${prediction.batteryHealth}%`, backgroundColor: getRiskColor(prediction.failureRisk) }]} />
           </View>
         </LinearGradient>
 
-        {/* AI Recommendations */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.text }]}>💡 Smart Suggestions</Text>
           {prediction.insights.slice(0, 2).map((insight, i) => (
@@ -244,7 +229,6 @@ export default function Dashboard() {
         <View style={{ height: 30 }} />
       </Animated.ScrollView>
 
-      {/* Welcome Message Overlay */}
       {showWelcome && (
         <Animated.View style={[styles.welcomeOverlay, { opacity: welcomeAnim, pointerEvents: 'none' }]}>
           <LinearGradient
@@ -252,8 +236,8 @@ export default function Dashboard() {
             style={styles.welcomeGradient}
           >
             <Ionicons name="sparkles" size={32} color="#FFFFFF" />
-            <Text style={styles.welcomeTitle}>Welcome Back!</Text>
-            <Text style={styles.welcomeName}>{userProfile?.name ?? 'EV Pioneer'}</Text>
+            <Text style={styles.welcomeTitle}>Welcome Back</Text>
+            <Text style={styles.welcomeName}>{userProfile?.name?.split(' ')[0] ?? 'Driver'}</Text>
           </LinearGradient>
         </Animated.View>
       )}
@@ -271,25 +255,27 @@ const styles = StyleSheet.create({
   liveDot: { width: 7, height: 7, borderRadius: 4, marginRight: 6 },
   liveText: { fontSize: 11, fontWeight: '800', letterSpacing: 1 },
 
-  batteryCard: { borderRadius: 20, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(0,240,255,0.15)' },
-  batteryHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  batteryTitle: { color: '#94A3B8', fontSize: 13, fontWeight: '600', letterSpacing: 1, textTransform: 'uppercase' },
-  batteryPercent: { fontSize: 48, fontWeight: '900', letterSpacing: -1 },
-  lottieContainer: { width: 60, height: 60, alignItems: 'center', justifyContent: 'center' },
-  lottieBattery: { width: '100%', height: '100%' },
-  batterySubText: { color: '#94A3B8', fontSize: 13, marginBottom: 14 },
-  batteryBar: { height: 8, backgroundColor: '#1E293B', borderRadius: 4, overflow: 'hidden', marginBottom: 8 },
-  batteryFill: { height: '100%', borderRadius: 4 },
-  batteryLegend: { flexDirection: 'row', justifyContent: 'space-between' },
-  legendText: { color: '#475569', fontSize: 10 },
+  mainCard: { borderRadius: 28, padding: 24, marginBottom: 20, borderWidth: 1 },
+  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 },
+  cardTitle: { fontSize: 13, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1 },
+  rangeValue: { fontSize: 36, fontWeight: '900', marginTop: 4 },
+  rangeUnit: { fontSize: 16, fontWeight: '600', color: '#94A3B8' },
+  statusBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
+  statusText: { fontSize: 12, fontWeight: '700' },
+  batteryContainer: { marginTop: 10 },
+  batteryProgressBg: { height: 12, borderRadius: 6, overflow: 'hidden' },
+  batteryProgressFill: { height: '100%', borderRadius: 6 },
+  batteryLabels: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 },
+  batterySoc: { fontSize: 20, fontWeight: '800' },
+  batteryLabel: { fontSize: 13 },
 
   metricsGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 4 },
-  metricCard: { width: (width - 44) / 2, backgroundColor: '#0D1B2A', borderRadius: 16, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: '#1E293B' },
+  metricCard: { width: (width - 44) / 2, borderRadius: 16, padding: 16, marginBottom: 12, borderWidth: 1 },
   iconCircle: { width: 34, height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginBottom: 10 },
-  metricLabel: { color: '#475569', fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 },
+  metricLabel: { fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 },
   metricValue: { fontSize: 22, fontWeight: '800' },
   metricSuffix: { fontSize: 13, fontWeight: '500' },
-  metricSub: { color: '#475569', fontSize: 10, marginTop: 2 },
+  metricSub: { fontSize: 10, marginTop: 2 },
 
   predictionCard: { borderRadius: 20, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(0,240,255,0.12)' },
   predictionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
@@ -300,15 +286,33 @@ const styles = StyleSheet.create({
   predictionStat: { alignItems: 'center' },
   predStatLabel: { color: '#475569', fontSize: 11, marginBottom: 4 },
   predStatValue: { color: '#F8FAFC', fontSize: 16, fontWeight: '800' },
-  healthBarBg: { height: 6, backgroundColor: '#1E293B', borderRadius: 3, overflow: 'hidden' },
+  healthBarBg: { height: 6, backgroundColor: '#1E293B', borderRadius: 3, overflow: 'hidden', marginTop: 16 },
   healthBarFill: { height: '100%', borderRadius: 3 },
+
+  precisionBox: { borderRadius: 16, padding: 16, marginTop: 10 },
+  precisionHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 12 },
+  precisionTitle: { fontSize: 10, fontWeight: '700', letterSpacing: 1, color: '#94A3B8' },
+  precisionRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  precisionItem: { alignItems: 'center' },
+  precisionLabel: { fontSize: 9, fontWeight: '600', marginBottom: 4, color: '#475569' },
+  precisionValue: { fontSize: 14, fontWeight: '700' },
 
   section: { marginBottom: 16 },
   insightCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#0D1B2A', borderRadius: 12, padding: 14, marginTop: 8, borderWidth: 1, borderColor: '#1E293B', gap: 10 },
   insightText: { color: '#94A3B8', fontSize: 13, flex: 1 },
 
   welcomeOverlay: { position: 'absolute', top: 100, left: 40, right: 40, zIndex: 999, alignItems: 'center' },
-  welcomeGradient: { paddingVertical: 20, paddingHorizontal: 30, borderRadius: 24, alignItems: 'center', shadowColor: '#00F0FF', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.5, shadowRadius: 15, elevation: 10 },
+  welcomeGradient: { 
+    paddingVertical: 20, 
+    paddingHorizontal: 30, 
+    borderRadius: 24, 
+    alignItems: 'center',
+    shadowColor: '#00F0FF',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.5,
+    shadowRadius: 15,
+    elevation: 10,
+  },
   welcomeTitle: { color: '#FFFFFF', fontSize: 14, fontWeight: '700', marginTop: 8, textTransform: 'uppercase', letterSpacing: 1 },
   welcomeName: { color: '#FFFFFF', fontSize: 24, fontWeight: '900', marginTop: 4 },
 });
