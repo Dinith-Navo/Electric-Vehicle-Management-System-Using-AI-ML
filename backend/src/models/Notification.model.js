@@ -40,8 +40,11 @@ class NotificationModel {
 
 
   async create(data) {
+    const sanitizedData = { ...data };
+    Object.keys(sanitizedData).forEach(key => sanitizedData[key] === undefined && delete sanitizedData[key]);
+    
     const newNotif = {
-      ...data,
+      ...sanitizedData,
       read: false,
       timestamp: new Date().toISOString(),
       createdAt: new Date().toISOString(),
@@ -136,8 +139,11 @@ class NotificationModel {
     const results = [];
     docs.forEach(doc => {
       const newKey = this.ref.push().key;
+      const sanitizedDoc = { ...doc };
+      Object.keys(sanitizedDoc).forEach(key => sanitizedDoc[key] === undefined && delete sanitizedDoc[key]);
+      
       const data = { 
-        ...doc, 
+        ...sanitizedDoc, 
         read: false,
         timestamp: new Date().toISOString(),
         createdAt: new Date().toISOString(), 

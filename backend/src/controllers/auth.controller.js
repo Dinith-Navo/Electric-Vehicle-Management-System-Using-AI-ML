@@ -39,7 +39,7 @@ exports.register = async (req, res, next) => {
     user.lastLogin    = new Date();
     await user.save();
 
-    logger.info(`[AUTH] Registration complete for ${email}. Sending response.`);
+    logger.info(`[AUTH] Registration complete for ${email}. Sending response with token: ${accessToken.substring(0, 10)}...`);
     res.status(201).json({
       success     : true,
       message     : 'Registration successful',

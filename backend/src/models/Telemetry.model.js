@@ -45,8 +45,9 @@ class TelemetryModel {
 
 
   async create(data) {
+    const cleanData = Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== undefined));
     const newTelemetry = {
-      ...data,
+      ...cleanData,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -65,7 +66,8 @@ class TelemetryModel {
     const results = [];
     docs.forEach(doc => {
       const newKey = this.ref.push().key;
-      const data = { ...doc, createdAt: doc.createdAt ? new Date(doc.createdAt).toISOString() : new Date().toISOString() };
+      const cleanDoc = Object.fromEntries(Object.entries(doc).filter(([_, v]) => v !== undefined));
+      const data = { ...cleanDoc, createdAt: doc.createdAt ? new Date(doc.createdAt).toISOString() : new Date().toISOString() };
       updates[newKey] = data;
       results.push({ id: newKey, ...data });
     });

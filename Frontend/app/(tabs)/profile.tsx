@@ -14,6 +14,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 import { useAppStore } from '../../store/useAppStore';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -187,6 +189,76 @@ export default function Profile() {
     }
   };
 
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportData = async () => {
+    setExporting(true);
+    try {
+      const token = useAppStore.getState().token;
+      if (!token) return;
+
+      // 1. Fetch History Data (Last 30 days)
+      const res = await telemetryService.getHistory(token, 30);
+      const data = res.history || [];
+
+      if (data.length === 0) {
+        Alert.alert('No Data', 'You do not have any telemetry records to export yet.');
+        return;
+      }
+
+      // 2. Convert to CSV
+      const headers = ['Timestamp', 'SoC (%)', 'SoH (%)', 'Voltage (V)', 'Current (A)', 'Temp (°C)', 'Charging'];
+      const rows = data.map((item: any) => [
+        item.createdAt,
+        item.soc,
+        item.soh,
+        item.voltage,
+        item.current,
+        item.temperature,
+        item.isCharging ? 'Yes' : 'No'
+      ]);
+
+      const csvContent = [
+        headers.join(','),
+        ...rows.map((row: any[]) => row.join(','))
+      ].join('\n');
+
+      const fileName = `EV_Data_Export_${new Date().getTime()}.csv`;
+
+      if (Platform.OS === 'web') {
+        // Web Download Logic
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        Alert.alert('Success', 'Data export started. Check your downloads.');
+      } else {
+        // Mobile Export Logic (FileSystem + Sharing)
+        const fileUri = FileSystem.documentDirectory + fileName;
+        await FileSystem.writeAsStringAsync(fileUri, csvContent, { encoding: FileSystem.EncodingType.UTF8 });
+        
+        const isAvailable = await Sharing.isAvailableAsync();
+        if (isAvailable) {
+          await Sharing.shareAsync(fileUri, {
+            mimeType: 'text/csv',
+            dialogTitle: 'Export your EV Data',
+            UTI: 'public.comma-separated-values-text'
+          });
+        } else {
+          Alert.alert('Error', 'Sharing is not available on this device.');
+        }
+      }
+    } catch (err: any) {
+      console.error('Export Error:', err);
+      Alert.alert('Export Failed', 'Failed to generate data report. Please try again later.');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const telemetry = useAppStore((s) => s.telemetry);
   const vehicles = useAppStore((s) => s.vehicles);
   const displayName = userProfile?.name ?? name;
@@ -344,9 +416,8 @@ export default function Profile() {
           <SettingsRow
             icon="cloud-download"
             label="Export Data (CSV)"
-            onPress={() => {
-              Alert.alert('Exporting...', 'Generating your encrypted data report. You will receive it at ' + displayEmail + ' shortly.');
-            }}
+            onPress={handleExportData}
+            rightElement={exporting ? <ActivityIndicator size="small" color={theme.accent} /> : null}
             theme={theme}
           />
         </View>

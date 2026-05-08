@@ -102,6 +102,12 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   const logger = require('./src/utils/logger');
   const status = err.status || err.statusCode || 500;
+  
+  if (res.headersSent) {
+    logger.warn(`[ERROR] Headers already sent for ${req.method} ${req.url}. Skipping error response.`);
+    return next(err);
+  }
+
   logger.error(`[ERROR] ${status} — ${err.message}`);
   if (process.env.NODE_ENV === 'development') logger.error(err.stack);
 
@@ -122,6 +128,12 @@ const PORT = parseInt(process.env.PORT || '5000', 10);
 
 if (db) {
   logger.info('✅ Firebase Realtime Database connected');
+  
+  // Verify authentication with a dummy read
+  db.ref('.info/connected').once('value')
+    .then(() => logger.info('🔐 Firebase Authentication verified successfully'))
+    .catch(err => logger.error(`🔐 Firebase Authentication failed: ${err.message}`));
+
   server.listen(PORT, () => {
     logger.info(`🚀 Server running on http://localhost:${PORT} [${process.env.NODE_ENV}]`);
     logger.info(`📡 Socket.IO ready on ws://localhost:${PORT}`);

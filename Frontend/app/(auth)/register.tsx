@@ -98,9 +98,14 @@ export default function Register() {
 
     setLoading(true);
     try {
-      console.log(`[AUTH] Attempting register at: ${authService.register.toString()}`); 
-      // Actually let's just log the result of the call
+      console.log(`[AUTH] Attempting register: ${email} at ${authService.register.constructor.name}`); 
       const res = await authService.register(name, email, password);
+      console.log('[AUTH] Registration Response:', res);
+      
+      if (!res || !res.access_token) {
+        throw new Error(res?.message || 'Invalid response from server - no access token received');
+      }
+      
       const token = res.access_token;
       const userData = res.user;
 

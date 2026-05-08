@@ -312,6 +312,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 15,
     elevation: 10,
+    ...Platform.select({
+      web: {
+        boxShadow: '0 8px 15px rgba(0, 240, 255, 0.5)',
+      }
+    })
   },
   welcomeTitle: { color: '#FFFFFF', fontSize: 14, fontWeight: '700', marginTop: 8, textTransform: 'uppercase', letterSpacing: 1 },
   welcomeName: { color: '#FFFFFF', fontSize: 24, fontWeight: '900', marginTop: 4 },
