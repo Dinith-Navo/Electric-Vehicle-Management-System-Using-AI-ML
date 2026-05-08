@@ -1,20 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  StatusBar,
-  Animated,
-  Dimensions,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity,
+  StatusBar, Animated, SafeAreaView,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { useTheme } from "./ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../ThemeContext";
 
-const { width } = Dimensions.get("window");
-
-// ─── Helpers ────────────────────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function calcSOH(capacity: number, mileage: number, cycles: number, temp: number, fastCharge: number, age: number) {
   let soh = 100;
@@ -26,612 +19,456 @@ function calcSOH(capacity: number, mileage: number, cycles: number, temp: number
   return Math.max(50, Math.min(100, Math.round(soh)));
 }
 
-// ─── Circular Progress ───────────────────────────────────────────────────────
+// ─── Circular Progress ────────────────────────────────────────────────────────
 
 function CircularProgress({ value }: { value: number }) {
-  const animVal = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    Animated.timing(animVal, { toValue: value, duration: 1200, useNativeDriver: false }).start();
-  }, [value]);
-
-  const size = 160;
-  const strokeWidth = 12;
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const cx = size / 2;
-  const cy = size / 2;
-
-  // SVG-style via border trick using Animated
-  const color = value >= 80 ? "#00e5a0" : value >= 60 ? "#f5a623" : "#ff4757";
-
+  const size = 140;
+  const stroke = 10;
+  const color      = value >= 80 ? "#0F6E56" : value >= 65 ? "#854F0B" : "#A32D2D";
+  const trackColor = value >= 80 ? "#E1F5EE" : value >= 65 ? "#FAEEDA" : "#FCEBEB";
   return (
     <View style={{ alignItems: "center", justifyContent: "center", width: size, height: size }}>
-      {/* Background ring */}
+      <View style={{ position: "absolute", width: size, height: size, borderRadius: size / 2, borderWidth: stroke, borderColor: trackColor }} />
       <View style={{
-        position: "absolute",
-        width: size, height: size,
-        borderRadius: size / 2,
-        borderWidth: strokeWidth,
-        borderColor: "#1e2a3a",
-      }} />
-      {/* Foreground arc using border trick */}
-      <View style={{
-        position: "absolute",
-        width: size, height: size,
-        borderRadius: size / 2,
-        borderWidth: strokeWidth,
-        borderColor: "transparent",
+        position: "absolute", width: size, height: size, borderRadius: size / 2,
+        borderWidth: stroke, borderColor: "transparent",
         borderTopColor: color,
         borderRightColor: value > 25 ? color : "transparent",
         borderBottomColor: value > 50 ? color : "transparent",
         borderLeftColor: value > 75 ? color : "transparent",
         transform: [{ rotate: "-45deg" }],
       }} />
-      <View style={{ alignItems: "center" }}>
-        <Text style={{ fontSize: 36, fontWeight: "bold", color }}>{value}%</Text>
-        <Text style={{ fontSize: 12, color: "#8899aa" }}>Current SOH</Text>
-      </View>
+      <Text style={{ fontSize: 30, fontWeight: "600", color }}>{value}%</Text>
+      <Text style={{ fontSize: 11, color: "#aaa", marginTop: 2 }}>Current SOH</Text>
     </View>
   );
 }
 
-// ─── Progress Bar ────────────────────────────────────────────────────────────
+// ─── Progress Bar ─────────────────────────────────────────────────────────────
 
-function ProgressBar({ value, color = "#f5a623" }: { value: number; color?: string }) {
+function ProgressBar({ value, color = "#BA7517", trackColor = "#F1EFE8" }: {
+  value: number; color?: string; trackColor?: string;
+}) {
   const anim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.timing(anim, { toValue: value / 100, duration: 900, useNativeDriver: false }).start();
   }, [value]);
   return (
-    <View style={{ height: 7, backgroundColor: "#1e2a3a", borderRadius: 4, overflow: "hidden", marginTop: 8 }}>
+    <View style={{ height: 6, backgroundColor: trackColor, borderRadius: 4, overflow: "hidden", marginTop: 6 }}>
       <Animated.View style={{
-        height: "100%",
-        borderRadius: 4,
-        backgroundColor: color,
+        height: "100%", borderRadius: 4, backgroundColor: color,
         width: anim.interpolate({ inputRange: [0, 1], outputRange: ["0%", "100%"] }),
       }} />
     </View>
   );
 }
 
-// ─── TAB: Dashboard ──────────────────────────────────────────────────────────
+// ─── Badge ────────────────────────────────────────────────────────────────────
 
-function Dashboard({ soh, capacity }: { soh: number; capacity: number }) {
-  const estRange = Math.round((capacity / 75) * 360 * (soh / 100));
+type BadgeType = "good" | "warn" | "info" | "error";
+const BADGE_STYLES: Record<BadgeType, { bg: string; color: string; label: string }> = {
+  good:  { bg: "#E1F5EE", color: "#0F6E56", label: "Good" },
+  warn:  { bg: "#FAEEDA", color: "#854F0B", label: "Warning" },
+  info:  { bg: "#EEEDFE", color: "#534AB7", label: "Info" },
+  error: { bg: "#FCEBEB", color: "#A32D2D", label: "Critical" },
+};
+
+function Badge({ type }: { type: BadgeType }) {
+  const s = BADGE_STYLES[type];
+  return (
+    <View style={{ alignSelf: "flex-start", backgroundColor: s.bg, borderRadius: 20, paddingHorizontal: 8, paddingVertical: 2, marginTop: 6 }}>
+      <Text style={{ fontSize: 10, fontWeight: "600", color: s.color }}>{s.label}</Text>
+    </View>
+  );
+}
+
+// ─── Card ─────────────────────────────────────────────────────────────────────
+
+function Card({ children, style, colors }: { children: React.ReactNode; style?: object; colors: any }) {
+  return (
+    <View style={[{ backgroundColor: colors.card, borderColor: colors.border, borderWidth: 0.5, borderRadius: 14, padding: 16, marginBottom: 12 }, style]}>
+      {children}
+    </View>
+  );
+}
+
+// ─── FeatureRow ───────────────────────────────────────────────────────────────
+
+function FeatureRow({ iconName, iconBg, iconColor, title, desc, badge, colors }: {
+  iconName: any; iconBg: string; iconColor: string;
+  title: string; desc: string; badge: BadgeType; colors: any;
+}) {
+  return (
+    <Card colors={colors} style={{ marginBottom: 10 }}>
+      <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 12 }}>
+        <View style={{ width: 38, height: 38, borderRadius: 10, backgroundColor: iconBg, alignItems: "center", justifyContent: "center" }}>
+          <Ionicons name={iconName} size={18} color={iconColor} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 13, fontWeight: "500", color: colors.textPrimary, marginBottom: 3 }}>{title}</Text>
+          <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 18 }}>{desc}</Text>
+          <Badge type={badge} />
+        </View>
+      </View>
+    </Card>
+  );
+}
+
+// ─── Dashboard ────────────────────────────────────────────────────────────────
+
+function Dashboard({ soh, capacity, colors }: { soh: number; capacity: number; colors: any }) {
+  const estRange    = Math.round((capacity / 75) * 360 * (soh / 100));
   const effCapacity = Math.round(capacity * soh / 100);
 
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16 }} showsVerticalScrollIndicator={false}>
-      {/* SOH Ring */}
-      <View style={styles.card}>
-        <View style={{ alignItems: "center", paddingVertical: 16 }}>
+    <ScrollView contentContainerStyle={{ padding: 14, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
+      <Card colors={colors}>
+        <View style={{ alignItems: "center", paddingVertical: 12 }}>
           <CircularProgress value={soh} />
-          <Text style={styles.cardSubLabel}>State of Health</Text>
+          <Text style={{ fontSize: 12, color: colors.textMuted, marginTop: 8 }}>State of health</Text>
         </View>
-      </View>
+      </Card>
 
-      {/* Health Predictions */}
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Text style={styles.cardIcon}>📉</Text>
-          <Text style={styles.cardTitle}>Health Predictions</Text>
+      <Card colors={colors}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 14 }}>
+          <View style={{ width: 30, height: 30, borderRadius: 8, backgroundColor: "#EEEDFE", alignItems: "center", justifyContent: "center" }}>
+            <Ionicons name="trending-down-outline" size={14} color="#534AB7" />
+          </View>
+          <Text style={{ fontSize: 14, fontWeight: "500", color: colors.textPrimary }}>Health predictions</Text>
         </View>
         {[
-          { label: "3 Months", value: Math.round(soh * 0.975) },
-          { label: "6 Months", value: Math.round(soh * 0.94) },
-          { label: "12 Months", value: Math.round(soh * 0.875) },
+          { label: "3 months",  value: Math.round(soh * 0.975), color: "#1D9E75" },
+          { label: "6 months",  value: Math.round(soh * 0.940), color: "#BA7517" },
+          { label: "12 months", value: Math.round(soh * 0.875), color: "#BA7517" },
         ].map((item) => (
-          <View key={item.label} style={{ marginTop: 14 }}>
-            <View style={styles.rowBetween}>
-              <Text style={styles.metricLabel}>{item.label}</Text>
-              <Text style={[styles.metricValue, { color: "#f5a623" }]}>{item.value}%</Text>
+          <View key={item.label} style={{ marginTop: 12 }}>
+            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+              <Text style={{ fontSize: 12, color: colors.textSecondary }}>{item.label}</Text>
+              <Text style={{ fontSize: 13, fontWeight: "500", color: item.color }}>{item.value}%</Text>
             </View>
-            <ProgressBar value={item.value} />
+            <ProgressBar value={item.value} color={item.color} trackColor={colors.progressTrack} />
           </View>
         ))}
-      </View>
+      </Card>
 
-      {/* Stats Row */}
-      <View style={styles.rowBetween}>
-        <View style={[styles.statCard, { flex: 1, marginRight: 8 }]}>
-          <Text style={styles.statIcon}>🏎️</Text>
-          <Text style={styles.statLabel}>Est. Range</Text>
-          <Text style={styles.statBig}>{estRange}</Text>
-          <Text style={styles.statUnit}>km</Text>
-        </View>
-        <View style={[styles.statCard, { flex: 1, marginLeft: 8 }]}>
-          <Text style={styles.statIcon}>🔋</Text>
-          <Text style={styles.statLabel}>Capacity</Text>
-          <Text style={styles.statBig}>{effCapacity}</Text>
-          <Text style={styles.statUnit}>kWh</Text>
-        </View>
+      <View style={{ flexDirection: "row", gap: 10, marginBottom: 12 }}>
+        <Card colors={colors} style={{ flex: 1 }}>
+          <Text style={{ fontSize: 11, color: colors.textSecondary }}>Est. range</Text>
+          <Text style={{ fontSize: 26, fontWeight: "500", color: colors.textPrimary, marginTop: 2 }}>{estRange}</Text>
+          <Text style={{ fontSize: 11, color: colors.textMuted, marginTop: 2 }}>km</Text>
+        </Card>
+        <Card colors={colors} style={{ flex: 1 }}>
+          <Text style={{ fontSize: 11, color: colors.textSecondary }}>Eff. capacity</Text>
+          <Text style={{ fontSize: 26, fontWeight: "500", color: colors.textPrimary, marginTop: 2 }}>{effCapacity}</Text>
+          <Text style={{ fontSize: 11, color: colors.textMuted, marginTop: 2 }}>kWh</Text>
+        </Card>
       </View>
     </ScrollView>
   );
 }
 
-// ─── TAB: Insights ───────────────────────────────────────────────────────────
+// ─── Insights ─────────────────────────────────────────────────────────────────
 
-function Insights({ fastCharge, temp, soh }: { fastCharge: number; temp: number; soh: number }) {
-  const items = [
-    {
-      icon: "⚡",
-      title: "Charging Pattern",
-      desc: "Your charging habits are optimal. Keep charging between 20-80%.",
-      tag: "GOOD",
-      tagColor: "#00e5a0",
-      tagBg: "#003322",
-    },
-    {
-      icon: "🌡️",
-      title: "Temperature Impact",
-      desc: `Average temperature is ${temp <= 35 ? "within" : "above"} optimal range (15-30°C).`,
-      tag: temp <= 35 ? "GOOD" : "WARNING",
-      tagColor: temp <= 35 ? "#00e5a0" : "#f5a623",
-      tagBg: temp <= 35 ? "#003322" : "#332200",
-    },
-    {
-      icon: "📉",
-      title: "Battery Degradation",
-      desc: `Battery is degrading at a ${soh >= 75 ? "normal" : "accelerated"} rate for its age and usage.`,
-      tag: "INFO",
-      tagColor: "#a78bfa",
-      tagBg: "#1e1b4b",
-    },
-    {
-      icon: "⚠️",
-      title: "Fast Charging Usage",
-      desc: `${fastCharge > 20 ? "High fast charging frequency detected. Consider reducing to 2-4 times per month." : "Fast charging usage is within safe limits."}`,
-      tag: fastCharge > 20 ? "WARNING" : "GOOD",
-      tagColor: fastCharge > 20 ? "#f5a623" : "#00e5a0",
-      tagBg: fastCharge > 20 ? "#332200" : "#003322",
-    },
-  ];
-
+function Insights({ fastCharge, temp, soh, colors }: { fastCharge: number; temp: number; soh: number; colors: any }) {
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16 }} showsVerticalScrollIndicator={false}>
-      <Text style={styles.pageTitle}>Battery Insights</Text>
-      <Text style={styles.pageSubtitle}>Analysis of your battery health factors</Text>
-      {items.map((item, i) => (
-        <View key={i} style={styles.card}>
-          <View style={styles.insightRow}>
-            <View style={styles.insightIconBox}>
-              <Text style={{ fontSize: 22 }}>{item.icon}</Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.insightTitle}>{item.title}</Text>
-              <Text style={styles.insightDesc}>{item.desc}</Text>
-              <View style={[styles.tag, { backgroundColor: item.tagBg }]}>
-                <Text style={[styles.tagText, { color: item.tagColor }]}>{item.tag}</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-      ))}
+    <ScrollView contentContainerStyle={{ padding: 14, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
+      <Text style={{ fontSize: 18, fontWeight: "500", color: colors.textPrimary, marginBottom: 4 }}>Battery insights</Text>
+      <Text style={{ fontSize: 12, color: colors.textSecondary, marginBottom: 14 }}>Analysis of your battery health factors</Text>
+
+      <FeatureRow colors={colors} iconName="flash-outline" iconBg="#E1F5EE" iconColor="#0F6E56"
+        title="Charging pattern" desc="Habits are optimal. Keep charging between 20–80%." badge="good" />
+      <FeatureRow colors={colors} iconName="thermometer-outline" iconBg="#FAEEDA" iconColor="#854F0B"
+        title="Temperature impact"
+        desc={`Avg temp is ${temp <= 35 ? "within" : "above"} optimal range (15–30°C).`}
+        badge={temp <= 35 ? "good" : "warn"} />
+      <FeatureRow colors={colors} iconName="trending-down-outline" iconBg="#EEEDFE" iconColor="#534AB7"
+        title="Battery degradation"
+        desc={`Degrading at a ${soh >= 75 ? "normal" : "accelerated"} rate for its age and usage.`}
+        badge="info" />
+      <FeatureRow colors={colors} iconName="alert-circle-outline" iconBg="#FCEBEB" iconColor="#A32D2D"
+        title="Fast charging usage"
+        desc={fastCharge > 20 ? "High frequency detected. Reduce to 2–4 times/month." : "Fast charging is within safe limits."}
+        badge={fastCharge > 20 ? "error" : "good"} />
     </ScrollView>
   );
 }
 
-// ─── TAB: Behavior ───────────────────────────────────────────────────────────
+// ─── Behavior ─────────────────────────────────────────────────────────────────
 
-function Behavior({ fastCharge, cycles }: { fastCharge: number; cycles: number }) {
+function Behavior({ fastCharge, cycles, colors }: { fastCharge: number; cycles: number; colors: any }) {
   const fastCount = Math.round((fastCharge / 100) * 20);
   const avgCharge = Math.max(40, Math.min(90, 80 - fastCharge / 5));
+  const tips = [
+    "Reduce fast charging to 2–4 times per month",
+    "Keep charge level between 20–80% for daily use",
+    "Avoid extreme temperatures when parking",
+    "Charge to 100% only before long trips",
+  ];
 
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16 }} showsVerticalScrollIndicator={false}>
-      <Text style={styles.pageTitle}>Usage Behavior</Text>
-      <Text style={styles.pageSubtitle}>Your charging and usage patterns</Text>
+    <ScrollView contentContainerStyle={{ padding: 14, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
+      <Text style={{ fontSize: 18, fontWeight: "500", color: colors.textPrimary, marginBottom: 4 }}>Usage behavior</Text>
+      <Text style={{ fontSize: 12, color: colors.textSecondary, marginBottom: 14 }}>Your charging and usage patterns</Text>
 
-      {/* Fast Charging Count */}
-      <View style={styles.card}>
-        <View style={styles.behaviorRow}>
-          <View style={[styles.insightIconBox, { backgroundColor: "#0d2a1e" }]}>
-            <Text style={{ fontSize: 22 }}>⚡</Text>
+      {[
+        { bg: "#E1F5EE", ic: "#0F6E56", icon: "flash-outline",        label: "Fast charging count", val: `${fastCount}`, unit: "per month", bar: false },
+        { bg: "#EEEDFE", ic: "#534AB7", icon: "battery-half-outline",  label: "Avg charge level",   val: `${Math.round(avgCharge)}%`, unit: "", bar: true, barVal: avgCharge, barColor: "#534AB7" },
+        { bg: "#FAEEDA", ic: "#854F0B", icon: "refresh-outline",       label: "Total charge cycles", val: `${cycles}`, unit: "lifetime", bar: false },
+      ].map((row, i) => (
+        <Card key={i} colors={colors}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+            <View style={{ width: 40, height: 40, borderRadius: 10, backgroundColor: row.bg, alignItems: "center", justifyContent: "center" }}>
+              <Ionicons name={row.icon as any} size={20} color={row.ic} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 12, color: colors.textSecondary }}>{row.label}</Text>
+              <Text style={{ fontSize: 26, fontWeight: "500", color: colors.textPrimary, marginTop: 2 }}>{row.val}</Text>
+              {row.unit ? <Text style={{ fontSize: 11, color: colors.textMuted }}>{row.unit}</Text> : null}
+              {row.bar ? <ProgressBar value={row.barVal!} color={row.barColor} trackColor={colors.progressTrack} /> : null}
+            </View>
           </View>
-          <View>
-            <Text style={styles.metricLabel}>Fast Charging Count</Text>
-            <Text style={styles.bigNumber}>{fastCount}</Text>
-            <Text style={styles.statUnit}>per month</Text>
-          </View>
-        </View>
-      </View>
+        </Card>
+      ))}
 
-      {/* Avg Charge Level */}
-      <View style={styles.card}>
-        <View style={styles.behaviorRow}>
-          <View style={[styles.insightIconBox, { backgroundColor: "#1a1040" }]}>
-            <Text style={{ fontSize: 22 }}>🔋</Text>
+      <Card colors={colors}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 10 }}>
+          <View style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: "#EEEDFE", alignItems: "center", justifyContent: "center" }}>
+            <Ionicons name="bulb-outline" size={14} color="#534AB7" />
           </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.metricLabel}>Avg. Charge Level</Text>
-            <Text style={styles.bigNumber}>{Math.round(avgCharge)}%</Text>
-            <ProgressBar value={avgCharge} color="#a78bfa" />
-          </View>
+          <Text style={{ fontSize: 14, fontWeight: "500", color: colors.textPrimary }}>Recommendations</Text>
         </View>
-      </View>
-
-      {/* Total Cycles */}
-      <View style={styles.card}>
-        <View style={styles.behaviorRow}>
-          <View style={[styles.insightIconBox, { backgroundColor: "#2a1800" }]}>
-            <Text style={{ fontSize: 22 }}>📈</Text>
-          </View>
-          <View>
-            <Text style={styles.metricLabel}>Total Charge Cycles</Text>
-            <Text style={styles.bigNumber}>{cycles}</Text>
-            <Text style={styles.statUnit}>lifetime cycles</Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Recommendations */}
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Text style={styles.cardIcon}>💡</Text>
-          <Text style={styles.cardTitle}>Recommendations</Text>
-        </View>
-        {[
-          "Reduce fast charging to 2-4 times per month",
-          "Keep charge level between 20-80% for daily use",
-          "Avoid extreme temperatures when possible",
-          "Charge to 100% only before long trips",
-        ].map((tip, i) => (
-          <View key={i} style={styles.bulletRow}>
-            <View style={styles.bullet} />
-            <Text style={styles.bulletText}>{tip}</Text>
+        {tips.map((tip, i) => (
+          <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 8, marginTop: 8 }}>
+            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: "#534AB7", marginTop: 5 }} />
+            <Text style={{ flex: 1, fontSize: 12, color: colors.textSecondary, lineHeight: 18 }}>{tip}</Text>
           </View>
         ))}
-      </View>
+      </Card>
     </ScrollView>
   );
 }
 
-// ─── TAB: Factors ────────────────────────────────────────────────────────────
+// ─── Factors ──────────────────────────────────────────────────────────────────
 
-function Factors({ temp, fastCharge, age }: { temp: number; fastCharge: number; age: number }) {
+function Factors({ temp, fastCharge, age, colors }: { temp: number; fastCharge: number; age: number; colors: any }) {
+  const barColor: Record<BadgeType, string> = {
+    good: "#1D9E75", warn: "#BA7517", info: "#534AB7", error: "#A32D2D",
+  };
+
   const items = [
-    {
-      icon: "🌡️",
-      title: "Temperature Exposure",
+    { icon: "thermometer-outline" as const, iconBg: "#FAEEDA", iconColor: "#854F0B",
+      title: "Temperature exposure",
       desc: `Operating temperature is ${temp > 30 ? "slightly above" : "within"} optimal range`,
-      impact: temp > 35 ? "High" : "Medium",
-      value: Math.min(100, 50 + (temp - 25) * 2),
-      impactColor: temp > 35 ? "#ff4757" : "#f5a623",
-      impactBg: temp > 35 ? "#3a0a0a" : "#332200",
-    },
-    {
-      icon: "⚡",
-      title: "Fast Charging Habits",
+      type: (temp > 35 ? "error" : "warn") as BadgeType,
+      value: Math.min(100, 50 + (temp - 25) * 2) },
+    { icon: "flash-outline" as const, iconBg: "#FCEBEB", iconColor: "#A32D2D",
+      title: "Fast charging habits",
       desc: "Frequent fast charging accelerates battery degradation",
-      impact: fastCharge > 30 ? "High" : "Medium",
-      value: fastCharge,
-      impactColor: fastCharge > 30 ? "#ff4757" : "#f5a623",
-      impactBg: fastCharge > 30 ? "#3a0a0a" : "#332200",
-    },
-    {
-      icon: "📉",
-      title: "Discharge Depth",
+      type: (fastCharge > 30 ? "error" : "warn") as BadgeType,
+      value: fastCharge },
+    { icon: "battery-dead-outline" as const, iconBg: "#EEEDFE", iconColor: "#534AB7",
+      title: "Discharge depth",
       desc: "Deep discharge cycles affect long-term battery health",
-      impact: "Medium",
-      value: 75,
-      impactColor: "#f5a623",
-      impactBg: "#332200",
-    },
-    {
-      icon: "📅",
-      title: "Battery Age",
+      type: "warn" as BadgeType, value: 75 },
+    { icon: "calendar-outline" as const, iconBg: "#F1EFE8", iconColor: "#5F5E5A",
+      title: "Battery age",
       desc: "Natural degradation occurs over time regardless of usage",
-      impact: age > 4 ? "High" : "Medium",
-      value: Math.min(100, age * 15),
-      impactColor: age > 4 ? "#ff4757" : "#f5a623",
-      impactBg: age > 4 ? "#3a0a0a" : "#332200",
-    },
+      type: (age > 4 ? "error" : "info") as BadgeType,
+      value: Math.min(100, age * 15) },
   ];
 
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16 }} showsVerticalScrollIndicator={false}>
-      <Text style={styles.pageTitle}>Impact Factors</Text>
-      <Text style={styles.pageSubtitle}>Key factors affecting battery health</Text>
+    <ScrollView contentContainerStyle={{ padding: 14, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
+      <Text style={{ fontSize: 18, fontWeight: "500", color: colors.textPrimary, marginBottom: 4 }}>Impact factors</Text>
+      <Text style={{ fontSize: 12, color: colors.textSecondary, marginBottom: 14 }}>Key factors affecting battery health</Text>
       {items.map((item, i) => (
-        <View key={i} style={styles.card}>
-          <View style={styles.factorHeader}>
-            <View style={styles.insightIconBox}>
-              <Text style={{ fontSize: 22 }}>{item.icon}</Text>
+        <Card key={i} colors={colors}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 8 }}>
+            <View style={{ width: 38, height: 38, borderRadius: 10, backgroundColor: item.iconBg, alignItems: "center", justifyContent: "center" }}>
+              <Ionicons name={item.icon} size={18} color={item.iconColor} />
             </View>
-            <Text style={styles.insightTitle}>{item.title}</Text>
-            <View style={[styles.impactBadge, { backgroundColor: item.impactBg }]}>
-              <Text style={[styles.impactText, { color: item.impactColor }]}>{item.impact}</Text>
-            </View>
+            <Text style={{ fontSize: 13, fontWeight: "500", color: colors.textPrimary, flex: 1 }}>{item.title}</Text>
+            <Badge type={item.type} />
           </View>
-          <Text style={[styles.insightDesc, { marginLeft: 50 }]}>{item.desc}</Text>
-          <View style={{ marginLeft: 50, marginTop: 4 }}>
-            <View style={styles.rowBetween}>
-              <ProgressBar value={item.value} />
+          <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 18 }}>{item.desc}</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: 8 }}>
+            <View style={{ flex: 1 }}>
+              <ProgressBar value={item.value} color={barColor[item.type]} trackColor={colors.progressTrack} />
             </View>
-            <Text style={[styles.metricValue, { color: "#f5a623", textAlign: "right", marginTop: 2 }]}>
+            <Text style={{ fontSize: 11, fontWeight: "600", color: barColor[item.type], minWidth: 30, textAlign: "right" }}>
               {Math.round(item.value)}%
             </Text>
           </View>
-        </View>
+        </Card>
       ))}
     </ScrollView>
   );
 }
 
-// ─── TAB: Report ─────────────────────────────────────────────────────────────
+// ─── Report ───────────────────────────────────────────────────────────────────
 
-function Report({ soh, cycles, capacity }: { soh: number; cycles: number; capacity: number }) {
-  const lifespan = Math.round(5 * (soh / 80));
+function Report({ soh, cycles, capacity, colors }: { soh: number; cycles: number; capacity: number; colors: any }) {
+  const lifespan   = Math.round(5 * (soh / 80));
   const efficiency = Math.round(soh * 0.95);
 
-  const recommendations = [
-    { text: "Maintain charge levels between 20-80% for daily use", ok: true },
-    { text: "Reduce fast charging frequency to 2-4 times per month", ok: false },
-    { text: "Avoid extreme temperatures when parking", ok: true },
-    { text: "Consider battery health check at service center", ok: false },
-    { text: "Regular charging is better than deep discharge cycles", ok: true },
+  const metrics = [
+    { label: "State of health (SOH)", value: `${soh}%`,          color: "#0F6E56" },
+    { label: "Estimated lifespan",    value: `${lifespan} years`, color: undefined },
+    { label: "Battery efficiency",    value: `${efficiency}%`,    color: undefined },
+    { label: "Total charge cycles",   value: `${cycles}`,         color: undefined },
+  ];
+
+  const recs = [
+    { ok: true,  text: "Maintain charge levels between 20–80% for daily use" },
+    { ok: false, text: "Reduce fast charging frequency to 2–4 times per month" },
+    { ok: true,  text: "Avoid extreme temperatures when parking" },
+    { ok: false, text: "Consider battery health check at service centre" },
+    { ok: true,  text: "Regular charging is better than deep discharge cycles" },
   ];
 
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16 }} showsVerticalScrollIndicator={false}>
-      <Text style={styles.pageTitle}>Health Report</Text>
-      <Text style={styles.pageSubtitle}>Comprehensive battery analysis summary</Text>
+    <ScrollView contentContainerStyle={{ padding: 14, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
+      <Text style={{ fontSize: 18, fontWeight: "500", color: colors.textPrimary, marginBottom: 4 }}>Health report</Text>
+      <Text style={{ fontSize: 12, color: colors.textSecondary, marginBottom: 14 }}>Comprehensive battery analysis summary</Text>
 
-      {/* Key Metrics */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Key Metrics</Text>
-        {[
-          { label: "State of Health (SOH)", value: `${soh}%`, color: "#00e5a0" },
-          { label: "Estimated Lifespan", value: `${lifespan} years`, color: "#ffffff" },
-          { label: "Battery Efficiency", value: `${efficiency}%`, color: "#ffffff" },
-          { label: "Total Charge Cycles", value: `${cycles}`, color: "#ffffff" },
-        ].map((m, i) => (
+      <Card colors={colors}>
+        <Text style={{ fontSize: 14, fontWeight: "500", color: colors.textPrimary, marginBottom: 12 }}>Key metrics</Text>
+        {metrics.map((m, i) => (
           <View key={i}>
-            {i > 0 && <View style={styles.divider} />}
-            <View style={[styles.rowBetween, { paddingVertical: 14 }]}>
-              <Text style={styles.metricLabel}>{m.label}</Text>
-              <Text style={[styles.metricValue, { color: m.color }]}>{m.value}</Text>
+            {i > 0 && <View style={{ height: 0.5, backgroundColor: colors.divider, marginVertical: 8 }} />}
+            <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 4 }}>
+              <Text style={{ fontSize: 12, color: colors.textSecondary }}>{m.label}</Text>
+              <Text style={{ fontSize: 13, fontWeight: "500", color: m.color ?? colors.textPrimary }}>{m.value}</Text>
             </View>
           </View>
         ))}
-      </View>
+      </Card>
 
-      {/* Recommendations */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Recommendations</Text>
-        {recommendations.map((r, i) => (
-          <View key={i} style={[styles.bulletRow, { marginTop: 12 }]}>
-            <Text style={{ fontSize: 18, marginRight: 10 }}>{r.ok ? "✅" : "⚠️"}</Text>
-            <Text style={styles.bulletText}>{r.text}</Text>
+      <Card colors={colors}>
+        <Text style={{ fontSize: 14, fontWeight: "500", color: colors.textPrimary, marginBottom: 4 }}>Recommendations</Text>
+        {recs.map((r, i) => (
+          <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", gap: 8, marginTop: 10 }}>
+            <Ionicons
+              name={r.ok ? "checkmark-circle-outline" : "alert-circle-outline"}
+              size={16}
+              color={r.ok ? "#0F6E56" : "#854F0B"}
+              style={{ marginTop: 1 }}
+            />
+            <Text style={{ flex: 1, fontSize: 12, color: colors.textSecondary, lineHeight: 18 }}>{r.text}</Text>
           </View>
         ))}
-      </View>
+      </Card>
 
-      {/* Download Button */}
-      <TouchableOpacity style={styles.downloadBtn} activeOpacity={0.85}>
-        <Text style={styles.downloadIcon}>⬇️</Text>
-        <Text style={styles.downloadText}>Download Report</Text>
+      <TouchableOpacity style={S.downloadBtn} activeOpacity={0.85}>
+        <Ionicons name="download-outline" size={16} color="#EEEDFE" />
+        <Text style={S.downloadText}>Download report</Text>
       </TouchableOpacity>
-
       <View style={{ height: 20 }} />
     </ScrollView>
   );
 }
 
-// ─── Main Results Screen ─────────────────────────────────────────────────────
+// ─── Main Screen ──────────────────────────────────────────────────────────────
 
 const TABS = [
-  { key: "dashboard", label: "Dashboard", icon: "⊞" },
-  { key: "insights", label: "Insights", icon: "💡" },
-  { key: "behavior", label: "Behavior", icon: "📊" },
-  { key: "factors", label: "Factors", icon: "⚙️" },
-  { key: "report", label: "Report", icon: "📋" },
+  { key: "dashboard", label: "Dashboard", icon: "grid-outline" as const },
+  { key: "insights",  label: "Insights",  icon: "bulb-outline" as const },
+  { key: "behavior",  label: "Behavior",  icon: "bar-chart-outline" as const },
+  { key: "factors",   label: "Factors",   icon: "options-outline" as const },
+  { key: "report",    label: "Report",    icon: "document-text-outline" as const },
 ];
 
 export default function Results() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const { colors } = useTheme();
+  const { theme, colors, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState("dashboard");
 
-  const capacity = parseFloat(params.capacity as string) || 75;
-  const mileage = parseFloat(params.mileage as string) || 45000;
-  const cycles = parseFloat(params.cycles as string) || 350;
-  const temp = parseFloat(params.temp as string) || 25;
+  const capacity   = parseFloat(params.capacity   as string) || 75;
+  const mileage    = parseFloat(params.mileage    as string) || 45000;
+  const cycles     = parseFloat(params.cycles     as string) || 350;
+  const temp       = parseFloat(params.temp       as string) || 25;
   const fastCharge = parseFloat(params.fastCharge as string) || 30;
-  const age = parseFloat(params.age as string) || 3;
+  const age        = parseFloat(params.age        as string) || 3;
 
   const soh = calcSOH(capacity, mileage, cycles, temp, fastCharge, age);
+  const activeLabel = TABS.find(t => t.key === activeTab)?.label ?? "";
 
   const renderTab = () => {
     switch (activeTab) {
-      case "dashboard": return <Dashboard soh={soh} capacity={capacity} />;
-      case "insights": return <Insights fastCharge={fastCharge} temp={temp} soh={soh} />;
-      case "behavior": return <Behavior fastCharge={fastCharge} cycles={cycles} />;
-      case "factors": return <Factors temp={temp} fastCharge={fastCharge} age={age} />;
-      case "report": return <Report soh={soh} cycles={cycles} capacity={capacity} />;
+      case "dashboard": return <Dashboard soh={soh} capacity={capacity} colors={colors} />;
+      case "insights":  return <Insights  fastCharge={fastCharge} temp={temp} soh={soh} colors={colors} />;
+      case "behavior":  return <Behavior  fastCharge={fastCharge} cycles={cycles} colors={colors} />;
+      case "factors":   return <Factors   temp={temp} fastCharge={fastCharge} age={age} colors={colors} />;
+      case "report":    return <Report    soh={soh} cycles={cycles} capacity={capacity} colors={colors} />;
     }
   };
 
   return (
-    <View style={[styles.screen, { backgroundColor: "#0d1117" }]}>
-      <StatusBar barStyle="light-content" backgroundColor="#0d1117" />
+    <SafeAreaView style={[S.safe, { backgroundColor: colors.card }]}>
+      <StatusBar barStyle={colors.statusBar} backgroundColor={colors.card} />
 
       {/* Top bar */}
-      <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backArrow}>←</Text>
+      <View style={[S.topBar, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+        <TouchableOpacity
+          style={[S.iconBtn, { backgroundColor: colors.bg, borderColor: colors.border }]}
+          onPress={() => router.back()}
+        >
+          <Ionicons name="arrow-back-outline" size={18} color={colors.textSecondary} />
         </TouchableOpacity>
-        <Text style={styles.topTitle}>
-          {TABS.find((t) => t.key === activeTab)?.label === "Dashboard"
-            ? "Battery Dashboard"
-            : TABS.find((t) => t.key === activeTab)?.label}
-        </Text>
-        <View style={{ width: 36 }} />
+        <Text style={[S.topTitle, { color: colors.textPrimary }]}>{activeLabel}</Text>
+        <TouchableOpacity
+          style={[S.iconBtn, { backgroundColor: colors.bg, borderColor: colors.border }]}
+          onPress={toggleTheme}
+        >
+          <Ionicons
+            name={theme === "light" ? "moon-outline" : "sunny-outline"}
+            size={18}
+            color={colors.textSecondary}
+          />
+        </TouchableOpacity>
       </View>
 
-      {/* Content */}
-      <View style={{ flex: 1 }}>{renderTab()}</View>
-
-      {/* Floating + Button */}
-      <TouchableOpacity
-        style={styles.floatingBtn}
-        onPress={() => router.push('/battery_health/input' as any)}
-        activeOpacity={0.85}
-      >
-        <Text style={styles.floatingBtnText}>+</Text>
-      </TouchableOpacity>
-
-      {/* Bottom Tab Bar */}
-      <View style={styles.tabBar}>
+      {/* Tab bar */}
+      <View style={[S.tabBar, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
         {TABS.map((tab) => {
           const active = activeTab === tab.key;
           return (
-            <TouchableOpacity
-              key={tab.key}
-              style={styles.tabItem}
-              onPress={() => setActiveTab(tab.key)}
-            >
-              <Text style={[styles.tabIcon, active && { color: "#00e5a0" }]}>{tab.icon}</Text>
-              <Text style={[styles.tabLabel, active && { color: "#00e5a0" }]}>{tab.label}</Text>
-              {active && <View style={styles.tabIndicator} />}
+            <TouchableOpacity key={tab.key} style={S.tabItem} onPress={() => setActiveTab(tab.key)}>
+              <Ionicons name={tab.icon} size={18} color={active ? "#534AB7" : colors.textMuted} />
+              <Text style={[S.tabLabel, { color: active ? "#534AB7" : colors.textMuted }]}>{tab.label}</Text>
+              {active && <View style={S.tabIndicator} />}
             </TouchableOpacity>
           );
         })}
       </View>
-    </View>
+
+      <View style={{ flex: 1, backgroundColor: colors.bg }}>{renderTab()}</View>
+
+      {/* FAB */}
+      <TouchableOpacity
+        style={S.fab}
+        onPress={() => router.push("/battery_health/input" as any)}
+        activeOpacity={0.85}
+      >
+        <Ionicons name="add" size={26} color="#EEEDFE" />
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 }
 
-// ─── Styles ──────────────────────────────────────────────────────────────────
+// ─── Styles ───────────────────────────────────────────────────────────────────
 
-const styles = StyleSheet.create({
-  screen: { flex: 1 },
-  topBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingTop: 48,
-    paddingBottom: 12,
-  },
-  backBtn: {
-    width: 36, height: 36,
-    borderRadius: 18,
-    backgroundColor: "#1a2233",
-    alignItems: "center", justifyContent: "center",
-  },
-  backArrow: { color: "#fff", fontSize: 18 },
-  topTitle: { fontSize: 20, fontWeight: "bold", color: "#ffffff" },
-
-  card: {
-    backgroundColor: "#131c2e",
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 14,
-  },
-  cardHeader: { flexDirection: "row", alignItems: "center", marginBottom: 4 },
-  cardIcon: { fontSize: 18, marginRight: 8 },
-  cardTitle: { fontSize: 16, fontWeight: "700", color: "#ffffff" },
-  cardSubLabel: { fontSize: 13, color: "#8899aa", marginTop: 8 },
-
-  rowBetween: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-
-  metricLabel: { fontSize: 14, color: "#8899aa" },
-  metricValue: { fontSize: 15, fontWeight: "700", color: "#ffffff" },
-
-  statCard: {
-    backgroundColor: "#131c2e",
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 14,
-  },
-  statIcon: { fontSize: 20, marginBottom: 4 },
-  statLabel: { fontSize: 13, color: "#8899aa" },
-  statBig: { fontSize: 32, fontWeight: "bold", color: "#ffffff" },
-  statUnit: { fontSize: 12, color: "#8899aa" },
-
-  pageTitle: { fontSize: 22, fontWeight: "bold", color: "#ffffff", marginBottom: 4 },
-  pageSubtitle: { fontSize: 13, color: "#8899aa", marginBottom: 16 },
-
-  insightRow: { flexDirection: "row", alignItems: "flex-start" },
-  insightIconBox: {
-    width: 44, height: 44,
-    borderRadius: 12,
-    backgroundColor: "#0d2233",
-    alignItems: "center", justifyContent: "center",
-    marginRight: 12,
-  },
-  insightTitle: { fontSize: 15, fontWeight: "700", color: "#ffffff", marginBottom: 4 },
-  insightDesc: { fontSize: 13, color: "#8899aa", lineHeight: 18 },
-  tag: { alignSelf: "flex-start", paddingHorizontal: 10, paddingVertical: 3, borderRadius: 6, marginTop: 8 },
-  tagText: { fontSize: 11, fontWeight: "700" },
-
-  behaviorRow: { flexDirection: "row", alignItems: "center" },
-  bigNumber: { fontSize: 30, fontWeight: "bold", color: "#ffffff", marginTop: 2 },
-
-  bulletRow: { flexDirection: "row", alignItems: "flex-start", marginTop: 10 },
-  bullet: { width: 7, height: 7, borderRadius: 4, backgroundColor: "#00e5a0", marginTop: 5, marginRight: 10 },
-  bulletText: { flex: 1, fontSize: 13, color: "#c0cce0", lineHeight: 20 },
-
-  factorHeader: { flexDirection: "row", alignItems: "center", marginBottom: 6 },
-  impactBadge: { marginLeft: "auto", paddingHorizontal: 10, paddingVertical: 3, borderRadius: 8 },
-  impactText: { fontSize: 11, fontWeight: "700" },
-
-  divider: { height: 1, backgroundColor: "#1e2a3a" },
-
-  downloadBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#00e5a0",
-    borderRadius: 30,
-    paddingVertical: 18,
-    marginBottom: 8,
-  },
-  downloadIcon: { fontSize: 20, marginRight: 10 },
-  downloadText: { fontSize: 17, fontWeight: "700", color: "#0d1117" },
-
-  tabBar: {
-    flexDirection: "row",
-    backgroundColor: "#131c2e",
-    borderTopWidth: 1,
-    borderTopColor: "#1e2a3a",
-    paddingBottom: 16,
-    paddingTop: 8,
-  },
-  tabItem: { flex: 1, alignItems: "center", position: "relative" },
-  tabIcon: { fontSize: 18, color: "#8899aa" },
-  tabLabel: { fontSize: 10, color: "#8899aa", marginTop: 2 },
-  tabIndicator: {
-    position: "absolute",
-    bottom: -8,
-    width: 30, height: 3,
-    borderRadius: 2,
-    backgroundColor: "#00e5a0",
-  },
-  floatingBtn: {
-    position: "absolute",
-    bottom: 90,
-    right: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: "#6c63ff",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#6c63ff",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
-    elevation: 10,
-    zIndex: 99,
-  },
-  floatingBtnText: {
-    color: "#ffffff",
-    fontSize: 30,
-    fontWeight: "300",
-    lineHeight: 34,
-  },
+const S = StyleSheet.create({
+  safe:         { flex: 1 },
+  topBar:       { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 0.5 },
+  iconBtn:      { width: 36, height: 36, borderRadius: 18, borderWidth: 0.5, alignItems: "center", justifyContent: "center" },
+  topTitle:     { fontSize: 16, fontWeight: "500" },
+  tabBar:       { flexDirection: "row", borderBottomWidth: 0.5 },
+  tabItem:      { flex: 1, alignItems: "center", paddingVertical: 9, position: "relative" },
+  tabLabel:     { fontSize: 10, marginTop: 2 },
+  tabIndicator: { position: "absolute", bottom: 0, width: 28, height: 2.5, borderRadius: 2, backgroundColor: "#534AB7" },
+  downloadBtn:  { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, backgroundColor: "#534AB7", borderRadius: 30, paddingVertical: 14, marginTop: 4 },
+  downloadText: { fontSize: 14, fontWeight: "500", color: "#EEEDFE" },
+  fab:          { position: "absolute", bottom: 80, right: 20, width: 52, height: 52, borderRadius: 26, backgroundColor: "#534AB7", alignItems: "center", justifyContent: "center", zIndex: 99 },
 });
