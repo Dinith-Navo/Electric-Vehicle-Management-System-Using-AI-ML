@@ -1,0 +1,10 @@
+{
+  "name": "EV",
+  "slug": "EV",
+  "plugins": [
+    "expo-asset"
+  ],
+  "android": {
+    "package": "com.anonymous.EV"
+  }
+}
