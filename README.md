@@ -95,6 +95,9 @@ SmartEV helps EV users and service providers make better decisions through real-
 ---
 
 # 🚀 Tech Stack
+### Clone the repository
+git clone https://github.com/Dinith-Navo/Electric-Vehicle-Management-System-Using-AI-ML
+cd Electric-Vehicle-Management-System-Using-AI-ML
 
 ### 📱 Frontend
 
