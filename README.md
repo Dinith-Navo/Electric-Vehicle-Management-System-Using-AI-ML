@@ -85,12 +85,12 @@ SmartEV helps EV users and service providers make better decisions through real-
 
 # 👨‍💻 Project Members
 
-| Name           | Student ID | Email                                                   |
-| -------------- | ---------- | ------------------------------------------------------- |
-| Dinith Navodya | ITXXXXXXXX | [your-email@example.com](mailto:your-email@example.com) |
-| Member 2       | ITXXXXXXXX | [member2@example.com](mailto:member2@example.com)       |
-| Member 3       | ITXXXXXXXX | [member3@example.com](mailto:member3@example.com)       |
-| Member 4       | ITXXXXXXXX | [member4@example.com](mailto:member4@example.com)       |
+| Name               | Student ID | Email                  |
+| -------------------| ---------- | -----------------------|
+| Vidushan A A D D N | IT22157928 | it22157928@my.sliit.lk |
+| Fernando C T H H D | IT22247490 | it22247490@my.sliit.lk |
+| Dias N T B P       | IT22134080 | it22134080@my.sliit.lk |
+| Jayarathne W.T.D.K.| IT22071170 | it22071170@my.sliit.lk |
 
 ---
 
@@ -106,6 +106,8 @@ SmartEV helps EV users and service providers make better decisions through real-
 ### ⚙️ Backend
 
 * Python
+* node js
+* express js
 * Flask / FastAPI
 * REST APIs
 
@@ -143,43 +145,13 @@ SmartEV/
 
 # 📌 Installation & Setup
 
-## Clone the Repository
-
-```bash id="0gnjlwm"
-git clone https://github.com/Dinith-Navo/Electric-Vehicle-Management-System-Using-AI-ML.git
-cd Electric-Vehicle-Management-System-Using-AI-ML
-```
-
----
-
 ## Start Backend Server
-
-```bash id="bhx18k"
 cd backend
-pip install -r requirements.txt
-python app.py
-```
-
----
+npm run dev
 
 ## Start Frontend Application
-
-```bash id="q5m5s2"
 cd frontend
-npm install
 npx expo start
-```
-
----
-
-## Machine Learning Setup
-
-```bash id="3g6vzh"
-cd ml-models
-pip install -r requirements.txt
-```
-
----
 
 # 📊 Core Functionalities
 
@@ -196,7 +168,6 @@ pip install -r requirements.txt
 
 # 🔮 Future Enhancements
 
-* IoT Sensor Integration
 * AI Chatbot Assistant
 * Voice Command Support
 * Live Charging Station Tracking
