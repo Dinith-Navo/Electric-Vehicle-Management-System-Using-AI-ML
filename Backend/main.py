@@ -6,7 +6,22 @@ from models import UserCreate, UserLogin, Token, VehicleSchema, TelemetrySchema
 from database import user_collection, vehicle_collection, telemetry_collection
 from auth import get_password_hash, verify_password, create_access_token
 
-app = FastAPI(title="PSEVPIFPS Full Python Backend")
+from fastapi.middleware.cors import CORSMiddleware
+from ev_optimization.ev_optimization_routes import ev_optimization_router
+
+app = FastAPI(title="SmartEV Full Backend with EV Optimization")
+
+# Configure CORS for React Native & Web
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Register EV Optimization Research Component
+app.include_router(ev_optimization_router, prefix="/api/ev-optimization")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
 

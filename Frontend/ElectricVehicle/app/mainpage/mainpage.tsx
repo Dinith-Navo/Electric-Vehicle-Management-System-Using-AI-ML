@@ -46,7 +46,7 @@ const features = [
     iconBg: "#FAEEDA",
     iconColor: "#854F0B",
     labelColor: "#854F0B",
-    route: null,
+    route: "/ev_optimization/dashboard",
   },
 ];
 
