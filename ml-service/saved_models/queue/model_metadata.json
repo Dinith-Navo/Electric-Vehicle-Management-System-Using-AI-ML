@@ -1,0 +1,25 @@
+{
+  "model_name": "MultiOutputRidgeRegression",
+  "features": [
+    "total_chargers",
+    "currently_occupied",
+    "arrival_hour",
+    "day_of_week",
+    "charging_speed_kw",
+    "avg_session_minutes"
+  ],
+  "targets": [
+    "queue_length",
+    "wait_minutes"
+  ],
+  "metrics": {
+    "queue_length_mae": 0.8117,
+    "queue_length_rmse": 0.9309,
+    "wait_minutes_mae": 11.4652,
+    "wait_minutes_rmse": 13.9407,
+    "overall_rmse": 7.4358
+  },
+  "author": "IT22134080",
+  "sample_size": 11,
+  "note": "Metrics computed from research sample dataset (N=11); indicative benchmark."
+}

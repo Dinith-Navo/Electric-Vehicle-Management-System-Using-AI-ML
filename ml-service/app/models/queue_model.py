@@ -61,24 +61,38 @@ class QueueModelLoader:
         if not self.is_model_loaded():
             raise RuntimeError("No trained model loaded to perform prediction.")
         
+        import pandas as pd
         import numpy as np
-        # Feature vector: [totalChargers, occupied, arrivalHour, dayOfWeek, chargingSpeedKw, avgSessionMinutes]
-        feature_vector = np.array([[
-            features.get("totalChargers", 6),
-            features.get("currentlyOccupied", 3),
-            features.get("arrivalHour", 14),
-            features.get("dayOfWeek", 2),
-            features.get("chargingSpeedKw", 50.0),
-            features.get("avgSessionMinutes", 35.0)
-        ]])
-        pred = self.model.predict(feature_vector)
-        # Expected prediction format: [predicted_queue, wait_minutes]
+
+        total_chargers = features.get("totalChargers", features.get("total_chargers", 6))
+        occupied = features.get("currentlyOccupied", features.get("currently_occupied", 3))
+        arrival_hour = features.get("arrivalHour", features.get("arrival_hour", 14))
+        day_of_week = features.get("dayOfWeek", features.get("day_of_week", 2))
+        charging_speed = features.get("chargingSpeedKw", features.get("charging_speed_kw", 50.0))
+        avg_session = features.get("avgSessionMinutes", features.get("avg_session_minutes", 35.0))
+
+        df_input = pd.DataFrame([{
+            "total_chargers": float(total_chargers),
+            "currently_occupied": float(occupied),
+            "arrival_hour": float(arrival_hour),
+            "day_of_week": float(day_of_week),
+            "charging_speed_kw": float(charging_speed),
+            "avg_session_minutes": float(avg_session)
+        }])
+
+        try:
+            pred = self.model.predict(df_input)
+        except Exception:
+            pred = self.model.predict(df_input.values)
+
+        # Handle 2D output array: [queue_length, wait_minutes]
         if hasattr(pred, "ndim") and pred.ndim > 1:
-            q_len = max(0, int(round(pred[0][0])))
-            wait_m = max(0, int(round(pred[0][1])))
+            q_len = max(0, int(round(float(pred[0][0]))))
+            wait_m = max(0, int(round(float(pred[0][1]))))
         else:
-            q_len = max(0, int(round(pred[0])))
+            q_len = max(0, int(round(float(pred[0]))))
             wait_m = q_len * 15
+
         return {"queueLength": q_len, "waitMinutes": wait_m}
 
 # Global Singleton instance

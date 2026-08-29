@@ -53,10 +53,10 @@ SmartEV helps EV users and service providers make better decisions through real-
 
 | Name | Student ID | Email | Component |
 | :--- | :--- | :--- | :--- |
+| Dias N T B P | IT22134080 | it22134080@my.sliit.lk | 4. Intelligent EV Charging & Range Optimization |
 | Vidushan A A D D N | IT22157928 | it22157928@my.sliit.lk | 1. Post-Sale Performance & Failure Prediction |
 | Fernando C T H H D | IT22247490 | it22247490@my.sliit.lk | 2. Adaptive Battery Health Prediction |
-| Dias N T B P | IT22134080 | it22134080@my.sliit.lk | 3. Intelligent EV Problem Diagnosis |
-| Jayarathne W.T.D.K. | IT22071170 | it22071170@my.sliit.lk | 4. Intelligent EV Charging & Range Optimization |
+| Jayarathne W.T.D.K. | IT22071170 | it22071170@my.sliit.lk | 3. Intelligent EV Problem Diagnosis |
 
 ---
 

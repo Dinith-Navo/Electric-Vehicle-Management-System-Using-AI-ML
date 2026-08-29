@@ -1,0 +1,17 @@
+{
+  "model_name": "RidgeRegression",
+  "features": [
+    "soc",
+    "battery_capacity_kwh",
+    "speed_kmh",
+    "temperature_c",
+    "energy_consumption_kwh_per_100km"
+  ],
+  "metrics": {
+    "mae": 7.7185,
+    "rmse": 10.7015,
+    "r2": 0.9927
+  },
+  "target": "remaining_range_km",
+  "author": "IT22134080"
+}

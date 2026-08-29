@@ -61,17 +61,26 @@ class RangeModelLoader:
         if not self.is_model_loaded():
             raise RuntimeError("No trained model loaded to perform prediction.")
         
-        # Expected feature order or dataframe depending on trained artifact
-        import numpy as np
-        # Convert dict to array: [soc, batteryCapacity, speed, temperature, consumption]
-        feature_vector = np.array([[
-            features.get("soc", 75.0),
-            features.get("batteryCapacityKWh", 60.0),
-            features.get("speedKmH", 60.0),
-            features.get("temperatureC", 25.0),
-            features.get("energyConsumptionKWhPer100Km", 15.0)
-        ]])
-        pred = self.model.predict(feature_vector)
+        import pandas as pd
+        soc = features.get("soc", 75.0)
+        capacity = features.get("batteryCapacityKWh", features.get("battery_capacity_kwh", 60.0))
+        speed = features.get("speedKmH", features.get("speed_kmh", 60.0))
+        temp = features.get("temperatureC", features.get("temperature_c", 25.0))
+        consumption = features.get("energyConsumptionKWhPer100Km", features.get("energy_consumption_kwh_per_100km", 15.0))
+
+        df_input = pd.DataFrame([{
+            "soc": float(soc),
+            "battery_capacity_kwh": float(capacity),
+            "speed_kmh": float(speed),
+            "temperature_c": float(temp),
+            "energy_consumption_kwh_per_100km": float(consumption)
+        }])
+
+        try:
+            pred = self.model.predict(df_input)
+        except Exception:
+            pred = self.model.predict(df_input.values)
+            
         return float(pred[0])
 
 # Global Singleton instance
