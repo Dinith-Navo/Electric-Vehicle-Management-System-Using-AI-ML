@@ -169,7 +169,8 @@ class ChargingStationService:
             if filters.connectorType and filters.connectorType not in types:
                 continue
 
-            if filters.onlyAvailable and total_avail == 0:
+            is_available_only = bool(filters.availableOnly if filters.availableOnly is not None else filters.onlyAvailable)
+            if is_available_only and total_avail == 0:
                 continue
 
             filtered.append(s)

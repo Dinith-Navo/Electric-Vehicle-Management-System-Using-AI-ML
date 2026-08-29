@@ -75,6 +75,25 @@ class TestEVOptimizationBackend(unittest.TestCase):
             max_kw = max(p.get("powerKw", 0) for p in st.get("ports", []))
             self.assertGreaterEqual(max_kw, 120)
 
+    def test_station_available_only_filter(self):
+        # Test with availableOnly=true
+        resp_avail = client.get("/api/ev-optimization/stations?availableOnly=true")
+        self.assertEqual(resp_avail.status_code, 200)
+        data_avail = resp_avail.json()
+        self.assertTrue(data_avail.get("success"))
+        stations_avail = data_avail.get("data", [])
+        self.assertGreater(len(stations_avail), 0)
+        for st in stations_avail:
+            total_avail = sum(p.get("available", 0) for p in st.get("ports", []))
+            self.assertGreater(total_avail, 0, f"Station {st.get('stationId')} has 0 available stalls but was returned with availableOnly=true")
+
+        # Test with availableOnly=false preserves default behavior
+        resp_all = client.get("/api/ev-optimization/stations?availableOnly=false")
+        self.assertEqual(resp_all.status_code, 200)
+        data_all = resp_all.json()
+        self.assertTrue(data_all.get("success"))
+        self.assertGreaterEqual(len(data_all.get("data", [])), len(stations_avail))
+
     def test_station_by_id(self):
         resp = client.get("/api/ev-optimization/stations/CS-CMB-001")
         self.assertEqual(resp.status_code, 200)

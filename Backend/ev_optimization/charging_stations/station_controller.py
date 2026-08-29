@@ -15,18 +15,21 @@ class ChargingStationController:
         connectorType: Optional[str] = None,
         minRating: Optional[float] = None,
         onlyAvailable: Optional[bool] = False,
+        availableOnly: Optional[bool] = None,
         userLat: Optional[float] = 6.9271,
         userLon: Optional[float] = 79.8612,
         sortBy: Optional[str] = "recommended"
     ) -> StandardResponse[List[Dict[str, Any]]]:
         try:
+            effective_avail = bool(availableOnly if availableOnly is not None else onlyAvailable)
             filters = StationFilterParams(
                 maxDistanceKm=maxDistanceKm,
                 minPowerKw=minPowerKw,
                 maxPricePerKWh=maxPricePerKWh,
                 connectorType=connectorType,
                 minRating=minRating,
-                onlyAvailable=onlyAvailable,
+                onlyAvailable=effective_avail,
+                availableOnly=effective_avail,
                 userLat=userLat,
                 userLon=userLon,
                 sortBy=sortBy

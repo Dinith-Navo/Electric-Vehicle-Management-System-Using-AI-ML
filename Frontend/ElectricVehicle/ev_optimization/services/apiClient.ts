@@ -76,6 +76,7 @@ export interface StationFilterParams {
   connectorType?: string;
   minRating?: number;
   onlyAvailable?: boolean;
+  availableOnly?: boolean;
   userLat?: number;
   userLon?: number;
   sortBy?: string;
@@ -100,7 +101,11 @@ export const evOptimizationApi = {
       if (filters.maxPricePerKWh) params.append("maxPricePerKWh", filters.maxPricePerKWh.toString());
       if (filters.connectorType) params.append("connectorType", filters.connectorType);
       if (filters.minRating) params.append("minRating", filters.minRating.toString());
-      if (filters.onlyAvailable) params.append("onlyAvailable", "true");
+      if (filters.availableOnly !== undefined) {
+        if (filters.availableOnly) params.append("availableOnly", "true");
+      } else if (filters.onlyAvailable) {
+        params.append("onlyAvailable", "true");
+      }
       if (filters.userLat) params.append("userLat", filters.userLat.toString());
       if (filters.userLon) params.append("userLon", filters.userLon.toString());
       if (filters.sortBy) params.append("sortBy", filters.sortBy);

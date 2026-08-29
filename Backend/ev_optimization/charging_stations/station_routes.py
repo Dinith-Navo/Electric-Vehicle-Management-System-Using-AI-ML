@@ -13,17 +13,20 @@ async def get_stations_route(
     connectorType: Optional[str] = Query(None, description="Connector type (CCS2, CHAdeMO, Type 2)"),
     minRating: Optional[float] = Query(None, description="Minimum user rating (0-5)"),
     onlyAvailable: Optional[bool] = Query(False, description="Filter only stations with free stalls"),
+    availableOnly: Optional[bool] = Query(None, description="Filter only stations with free stalls (alias)"),
     userLat: Optional[float] = Query(6.9271, description="User latitude"),
     userLon: Optional[float] = Query(79.8612, description="User longitude"),
     sortBy: Optional[str] = Query("recommended", description="Sorting criteria: recommended, distance, price, speed, rating")
 ):
+    effective_available = bool(availableOnly if availableOnly is not None else onlyAvailable)
     return await ChargingStationController.get_stations_handler(
         maxDistanceKm=maxDistanceKm,
         minPowerKw=minPowerKw,
         maxPricePerKWh=maxPricePerKWh,
         connectorType=connectorType,
         minRating=minRating,
-        onlyAvailable=onlyAvailable,
+        onlyAvailable=effective_available,
+        availableOnly=effective_available,
         userLat=userLat,
         userLon=userLon,
         sortBy=sortBy

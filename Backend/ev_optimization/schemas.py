@@ -45,6 +45,7 @@ class StationFilterParams(BaseModel):
     connectorType: Optional[str] = None
     minRating: Optional[float] = None
     onlyAvailable: Optional[bool] = False
+    availableOnly: Optional[bool] = None
     userLat: Optional[float] = 6.9271
     userLon: Optional[float] = 79.8612
     sortBy: Optional[str] = "recommended"  # recommended, distance, price, speed, rating

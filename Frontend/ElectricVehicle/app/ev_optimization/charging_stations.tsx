@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,9 @@ import {
   ActivityIndicator,
   Modal,
   RefreshControl,
+  Linking,
+  Platform,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -35,10 +38,58 @@ export default function ChargingStationsScreen() {
     connectorType: undefined,
     minRating: 0,
     onlyAvailable: false,
+    availableOnly: false,
     sortBy: "recommended",
   });
 
-  const loadStations = async (currentFilters = filters) => {
+  const handleOpenNavigation = async (station: any) => {
+    const lat = station.location?.latitude ?? station.latitude;
+    const lon = station.location?.longitude ?? station.longitude;
+
+    if (
+      typeof lat !== "number" ||
+      typeof lon !== "number" ||
+      isNaN(lat) ||
+      isNaN(lon)
+    ) {
+      Alert.alert(
+        "Navigation Unavailable",
+        "Valid GPS coordinates are not available for this charging station."
+      );
+      return;
+    }
+
+    const label = encodeURIComponent(station.name || "EV Charging Station");
+    const latLng = `${lat},${lon}`;
+
+    const nativeUrl = Platform.select({
+      ios: `maps:0,0?q=${label}@${latLng}`,
+      android: `geo:0,0?q=${latLng}(${label})`,
+      default: `https://www.google.com/maps/dir/?api=1&destination=${latLng}`,
+    });
+
+    const webFallbackUrl = `https://www.google.com/maps/dir/?api=1&destination=${latLng}`;
+
+    try {
+      const canOpen = await Linking.canOpenURL(nativeUrl);
+      if (canOpen) {
+        await Linking.openURL(nativeUrl);
+      } else {
+        await Linking.openURL(webFallbackUrl);
+      }
+    } catch {
+      try {
+        await Linking.openURL(webFallbackUrl);
+      } catch {
+        Alert.alert(
+          "Navigation Notice",
+          "Could not open map navigation on this device."
+        );
+      }
+    }
+  };
+
+  const loadStations = useCallback(async (currentFilters = filters) => {
     setLoading(true);
     try {
       const res = await evOptimizationApi.getStations(currentFilters);
@@ -100,11 +151,11 @@ export default function ChargingStationsScreen() {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [filters]);
 
   useEffect(() => {
     loadStations();
-  }, []);
+  }, [loadStations]);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -141,12 +192,25 @@ export default function ChargingStationsScreen() {
 
         <Text style={[styles.headerTitle, { color: colors.textPrimary }]}>Charging Stations</Text>
 
-        <TouchableOpacity
-          style={[styles.iconBtn, { backgroundColor: colors.iconBtn, borderColor: colors.border }]}
-          onPress={() => setFilterModalVisible(true)}
-        >
-          <Ionicons name="options-outline" size={18} color="#2563EB" />
-        </TouchableOpacity>
+        <View style={{ flexDirection: "row", gap: 8 }}>
+          <TouchableOpacity
+            style={[styles.iconBtn, { backgroundColor: colors.iconBtn, borderColor: colors.border }]}
+            onPress={toggleTheme}
+          >
+            <Ionicons
+              name={theme === "light" ? "moon-outline" : "sunny-outline"}
+              size={18}
+              color={colors.textPrimary}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.iconBtn, { backgroundColor: colors.iconBtn, borderColor: colors.border }]}
+            onPress={() => setFilterModalVisible(true)}
+          >
+            <Ionicons name="options-outline" size={18} color="#2563EB" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Search Bar & Active Filter Bar */}
@@ -167,8 +231,42 @@ export default function ChargingStationsScreen() {
           ) : null}
         </View>
 
-        {/* Sort Pills */}
+        {/* Sort & Availability Pills */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.sortPillsScroll}>
+          {/* Quick Available Only Toggle Pill */}
+          <TouchableOpacity
+            style={[
+              styles.sortPill,
+              {
+                backgroundColor: (filters.availableOnly || filters.onlyAvailable) ? "#059669" : colors.card,
+                borderColor: (filters.availableOnly || filters.onlyAvailable) ? "#059669" : colors.border,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 4,
+              },
+            ]}
+            onPress={() => {
+              const nextAvail = !(filters.availableOnly || filters.onlyAvailable);
+              const newFilters = { ...filters, availableOnly: nextAvail, onlyAvailable: nextAvail };
+              setFilters(newFilters);
+              loadStations(newFilters);
+            }}
+          >
+            <Ionicons
+              name={filters.availableOnly || filters.onlyAvailable ? "checkmark-circle" : "flash-outline"}
+              size={13}
+              color={filters.availableOnly || filters.onlyAvailable ? "#fff" : "#059669"}
+            />
+            <Text
+              style={[
+                styles.sortPillText,
+                { color: filters.availableOnly || filters.onlyAvailable ? "#fff" : colors.textSecondary },
+              ]}
+            >
+              Available Only
+            </Text>
+          </TouchableOpacity>
+
           {[
             { label: "✨ Recommended", value: "recommended" },
             { label: "📍 Nearest", value: "distance" },
@@ -304,16 +402,24 @@ export default function ChargingStationsScreen() {
                     style={[styles.actionBtnSecondary, { borderColor: colors.border }]}
                     onPress={() => router.push("/ev_optimization/queue_prediction" as any)}
                   >
-                    <Ionicons name="time-outline" size={15} color="#2563EB" />
-                    <Text style={styles.actionBtnSecText}>Predict Queue</Text>
+                    <Ionicons name="time-outline" size={14} color="#2563EB" />
+                    <Text style={styles.actionBtnSecText}>Queue</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.actionBtnSecondary, { borderColor: colors.border }]}
+                    onPress={() => router.push("/ev_optimization/route_optimization" as any)}
+                  >
+                    <Ionicons name="trail-sign-outline" size={14} color="#7C3AED" />
+                    <Text style={[styles.actionBtnSecText, { color: "#7C3AED" }]}>Plan Route</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={styles.actionBtnPrimary}
-                    onPress={() => router.push("/ev_optimization/route_optimization" as any)}
+                    onPress={() => handleOpenNavigation(station)}
                   >
-                    <Ionicons name="navigate" size={15} color="#fff" />
-                    <Text style={styles.actionBtnPrimText}>Plan Route</Text>
+                    <Ionicons name="navigate" size={14} color="#fff" />
+                    <Text style={styles.actionBtnPrimText}>Navigate</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -402,15 +508,21 @@ export default function ChargingStationsScreen() {
             {/* Available Stalls Only Toggle */}
             <TouchableOpacity
               style={[styles.filterToggleRow, { backgroundColor: colors.bgSecondary }]}
-              onPress={() => setFilters({ ...filters, onlyAvailable: !filters.onlyAvailable })}
+              onPress={() => {
+                const nextVal = !(filters.availableOnly || filters.onlyAvailable);
+                setFilters({ ...filters, availableOnly: nextVal, onlyAvailable: nextVal });
+              }}
             >
-              <Text style={[styles.filterToggleText, { color: colors.textPrimary }]}>
-                Show Available Stalls Only
-              </Text>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                <Ionicons name="flash-outline" size={18} color="#059669" />
+                <Text style={[styles.filterToggleText, { color: colors.textPrimary }]}>
+                  Show Available Stalls Only
+                </Text>
+              </View>
               <Ionicons
-                name={filters.onlyAvailable ? "checkbox" : "square-outline"}
+                name={filters.availableOnly || filters.onlyAvailable ? "checkbox" : "square-outline"}
                 size={22}
-                color={filters.onlyAvailable ? "#2563EB" : colors.textMuted}
+                color={filters.availableOnly || filters.onlyAvailable ? "#2563EB" : colors.textMuted}
               />
             </TouchableOpacity>
 
@@ -520,7 +632,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
   },
-  actionBtnSecText: { color: "#2563EB", fontSize: 12, fontWeight: "600" },
+  actionBtnSecText: { color: "#2563EB", fontSize: 11, fontWeight: "600" },
   actionBtnPrimary: {
     flex: 1,
     height: 36,
@@ -531,7 +643,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
   },
-  actionBtnPrimText: { color: "#fff", fontSize: 12, fontWeight: "600" },
+  actionBtnPrimText: { color: "#fff", fontSize: 11, fontWeight: "600" },
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "flex-end" },
   modalContent: { borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20 },
   modalHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 16 },
