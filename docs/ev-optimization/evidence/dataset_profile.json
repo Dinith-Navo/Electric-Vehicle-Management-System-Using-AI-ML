@@ -1,0 +1,194 @@
+{
+  "range_prediction_dataset": {
+    "file": "ml-service/datasets/raw/ev_range_dataset_sample.csv",
+    "rows": 20,
+    "columns": 8,
+    "origin": "Synthetic / Domain-Calculated Benchmark Dataset",
+    "verification_status": "Verified Initial Research Sample (N=20)",
+    "features": [
+      "soc",
+      "battery_capacity_kwh",
+      "speed_kmh",
+      "temperature_c",
+      "energy_consumption_kwh_per_100km"
+    ],
+    "target": "remaining_range_km",
+    "missing_values": 0,
+    "duplicates": 0,
+    "statistical_summary": {
+      "battery_capacity_kwh": {
+        "count": 20.0,
+        "mean": 65.11,
+        "std": 9.727979181071907,
+        "min": 50.0,
+        "25%": 60.0,
+        "50%": 64.0,
+        "75%": 67.35,
+        "max": 82.0
+      },
+      "soc": {
+        "count": 20.0,
+        "mean": 66.75,
+        "std": 24.616799997263314,
+        "min": 20.0,
+        "25%": 48.75,
+        "50%": 80.0,
+        "75%": 81.25,
+        "max": 100.0
+      },
+      "speed_kmh": {
+        "count": 20.0,
+        "mean": 69.5,
+        "std": 18.488972531299783,
+        "min": 45.0,
+        "25%": 60.0,
+        "50%": 60.0,
+        "75%": 81.25,
+        "max": 110.0
+      },
+      "temperature_c": {
+        "count": 20.0,
+        "mean": 25.6,
+        "std": 6.738733287183095,
+        "min": 5.0,
+        "25%": 23.5,
+        "50%": 25.0,
+        "75%": 28.5,
+        "max": 38.0
+      },
+      "energy_consumption_kwh_per_100km": {
+        "count": 20.0,
+        "mean": 15.094999999999999,
+        "std": 1.2403204170060675,
+        "min": 13.2,
+        "25%": 14.5,
+        "50%": 14.5,
+        "75%": 16.0,
+        "max": 18.0
+      },
+      "ac_on": {
+        "count": 20.0,
+        "mean": 0.3,
+        "std": 0.4701623459816272,
+        "min": 0.0,
+        "25%": 0.0,
+        "50%": 0.0,
+        "75%": 1.0,
+        "max": 1.0
+      },
+      "remaining_range_km": {
+        "count": 20.0,
+        "mean": 279.58000000000004,
+        "std": 123.39689324759311,
+        "min": 82.0,
+        "25%": 189.5,
+        "50%": 292.85,
+        "75%": 366.05,
+        "max": 490.2
+      }
+    }
+  },
+  "queue_prediction_dataset": {
+    "file": "ml-service/datasets/raw/ev_station_queue_sample.csv",
+    "rows": 11,
+    "columns": 9,
+    "origin": "Synthetic / Domain Queuing Theory Simulated Dataset",
+    "verification_status": "Verified Initial Research Sample (N=11)",
+    "features": [
+      "total_chargers",
+      "currently_occupied",
+      "arrival_hour",
+      "day_of_week",
+      "charging_speed_kw",
+      "avg_session_minutes"
+    ],
+    "targets": [
+      "queue_length",
+      "wait_minutes"
+    ],
+    "missing_values": 0,
+    "duplicates": 0,
+    "statistical_summary": {
+      "total_chargers": {
+        "count": 11.0,
+        "mean": 4.909090909090909,
+        "std": 1.868397465987655,
+        "min": 2.0,
+        "25%": 4.0,
+        "50%": 4.0,
+        "75%": 6.0,
+        "max": 8.0
+      },
+      "currently_occupied": {
+        "count": 11.0,
+        "mean": 3.909090909090909,
+        "std": 1.9725387425622574,
+        "min": 1.0,
+        "25%": 2.5,
+        "50%": 4.0,
+        "75%": 4.5,
+        "max": 8.0
+      },
+      "arrival_hour": {
+        "count": 11.0,
+        "mean": 14.636363636363637,
+        "std": 3.6952057391362465,
+        "min": 8.0,
+        "25%": 12.0,
+        "50%": 16.0,
+        "75%": 17.5,
+        "max": 19.0
+      },
+      "day_of_week": {
+        "count": 11.0,
+        "mean": 3.090909090909091,
+        "std": 2.165850662190053,
+        "min": 0.0,
+        "25%": 1.5,
+        "50%": 3.0,
+        "75%": 4.5,
+        "max": 6.0
+      },
+      "charging_speed_kw": {
+        "count": 11.0,
+        "mean": 132.72727272727272,
+        "std": 42.9164092372391,
+        "min": 50.0,
+        "25%": 120.0,
+        "50%": 150.0,
+        "75%": 150.0,
+        "max": 180.0
+      },
+      "avg_session_minutes": {
+        "count": 11.0,
+        "mean": 27.272727272727273,
+        "std": 6.067798762169179,
+        "min": 20.0,
+        "25%": 25.0,
+        "50%": 25.0,
+        "75%": 30.0,
+        "max": 40.0
+      },
+      "queue_length": {
+        "count": 11.0,
+        "mean": 1.1818181818181819,
+        "std": 1.0787197799411874,
+        "min": 0.0,
+        "25%": 0.0,
+        "50%": 1.0,
+        "75%": 2.0,
+        "max": 3.0
+      },
+      "wait_minutes": {
+        "count": 11.0,
+        "mean": 18.181818181818183,
+        "std": 17.21521525754576,
+        "min": 0.0,
+        "25%": 0.0,
+        "50%": 15.0,
+        "75%": 32.5,
+        "max": 45.0
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+[
+  {
+    "Model": "MultiOutput Ridge (Baseline)",
+    "Queue_MAE_cars": 0.8117,
+    "Queue_RMSE_cars": 0.9309,
+    "Wait_MAE_mins": 11.4652,
+    "Wait_RMSE_mins": 13.9407,
+    "Overall_Mean_RMSE": 7.4358,
+    "Training_Time_ms": 3.01
+  },
+  {
+    "Model": "MultiOutput Random Forest",
+    "Queue_MAE_cars": 0.8167,
+    "Queue_RMSE_cars": 0.8506,
+    "Wait_MAE_mins": 14.3333,
+    "Wait_RMSE_mins": 14.8343,
+    "Overall_Mean_RMSE": 7.8424,
+    "Training_Time_ms": 62.68
+  },
+  {
+    "Model": "MultiOutput Gradient Boosting",
+    "Queue_MAE_cars": 0.6667,
+    "Queue_RMSE_cars": 0.8165,
+    "Wait_MAE_mins": 7.8805,
+    "Wait_RMSE_mins": 9.4747,
+    "Overall_Mean_RMSE": 5.1456,
+    "Training_Time_ms": 49.84
+  }
+]

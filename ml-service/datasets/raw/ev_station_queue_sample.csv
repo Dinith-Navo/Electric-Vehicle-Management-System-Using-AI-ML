@@ -1,0 +1,12 @@
+station_id,total_chargers,currently_occupied,arrival_hour,day_of_week,charging_speed_kw,avg_session_minutes,queue_length,wait_minutes
+CS-CMB-001,4,4,18,3,150.0,25.0,2,30
+CS-CMB-001,4,3,14,3,150.0,25.0,0,0
+CS-CMB-001,4,4,8,1,150.0,25.0,1,15
+CS-CMB-002,6,6,17,4,120.0,30.0,3,45
+CS-CMB-002,6,2,11,4,120.0,30.0,0,0
+CS-CMB-003,2,2,19,5,50.0,40.0,2,40
+CS-GAL-001,4,1,10,6,150.0,25.0,0,0
+CS-GAL-001,4,4,16,6,150.0,25.0,1,15
+CS-KND-001,4,4,17,2,60.0,35.0,2,35
+CS-NEG-001,8,5,13,0,180.0,20.0,0,0
+CS-NEG-001,8,8,18,0,180.0,20.0,2,20

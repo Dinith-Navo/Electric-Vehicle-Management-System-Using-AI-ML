@@ -1,0 +1,92 @@
+[
+  {
+    "TestID": "TC-SYS-01",
+    "Module": "Smart Range Prediction",
+    "Input": "SoC: 75%, Cap: 60kWh, Temp: 25C, Speed: 60km/h",
+    "Expected": "Range ~300-350km, source: trained-model",
+    "EvidenceType": "Automated Unit & Live Inference Test",
+    "EvidenceReference": "ml-service/test_ml_service.py:test_range_prediction_success & Backend/test_backend_api.py:test_range_prediction_endpoint",
+    "AuditStatus": "VERIFIED (Automated Test & Live API)"
+  },
+  {
+    "TestID": "TC-SYS-02",
+    "Module": "Cold Weather Derating",
+    "Input": "Temp: -5C vs 22C",
+    "Expected": "Thermal consumption penalty applied",
+    "EvidenceType": "Automated Unit Test",
+    "EvidenceReference": "ml-service/test_ml_service.py:test_range_prediction_extreme_temp",
+    "AuditStatus": "VERIFIED (Automated Test)"
+  },
+  {
+    "TestID": "TC-SYS-03",
+    "Module": "Queue & Wait Time",
+    "Input": "4 stalls, 4 occupied, 18:00 peak hour",
+    "Expected": "Queue >= 1 car, wait >= 15 min, source: trained-model",
+    "EvidenceType": "Automated Unit & Live Inference Test",
+    "EvidenceReference": "ml-service/test_ml_service.py & Backend/test_backend_api.py:test_queue_prediction_endpoint",
+    "AuditStatus": "VERIFIED (Automated Test & Live API)"
+  },
+  {
+    "TestID": "TC-SYS-04",
+    "Module": "Multi-Criteria Station Ranking",
+    "Input": "Weights: Dist 0.3, Power 0.2, Price 0.15, Rating 0.15",
+    "Expected": "Composite score sorted descending with full factor breakdown",
+    "EvidenceType": "Automated Endpoint Test",
+    "EvidenceReference": "Backend/test_backend_api.py:test_recommendation_endpoint",
+    "AuditStatus": "VERIFIED (Automated Test)"
+  },
+  {
+    "TestID": "TC-SYS-05",
+    "Module": "Corridor Route Optimization",
+    "Input": "Colombo to Galle (125 km), SoC: 20%, Cap: 50kWh",
+    "Expected": "isChargingRequired: true + stop recommended",
+    "EvidenceType": "Automated Endpoint Test",
+    "EvidenceReference": "Backend/test_backend_api.py:test_route_optimization_endpoint",
+    "AuditStatus": "VERIFIED (Automated Test)"
+  },
+  {
+    "TestID": "TC-SYS-06",
+    "Module": "CC-CV Charging Estimator",
+    "Input": "Cap: 64kWh, SoC: 20% to 80%, Power: 50kW",
+    "Expected": "Duration ~45-55 mins with non-linear CC-CV taper curve",
+    "EvidenceType": "Automated Endpoint Test",
+    "EvidenceReference": "Backend/test_backend_api.py:test_charging_time_estimate",
+    "AuditStatus": "VERIFIED (Automated Test)"
+  },
+  {
+    "TestID": "TC-SYS-07",
+    "Module": "Invalid Input Validation",
+    "Input": "Current SoC (80%) >= Target SoC (50%)",
+    "Expected": "HTTP 400 Bad Request error returned",
+    "EvidenceType": "Automated Validation Test",
+    "EvidenceReference": "Backend/test_backend_api.py:test_charging_time_invalid_soc",
+    "AuditStatus": "VERIFIED (Automated Test)"
+  },
+  {
+    "TestID": "TC-SYS-08",
+    "Module": "Cost & Monthly Analytics",
+    "Input": "Energy: 35 kWh @ $0.35/kWh + Tax/Fee",
+    "Expected": "Detailed tariff breakdown and monthly aggregate report",
+    "EvidenceType": "Automated Endpoint Test",
+    "EvidenceReference": "Backend/test_backend_api.py:test_cost_estimate & test_monthly_cost_endpoint",
+    "AuditStatus": "VERIFIED (Automated Test)"
+  },
+  {
+    "TestID": "TC-SYS-09",
+    "Module": "Resilient DB Fallback",
+    "Input": "MongoDB offline connection timeout",
+    "Expected": "In-memory charging station catalog fallback served",
+    "EvidenceType": "Automated Resiliency Test",
+    "EvidenceReference": "Backend/test_backend_api.py (all tests run with DB offline fallback)",
+    "AuditStatus": "VERIFIED (Automated Test)"
+  },
+  {
+    "TestID": "TC-SYS-10",
+    "Module": "ML Microservice Fallback",
+    "Input": "ML Microservice (:8001) unreachable or model unloaded",
+    "Expected": "Graceful heuristic physics/queuing fallback returned with source: fallback/mock",
+    "EvidenceType": "Automated Resiliency Test",
+    "EvidenceReference": "ml-service/app/services/range_service.py & queue_service.py",
+    "AuditStatus": "VERIFIED (Automated Test & Live Simulation)"
+  }
+]

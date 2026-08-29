@@ -1,0 +1,30 @@
+[
+  {
+    "Model": "Linear Regression (Baseline)",
+    "MAE_km": 8.0697,
+    "RMSE_km": 10.8125,
+    "R2_Score": 0.9925,
+    "Training_Time_ms": 1.19
+  },
+  {
+    "Model": "Ridge Regression (Regularized)",
+    "MAE_km": 7.7185,
+    "RMSE_km": 10.7015,
+    "R2_Score": 0.9927,
+    "Training_Time_ms": 0.96
+  },
+  {
+    "Model": "Random Forest Regressor",
+    "MAE_km": 37.9834,
+    "RMSE_km": 49.2332,
+    "R2_Score": 0.8446,
+    "Training_Time_ms": 80.49
+  },
+  {
+    "Model": "Gradient Boosting Regressor",
+    "MAE_km": 50.0683,
+    "RMSE_km": 57.4954,
+    "R2_Score": 0.7881,
+    "Training_Time_ms": 27.23
+  }
+]
