@@ -14,8 +14,8 @@ import json
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import Ridge
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression, Ridge
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import joblib
 
@@ -76,46 +76,62 @@ def train_and_export_range_model():
     # Train / Test split with fixed random seed for reproducible research evaluation
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
 
-    # 1. Baseline Model: Ridge Regression
-    baseline = Ridge()
+    # 1. Baseline 1: Linear Regression
+    lr = LinearRegression()
+    lr.fit(X_train, y_train)
+    y_pred_lr = lr.predict(X_test)
+    mae_lr = mean_absolute_error(y_test, y_pred_lr)
+    rmse_lr = np.sqrt(mean_squared_error(y_test, y_pred_lr))
+    r2_lr = r2_score(y_test, y_pred_lr)
+    print(f"\nModel 1: Linear Regression (Baseline)  -> MAE: {mae_lr:.2f} km | RMSE: {rmse_lr:.2f} km | R2: {r2_lr:.4f}")
+
+    # 2. Baseline 2: Ridge Regression
+    baseline = Ridge(alpha=1.0)
     baseline.fit(X_train, y_train)
     y_pred_base = baseline.predict(X_test)
     mae_base = mean_absolute_error(y_test, y_pred_base)
     rmse_base = np.sqrt(mean_squared_error(y_test, y_pred_base))
     r2_base = r2_score(y_test, y_pred_base)
+    print(f"Model 2: Ridge Regression (Regularized)-> MAE: {mae_base:.2f} km | RMSE: {rmse_base:.2f} km | R2: {r2_base:.4f}")
 
-    print(f"\nBaseline (Ridge)          -> MAE: {mae_base:.2f} km | RMSE: {rmse_base:.2f} km | R2: {r2_base:.4f}")
-
-    # 2. Advanced Model: Random Forest Regressor
+    # 3. Advanced 1: Random Forest Regressor
     rf_model = RandomForestRegressor(n_estimators=100, random_state=42)
     rf_model.fit(X_train, y_train)
     y_pred_rf = rf_model.predict(X_test)
     mae_rf = mean_absolute_error(y_test, y_pred_rf)
     rmse_rf = np.sqrt(mean_squared_error(y_test, y_pred_rf))
     r2_rf = r2_score(y_test, y_pred_rf)
+    print(f"Model 3: Random Forest Regressor       -> MAE: {mae_rf:.2f} km | RMSE: {rmse_rf:.2f} km | R2: {r2_rf:.4f}")
 
-    print(f"Advanced (Random Forest)  -> MAE: {mae_rf:.2f} km | RMSE: {rmse_rf:.2f} km | R2: {r2_rf:.4f}")
+    # 4. Advanced 2: Gradient Boosting Regressor
+    gbm_model = GradientBoostingRegressor(n_estimators=100, random_state=42)
+    gbm_model.fit(X_train, y_train)
+    y_pred_gbm = gbm_model.predict(X_test)
+    mae_gbm = mean_absolute_error(y_test, y_pred_gbm)
+    rmse_gbm = np.sqrt(mean_squared_error(y_test, y_pred_gbm))
+    r2_gbm = r2_score(y_test, y_pred_gbm)
+    print(f"Model 4: Gradient Boosting Regressor   -> MAE: {mae_gbm:.2f} km | RMSE: {rmse_gbm:.2f} km | R2: {r2_gbm:.4f}")
 
-    # 3. Champion Model Selection (R² comparison)
-    if r2_rf >= r2_base:
-        champion_model = rf_model
-        champion_name = "RandomForestRegressor"
-        champion_mae = mae_rf
-        champion_rmse = rmse_rf
-        champion_r2 = r2_rf
-    else:
-        champion_model = baseline
-        champion_name = "RidgeRegression"
-        champion_mae = mae_base
-        champion_rmse = rmse_base
-        champion_r2 = r2_base
+    # Champion Model Selection (Lowest RMSE / Highest R²)
+    candidates = [
+        ("LinearRegression", lr, mae_lr, rmse_lr, r2_lr),
+        ("RidgeRegression", baseline, mae_base, rmse_base, r2_base),
+        ("RandomForestRegressor", rf_model, mae_rf, rmse_rf, r2_rf),
+        ("GradientBoostingRegressor", gbm_model, mae_gbm, rmse_gbm, r2_gbm)
+    ]
+    # Sort by RMSE ascending
+    candidates.sort(key=lambda x: x[3])
+    champion_name, champion_model, champion_mae, champion_rmse, champion_r2 = candidates[0]
 
-    # 4. Export Champion Model (Exactly once)
+    print(f"\nChampion Selection Rule: Minimum Test-Set RMSE -> {champion_name} (RMSE: {champion_rmse:.2f} km, R2: {champion_r2:.4f})")
+    print(f"Selected Champion Model: {champion_name}")
+
+    # Export Champion Model (Exactly once)
     export_path = os.path.join(output_dir, "ev_range_model.joblib")
     joblib.dump(champion_model, export_path)
     print(f"\n[OK] Successfully exported champion model ({champion_name}) to {export_path}")
 
-    # 5. Export Champion Metadata (Exactly once)
+    # Export Champion Metadata (Exactly once)
     metadata = {
         "model_name": champion_name,
         "features": feature_cols,
@@ -125,7 +141,12 @@ def train_and_export_range_model():
             "r2": round(float(champion_r2), 4)
         },
         "target": target_col,
-        "author": "IT22134080"
+        "author": "IT22134080",
+        "sample_size": len(df),
+        "test_split_ratio": 0.25,
+        "random_state": 42,
+        "experiment_date": "2026-08-29",
+        "note": "Evaluated on initial sample dataset (N=20) with 25% holdout test set."
     }
 
     meta_path = os.path.join(output_dir, "model_metadata.json")
