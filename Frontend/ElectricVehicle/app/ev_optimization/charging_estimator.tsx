@@ -23,7 +23,7 @@ export default function ChargingEstimatorScreen() {
   const [currentSoc, setCurrentSoc] = useState("20");
   const [targetSoc, setTargetSoc] = useState("80");
   const [chargerPower, setChargerPower] = useState(50);
-  const [efficiency, setEfficiency] = useState(0.90);
+  const efficiency = 0.90;
 
   const [loading, setLoading] = useState(false);
   const [estimate, setEstimate] = useState<any>(null);

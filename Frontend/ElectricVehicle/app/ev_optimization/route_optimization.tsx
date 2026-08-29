@@ -203,7 +203,17 @@ export default function RouteOptimizationScreen() {
             </View>
 
             <View style={[styles.inputGroup, { flex: 1 }]}>
-              <Text style={[styles.inputLabel, { color: colors.textPrimary }]}>Consumption (kWh)</Text>
+              <Text style={[styles.inputLabel, { color: colors.textPrimary }]}>Battery (kWh)</Text>
+              <TextInput
+                style={[styles.textInput, { backgroundColor: colors.bgSecondary, color: colors.textPrimary, borderColor: colors.border }]}
+                value={batteryCapacity}
+                onChangeText={setBatteryCapacity}
+                keyboardType="numeric"
+              />
+            </View>
+
+            <View style={[styles.inputGroup, { flex: 1 }]}>
+              <Text style={[styles.inputLabel, { color: colors.textPrimary }]}>Cons. (kWh/100)</Text>
               <TextInput
                 style={[styles.textInput, { backgroundColor: colors.bgSecondary, color: colors.textPrimary, borderColor: colors.border }]}
                 value={consumption}

@@ -32,11 +32,9 @@ export default function RangePredictionScreen() {
 
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const handlePredict = async () => {
     setLoading(true);
-    setError(null);
     try {
       const payload: RangePredictInput = {
         soc: parseFloat(form.soc) || 75,

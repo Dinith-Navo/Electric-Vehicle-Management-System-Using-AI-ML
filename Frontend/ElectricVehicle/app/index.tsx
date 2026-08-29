@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import React from "react";
 import MainPage from "./mainpage/mainpage";
 
 export default function Index() {

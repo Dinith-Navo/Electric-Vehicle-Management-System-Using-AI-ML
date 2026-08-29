@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -26,20 +26,7 @@ export default function QueuePredictionScreen() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
 
-  useEffect(() => {
-    // Load station list
-    evOptimizationApi.getStations().then((res) => {
-      if (res && res.success && res.data.length > 0) {
-        setStations(res.data);
-        setSelectedStationId(res.data[0].stationId);
-      }
-    }).catch(() => {});
-
-    // Initial prediction
-    handlePredict("CS-CMB-001", 17, 3);
-  }, []);
-
-  const handlePredict = async (stId = selectedStationId, hr = arrivalHour, day = dayOfWeek) => {
+  const handlePredict = useCallback(async (stId = selectedStationId, hr = arrivalHour, day = dayOfWeek) => {
     setLoading(true);
     try {
       const payload: QueuePredictInput = {
@@ -58,27 +45,39 @@ export default function QueuePredictionScreen() {
       // Fallback calculation
       const isPeak = hr >= 17 && hr <= 19;
       const qLen = isPeak ? 2 : 0;
-      const waitMin = isPeak ? 25 : 0;
+      const wait = qLen * 18;
       setResult({
         stationId: stId,
         predictedQueueLength: qLen,
-        estimatedWaitMinutes: waitMin,
-        availableChargersNow: isPeak ? 1 : 3,
-        congestionLevel: isPeak ? "Moderate" : "Low",
+        estimatedWaitMinutes: wait,
+        availableChargersNow: 2,
+        congestionLevel: isPeak ? "High" : "Low",
         source: "mock",
-        modelName: "QueuingTheoryFallback",
+        modelName: "ClientFallbackQueueEstimator",
         hourlyForecast: [
-          { hour: `${hr}:00`, predictedQueue: qLen, estimatedWaitMin: waitMin },
-          { hour: `${(hr + 1) % 24}:00`, predictedQueue: isPeak ? 3 : 1, estimatedWaitMin: isPeak ? 35 : 10 },
-          { hour: `${(hr + 2) % 24}:00`, predictedQueue: isPeak ? 2 : 0, estimatedWaitMin: isPeak ? 20 : 0 },
+          { hour: `${hr}:00`, predictedQueue: qLen, estimatedWaitMin: wait },
+          { hour: `${(hr + 1) % 24}:00`, predictedQueue: isPeak ? 3 : 1, estimatedWaitMin: (isPeak ? 3 : 1) * 18 },
+          { hour: `${(hr + 2) % 24}:00`, predictedQueue: 1, estimatedWaitMin: 18 },
           { hour: `${(hr + 3) % 24}:00`, predictedQueue: 0, estimatedWaitMin: 0 },
         ],
-        timestamp: new Date().toISOString(),
       });
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedStationId, arrivalHour, dayOfWeek]);
+
+  useEffect(() => {
+    // Load station list
+    evOptimizationApi.getStations().then((res) => {
+      if (res && res.success && res.data.length > 0) {
+        setStations(res.data);
+        setSelectedStationId(res.data[0].stationId);
+      }
+    }).catch(() => {});
+
+    // Initial prediction
+    handlePredict("CS-CMB-001", 17, 3);
+  }, [handlePredict]);
 
   const getCongestionColor = (level: string) => {
     switch (level) {

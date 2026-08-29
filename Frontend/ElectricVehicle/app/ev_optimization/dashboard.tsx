@@ -22,11 +22,9 @@ export default function EVOptimizationDashboard() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const loadData = async () => {
     try {
-      setError(null);
       const res = await evOptimizationApi.getDashboard();
       if (res && res.success) {
         setData(res.data);

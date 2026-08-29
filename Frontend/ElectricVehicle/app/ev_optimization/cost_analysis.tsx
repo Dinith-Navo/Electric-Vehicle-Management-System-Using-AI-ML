@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -27,12 +27,7 @@ export default function CostAnalysisScreen() {
   const [monthlyData, setMonthlyData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadMonthlyData();
-    calculateSession();
-  }, []);
-
-  const loadMonthlyData = async () => {
+  const loadMonthlyData = useCallback(async () => {
     try {
       const res = await evOptimizationApi.getMonthlyCostSummary();
       if (res && res.success) {
@@ -61,9 +56,9 @@ export default function CostAnalysisScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const calculateSession = async () => {
+  const calculateSession = useCallback(async () => {
     const kwh = parseFloat(calcEnergy) || 30;
     const price = parseFloat(calcPrice) || 0.35;
     const fee = parseFloat(calcFee) || 1.50;
@@ -88,7 +83,12 @@ export default function CostAnalysisScreen() {
         pricePerKWh: price,
       });
     }
-  };
+  }, [calcEnergy, calcPrice, calcFee]);
+
+  useEffect(() => {
+    loadMonthlyData();
+    calculateSession();
+  }, [loadMonthlyData, calculateSession]);
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.bg }]}>
@@ -118,8 +118,13 @@ export default function CostAnalysisScreen() {
       </View>
 
       <ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Loading Spinner */}
+        {loading && (
+          <ActivityIndicator size="large" color="#2563EB" style={{ marginVertical: 20 }} />
+        )}
+
         {/* Monthly Summary Hero Card */}
-        {monthlyData && (
+        {monthlyData && !loading && (
           <View style={[styles.summaryCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={styles.summaryHeader}>
               <View>
@@ -185,6 +190,16 @@ export default function CostAnalysisScreen() {
                 style={[styles.textInput, { backgroundColor: colors.bgSecondary, color: colors.textPrimary, borderColor: colors.border }]}
                 value={calcPrice}
                 onChangeText={setCalcPrice}
+                keyboardType="numeric"
+              />
+            </View>
+
+            <View style={[styles.inputCol, { flex: 1 }]}>
+              <Text style={[styles.inputLabel, { color: colors.textPrimary }]}>Fee ($)</Text>
+              <TextInput
+                style={[styles.textInput, { backgroundColor: colors.bgSecondary, color: colors.textPrimary, borderColor: colors.border }]}
+                value={calcFee}
+                onChangeText={setCalcFee}
                 keyboardType="numeric"
               />
             </View>
