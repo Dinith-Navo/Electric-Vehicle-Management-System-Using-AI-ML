@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+*.pyc
+
+.env
+.pytest_cache/
+
+secrets/
+serviceAccountKey.json
+
+models/*.joblib
+models/*.pkl
