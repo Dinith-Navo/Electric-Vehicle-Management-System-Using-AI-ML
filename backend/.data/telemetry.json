@@ -1,0 +1,202 @@
+[
+  {
+    "vehicleId": "veh_restart_test_99",
+    "soc": 82.5,
+    "speedKmH": 65.0,
+    "timestamp": "2026-10-17T14:00:00Z"
+  },
+  {
+    "vehicleId": "default-vehicle",
+    "soc": 68.5,
+    "soh": 98.0,
+    "voltage": 400.2,
+    "current": 12.5,
+    "temperature": 29.0,
+    "drivingEfficiency": 15.2,
+    "speed": 60.0,
+    "timestamp": null
+  },
+  {
+    "vehicleId": "default-vehicle",
+    "soc": 68.5,
+    "soh": 98.0,
+    "voltage": 400.2,
+    "current": 12.5,
+    "temperature": 29.0,
+    "drivingEfficiency": 15.2,
+    "speed": 60.0,
+    "timestamp": null
+  },
+  {
+    "vehicleId": "default-vehicle",
+    "soc": 68.5,
+    "soh": 98.0,
+    "voltage": 400.2,
+    "current": 12.5,
+    "temperature": 29.0,
+    "drivingEfficiency": 15.2,
+    "speed": 60.0,
+    "timestamp": null
+  },
+  {
+    "vehicleId": "veh_restart_test_99",
+    "soc": 82.5,
+    "speedKmH": 65.0,
+    "timestamp": "2026-10-17T14:00:00Z"
+  },
+  {
+    "vehicleId": "veh_restart_test_99",
+    "soc": 82.5,
+    "speedKmH": 65.0,
+    "timestamp": "2026-10-17T14:00:00Z"
+  },
+  {
+    "vehicleId": "default-vehicle",
+    "soc": 68.5,
+    "soh": 98.0,
+    "voltage": 400.2,
+    "current": 12.5,
+    "temperature": 29.0,
+    "drivingEfficiency": 15.2,
+    "speed": 60.0,
+    "timestamp": null
+  },
+  {
+    "vehicleId": "veh_restart_test_99",
+    "soc": 82.5,
+    "speedKmH": 65.0,
+    "timestamp": "2026-10-17T14:00:00Z"
+  },
+  {
+    "vehicleId": "default-vehicle",
+    "soc": 68.5,
+    "soh": 98.0,
+    "voltage": 400.2,
+    "current": 12.5,
+    "temperature": 29.0,
+    "drivingEfficiency": 15.2,
+    "speed": 60.0,
+    "timestamp": null
+  },
+  {
+    "vehicleId": "default-vehicle",
+    "soc": 68.5,
+    "soh": 98.0,
+    "voltage": 400.2,
+    "current": 12.5,
+    "temperature": 29.0,
+    "drivingEfficiency": 15.2,
+    "speed": 60.0,
+    "timestamp": null
+  },
+  {
+    "vehicleId": "default-vehicle",
+    "soc": 68.5,
+    "soh": 98.0,
+    "voltage": 400.2,
+    "current": 12.5,
+    "temperature": 29.0,
+    "drivingEfficiency": 15.2,
+    "speed": 60.0,
+    "timestamp": null
+  },
+  {
+    "vehicleId": "default-vehicle",
+    "soc": 68.5,
+    "soh": 98.0,
+    "voltage": 400.2,
+    "current": 12.5,
+    "temperature": 29.0,
+    "drivingEfficiency": 15.2,
+    "speed": 60.0,
+    "timestamp": null
+  },
+  {
+    "vehicleId": "default-vehicle",
+    "soc": 68.5,
+    "soh": 98.0,
+    "voltage": 400.2,
+    "current": 12.5,
+    "temperature": 29.0,
+    "drivingEfficiency": 15.2,
+    "speed": 60.0,
+    "timestamp": null
+  },
+  {
+    "vehicleId": "default-vehicle",
+    "soc": 68.5,
+    "soh": 98.0,
+    "voltage": 400.2,
+    "current": 12.5,
+    "temperature": 29.0,
+    "drivingEfficiency": 15.2,
+    "speed": 60.0,
+    "timestamp": null
+  },
+  {
+    "vehicleId": "default-vehicle",
+    "soc": 68.5,
+    "soh": 98.0,
+    "voltage": 400.2,
+    "current": 12.5,
+    "temperature": 29.0,
+    "drivingEfficiency": 15.2,
+    "speed": 60.0,
+    "timestamp": null
+  },
+  {
+    "vehicleId": "default-vehicle",
+    "soc": 68.5,
+    "soh": 98.0,
+    "voltage": 400.2,
+    "current": 12.5,
+    "temperature": 29.0,
+    "drivingEfficiency": 15.2,
+    "speed": 60.0,
+    "timestamp": null
+  },
+  {
+    "vehicleId": "default-vehicle",
+    "soc": 68.5,
+    "soh": 98.0,
+    "voltage": 400.2,
+    "current": 12.5,
+    "temperature": 29.0,
+    "drivingEfficiency": 15.2,
+    "speed": 60.0,
+    "timestamp": null
+  },
+  {
+    "vehicleId": "default-vehicle",
+    "soc": 68.5,
+    "soh": 98.0,
+    "voltage": 400.2,
+    "current": 12.5,
+    "temperature": 29.0,
+    "drivingEfficiency": 15.2,
+    "speed": 60.0,
+    "timestamp": null
+  },
+  {
+    "vehicleId": "default-vehicle",
+    "soc": 68.5,
+    "soh": 98.0,
+    "voltage": 400.2,
+    "current": 12.5,
+    "temperature": 29.0,
+    "drivingEfficiency": 15.2,
+    "speed": 60.0,
+    "timestamp": null
+  },
+  {
+    "vehicleId": "default-vehicle",
+    "soc": 68.5,
+    "soh": 98.0,
+    "voltage": 400.2,
+    "current": 12.5,
+    "temperature": 29.0,
+    "drivingEfficiency": 15.2,
+    "speed": 60.0,
+    "timestamp": null
+  }
+]

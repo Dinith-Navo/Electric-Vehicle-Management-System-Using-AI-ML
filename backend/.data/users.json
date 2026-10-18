@@ -1,0 +1,496 @@
+{
+  "8d16047f-829a-427b-a930-90058b9cd889": {
+    "name": "Kavinda Perera",
+    "email": "real_device_driver_11472@srilanka-ev.lk",
+    "password": "$2b$12$.QzDuf.TnjcBjgQ6GP8OouuyVZsNj00seAwN1ab5jO51WnDvA6O1O",
+    "role": "customer",
+    "_id": "8d16047f-829a-427b-a930-90058b9cd889",
+    "id": "8d16047f-829a-427b-a930-90058b9cd889"
+  },
+  "110cc269-c43c-46bc-99c7-c09608e4f6b5": {
+    "name": "Kavinda Perera",
+    "email": "real_device_driver_20388@srilanka-ev.lk",
+    "password": "$2b$12$.d1.HTcnQnMRNs1gdDTP8u7sXiaT9iW1l5L1QicqiijQRa8xvbluO",
+    "role": "customer",
+    "_id": "110cc269-c43c-46bc-99c7-c09608e4f6b5",
+    "id": "110cc269-c43c-46bc-99c7-c09608e4f6b5"
+  },
+  "usr_restart_test_99": {
+    "id": "usr_restart_test_99",
+    "email": "restart_test@srilanka.lk",
+    "name": "Restart Tester",
+    "role": "customer"
+  },
+  "0b5b904d-c139-43af-b3cb-56810f7f2be5": {
+    "name": "Jane Customer",
+    "email": "customer_29f2c9@smartev.lk",
+    "password": "$2b$12$7Wq/B6Uu6XdYeLZ9WrbiReawJhJwGJGjLs0yPDnQUENSf9o1dpu3K",
+    "role": "customer",
+    "id": "0b5b904d-c139-43af-b3cb-56810f7f2be5",
+    "_id": "0b5b904d-c139-43af-b3cb-56810f7f2be5"
+  },
+  "13948b5f-6ed3-4b8a-86cb-f6f24751e039": {
+    "name": "Refresh Tester",
+    "email": "refresh_user_37988a19@smart-ev.lk",
+    "password": "$2b$12$j39rxRj8G4x4pCFsk2Samu9FSwWcDAXtjq8VNx1qmnwbuos8WeCe6",
+    "role": "customer",
+    "id": "13948b5f-6ed3-4b8a-86cb-f6f24751e039",
+    "_id": "13948b5f-6ed3-4b8a-86cb-f6f24751e039"
+  },
+  "485e098c-3498-4ce7-989d-4eb4e17fa0b2": {
+    "name": "Vehicle Owner",
+    "email": "veh_owner_41a7fcc1@smart-ev.lk",
+    "password": "$2b$12$tAzriYJEAqFobDjQuDLTa.5w/NBvXwCx9/owiB2ALCkebvsaz3PVa",
+    "role": "customer",
+    "id": "485e098c-3498-4ce7-989d-4eb4e17fa0b2",
+    "_id": "485e098c-3498-4ce7-989d-4eb4e17fa0b2"
+  },
+  "b3274b16-a5dc-4d6e-a36e-879277966986": {
+    "name": "Jane Customer",
+    "email": "customer_85ce3d@smartev.lk",
+    "password": "$2b$12$UjV2pTODg6SsEa/mdQKz6eUVFIi/L6hY1VwtwFzAgIko/2qtB1s8K",
+    "role": "customer",
+    "id": "b3274b16-a5dc-4d6e-a36e-879277966986",
+    "_id": "b3274b16-a5dc-4d6e-a36e-879277966986"
+  },
+  "43c7a5ab-8d9c-4be0-997e-8b7a002ea760": {
+    "name": "Refresh Tester",
+    "email": "refresh_user_962f612d@smart-ev.lk",
+    "password": "$2b$12$UgM.M8y/gNX6AB69McF.wOO7llyADbAsKYp.iTNrVc1EKNeHl5HEu",
+    "role": "customer",
+    "id": "43c7a5ab-8d9c-4be0-997e-8b7a002ea760",
+    "_id": "43c7a5ab-8d9c-4be0-997e-8b7a002ea760"
+  },
+  "67251780-af7f-4797-b99f-36e74e962059": {
+    "name": "Vehicle Owner",
+    "email": "veh_owner_721063d4@smart-ev.lk",
+    "password": "$2b$12$DYxN9mb7KPYey/EGWw6t1OWnrAa8CT4MRrMO2VBZ6PNTVyjeF.n6G",
+    "role": "customer",
+    "id": "67251780-af7f-4797-b99f-36e74e962059",
+    "_id": "67251780-af7f-4797-b99f-36e74e962059"
+  },
+  "8c117748-3c05-4309-8185-61a55afbd38d": {
+    "name": "Jane Customer",
+    "email": "customer_ae4c3a@smartev.lk",
+    "password": "$2b$12$UdBIoBPCaLfkHbyzkWb/bO4GiBMgO/hBda4Wr.NWZHbU05V.Bhl7i",
+    "role": "customer",
+    "id": "8c117748-3c05-4309-8185-61a55afbd38d",
+    "_id": "8c117748-3c05-4309-8185-61a55afbd38d"
+  },
+  "94f558b9-5670-4026-8671-9acf42d14758": {
+    "name": "Refresh Tester",
+    "email": "refresh_user_022a3116@smart-ev.lk",
+    "password": "$2b$12$vEiHU/3or.VE/nOEUkqh5eWiTogex/bv8td8JkwaXQnLbJny6wUme",
+    "role": "customer",
+    "id": "94f558b9-5670-4026-8671-9acf42d14758",
+    "_id": "94f558b9-5670-4026-8671-9acf42d14758"
+  },
+  "f099f9a3-34f5-4463-85ad-425da209405c": {
+    "name": "Vehicle Owner",
+    "email": "veh_owner_98576cd8@smart-ev.lk",
+    "password": "$2b$12$1aZIElWmir/7FxlDrHs8guifTGp3clup06Ijd7FoID53kifawO92.",
+    "role": "customer",
+    "id": "f099f9a3-34f5-4463-85ad-425da209405c",
+    "_id": "f099f9a3-34f5-4463-85ad-425da209405c"
+  },
+  "ccfee330-ae88-4b3b-8fdd-7dc3dd0c3f0b": {
+    "name": "Kavinda Perera",
+    "email": "real_device_driver_8396@srilanka-ev.lk",
+    "password": "$2b$12$OIg0jY4piIMU5x8I8Y2P9eKXMHR66qlIXII4I5QvhvgmDu3xW/U8.",
+    "role": "customer",
+    "_id": "ccfee330-ae88-4b3b-8fdd-7dc3dd0c3f0b",
+    "id": "ccfee330-ae88-4b3b-8fdd-7dc3dd0c3f0b"
+  },
+  "e4857371-8bac-4b0d-aa68-6291cc7754c6": {
+    "name": "Kavinda Perera",
+    "email": "real_device_driver_10776@srilanka-ev.lk",
+    "password": "$2b$12$XHTRvdKIZ.fV1D0PN9aNcu1/fxrnHPbZ2bw4wSjnpPUr/oywRkquK",
+    "role": "customer",
+    "_id": "e4857371-8bac-4b0d-aa68-6291cc7754c6",
+    "id": "e4857371-8bac-4b0d-aa68-6291cc7754c6"
+  },
+  "675a3203-53c8-4e42-af44-68b6c0b70f6d": {
+    "name": "Jane Customer",
+    "email": "customer_c79009@smartev.lk",
+    "password": "$2b$12$DBCkXk7yi63sWH90vlWGRemt6pOFw1aAOl8g/l1LaA9y04KMR1CnK",
+    "role": "customer",
+    "id": "675a3203-53c8-4e42-af44-68b6c0b70f6d",
+    "_id": "675a3203-53c8-4e42-af44-68b6c0b70f6d"
+  },
+  "b1442586-af40-44e5-baaa-2fafa9bf448c": {
+    "name": "Refresh Tester",
+    "email": "refresh_user_e06a31ce@smart-ev.lk",
+    "password": "$2b$12$PFZZ/aooAfcmKVWLSfXYAOgeCDJWcbFO8myeuOiH7jctrqyvF5zyy",
+    "role": "customer",
+    "id": "b1442586-af40-44e5-baaa-2fafa9bf448c",
+    "_id": "b1442586-af40-44e5-baaa-2fafa9bf448c"
+  },
+  "73609030-bb04-455f-a2a4-ce255d0b796e": {
+    "name": "Vehicle Owner",
+    "email": "veh_owner_3c0951dd@smart-ev.lk",
+    "password": "$2b$12$8U4uRH217biduBR/aiCQFO.SYx/6HODRzO9pNeX7IhABVBdoYwkoW",
+    "role": "customer",
+    "id": "73609030-bb04-455f-a2a4-ce255d0b796e",
+    "_id": "73609030-bb04-455f-a2a4-ce255d0b796e"
+  },
+  "0ef7e108-c32a-4f42-833f-79c3dd6293fb": {
+    "name": "Kavinda Perera",
+    "email": "real_device_driver_10324@srilanka-ev.lk",
+    "password": "$2b$12$/xfPaJk0mp/Y4t0i3Prj5.Q.sz7reLaVicyA3Ag/J.e99WFkkYvka",
+    "role": "customer",
+    "_id": "0ef7e108-c32a-4f42-833f-79c3dd6293fb",
+    "id": "0ef7e108-c32a-4f42-833f-79c3dd6293fb"
+  },
+  "fdf2b2c3-d1d3-4eec-813b-9113fdc6fe22": {
+    "name": "Nisal Fernando",
+    "email": "live_test_pilot@srilanka-ev.lk",
+    "password": "$2b$12$.21jA12lE9hU8iH16UQiRuJYpx11bUU7859x2H1EIDdOr.AF7wBYm",
+    "role": "customer",
+    "_id": "fdf2b2c3-d1d3-4eec-813b-9113fdc6fe22",
+    "id": "fdf2b2c3-d1d3-4eec-813b-9113fdc6fe22"
+  },
+  "29451bd0-2e94-49f0-a175-ae4b948a4a19": {
+    "name": "Nisal Fernando",
+    "email": "journey_pilot_test@srilanka-ev.lk",
+    "password": "$2b$12$whGR35XP5/.spD01c4GceOTZshWPB9ucofxusr7/ZZoLyCBL/Wk1W",
+    "role": "customer",
+    "_id": "29451bd0-2e94-49f0-a175-ae4b948a4a19",
+    "id": "29451bd0-2e94-49f0-a175-ae4b948a4a19"
+  },
+  "8cde0aae-e5cd-44d2-a243-eaa1f50e9ab8": {
+    "name": "Nisal Fernando",
+    "email": "journey_pilot_test2@srilanka-ev.lk",
+    "password": "$2b$12$7aYETejz2uyUlqEv1hawruxiG/iorM/hUfehi.TwG/qLz4.e9KufO",
+    "role": "customer",
+    "_id": "8cde0aae-e5cd-44d2-a243-eaa1f50e9ab8",
+    "id": "8cde0aae-e5cd-44d2-a243-eaa1f50e9ab8"
+  },
+  "3644b07a-e0b1-44fa-929d-73d62caabd10": {
+    "name": "Nisal Fernando",
+    "email": "journey_pilot_test3@srilanka-ev.lk",
+    "password": "$2b$12$4DUND.bwo.e09mbbHIPh9.9b.AErwJ1Tk2e.cR0./jU46l7XC5bpu",
+    "role": "customer",
+    "_id": "3644b07a-e0b1-44fa-929d-73d62caabd10",
+    "id": "3644b07a-e0b1-44fa-929d-73d62caabd10"
+  },
+  "5f156171-1b6d-4b4c-ae6a-a99ae5ebd16f": {
+    "name": "Kasun Silva",
+    "email": "kasun_owner@chargenet.lk",
+    "password": "$2b$12$cwJt8.Grntgcm.PN58um3e.8.5bLgL.3d9mSmCHUVXoF3BB/PfRTO",
+    "role": "station_owner",
+    "_id": "5f156171-1b6d-4b4c-ae6a-a99ae5ebd16f",
+    "id": "5f156171-1b6d-4b4c-ae6a-a99ae5ebd16f"
+  },
+  "b7d74c4d-b48a-436d-81e0-48783c270df7": {
+    "name": "Jane Customer",
+    "email": "customer_312d49@smartev.lk",
+    "password": "$2b$12$8UiSrMsxvV89/VqA6E.Q1..05nHE1uRqxPDls6YBeBMgbrBhJgTr6",
+    "role": "customer",
+    "id": "b7d74c4d-b48a-436d-81e0-48783c270df7",
+    "_id": "b7d74c4d-b48a-436d-81e0-48783c270df7"
+  },
+  "8e21050e-7d0f-4e25-a639-2f9c5adcf39a": {
+    "name": "Refresh Tester",
+    "email": "refresh_user_bbff34ab@smart-ev.lk",
+    "password": "$2b$12$jQgc4WbmfReS90t.thpKju1W8GlUkgZCvDWBEOc9i3Klvd52.nL0S",
+    "role": "customer",
+    "id": "8e21050e-7d0f-4e25-a639-2f9c5adcf39a",
+    "_id": "8e21050e-7d0f-4e25-a639-2f9c5adcf39a"
+  },
+  "2f7176da-b263-4f97-ab3f-ad562fc49272": {
+    "name": "Vehicle Owner",
+    "email": "veh_owner_760217af@smart-ev.lk",
+    "password": "$2b$12$8df7.lAoIFrh1zL4kHpe0O.dJ28IiGnCoX3g16bRKeYHB8cVzoDoq",
+    "role": "customer",
+    "id": "2f7176da-b263-4f97-ab3f-ad562fc49272",
+    "_id": "2f7176da-b263-4f97-ab3f-ad562fc49272"
+  },
+  "18c520c8-364e-4474-a690-6e1c086fbcbc": {
+    "name": "Jane Customer",
+    "email": "customer_9d6453@smartev.lk",
+    "password": "$2b$12$qln/gtF4tbhGoeP6sKrB1e60sGKfHDvtH2QPjR2jrgtE87ZcZ9NTq",
+    "role": "customer",
+    "id": "18c520c8-364e-4474-a690-6e1c086fbcbc",
+    "_id": "18c520c8-364e-4474-a690-6e1c086fbcbc"
+  },
+  "44b45a60-5ee2-4151-a15c-1e1320d9b5c8": {
+    "name": "Refresh Tester",
+    "email": "refresh_user_65f2a6af@smart-ev.lk",
+    "password": "$2b$12$E.rhZPzyqkmJTb7N4NuOfOv1L2LAVM7hyDAhsZIjCVVMYicWErcU2",
+    "role": "customer",
+    "id": "44b45a60-5ee2-4151-a15c-1e1320d9b5c8",
+    "_id": "44b45a60-5ee2-4151-a15c-1e1320d9b5c8"
+  },
+  "c1546ff0-0eac-46cd-9414-452073234227": {
+    "name": "Vehicle Owner",
+    "email": "veh_owner_494f7e96@smart-ev.lk",
+    "password": "$2b$12$RRgNYMff1Xa5muyixwi4Nuuv5S0GUF8AbffPj7f6VGarIwyfzzcOe",
+    "role": "customer",
+    "id": "c1546ff0-0eac-46cd-9414-452073234227",
+    "_id": "c1546ff0-0eac-46cd-9414-452073234227"
+  },
+  "3ae3ee90-c202-48f6-930a-b62c072e024e": {
+    "name": "Jane Customer",
+    "email": "customer_ef6f0b@smartev.lk",
+    "password": "$2b$12$ET4WG2QB/vzs9jpyZAgi6.wn9bh63qg8ob1pWW.qcEs.JTdmVCp/O",
+    "role": "customer",
+    "id": "3ae3ee90-c202-48f6-930a-b62c072e024e",
+    "_id": "3ae3ee90-c202-48f6-930a-b62c072e024e"
+  },
+  "57c16e99-806b-4ddd-b2bc-dbc68fd0eece": {
+    "name": "Refresh Tester",
+    "email": "refresh_user_ccf54663@smart-ev.lk",
+    "password": "$2b$12$0zgYmwvYOYsOXJgMADzqLeVWROKclg8.CQUBEIUC45mJVndbJRe1.",
+    "role": "customer",
+    "id": "57c16e99-806b-4ddd-b2bc-dbc68fd0eece",
+    "_id": "57c16e99-806b-4ddd-b2bc-dbc68fd0eece"
+  },
+  "eb015f86-5d74-4bec-9130-789faa1295dd": {
+    "name": "Vehicle Owner",
+    "email": "veh_owner_075e3434@smart-ev.lk",
+    "password": "$2b$12$uay1ZvruR12y6bk6WMTFIOS2HJfbHMaivgimuUyrnNaqwhoLnV6du",
+    "role": "customer",
+    "id": "eb015f86-5d74-4bec-9130-789faa1295dd",
+    "_id": "eb015f86-5d74-4bec-9130-789faa1295dd"
+  },
+  "da0fd429-2457-4ce9-8caf-027dff3ef6bb": {
+    "name": "Jane Customer",
+    "email": "customer_b0e5f8@smartev.lk",
+    "password": "$2b$12$xaLF/S63RLSZaSSArd/Wv.0V0ymWAzrm1SWf4rj7qUWHgtAcUyyzW",
+    "role": "customer",
+    "id": "da0fd429-2457-4ce9-8caf-027dff3ef6bb",
+    "_id": "da0fd429-2457-4ce9-8caf-027dff3ef6bb"
+  },
+  "84c3ce7b-5910-4279-81a9-6ef9cc7cbcd0": {
+    "name": "Refresh Tester",
+    "email": "refresh_user_f837009f@smart-ev.lk",
+    "password": "$2b$12$0W.pWsf6SyFNgMyHF09RP.jExIIVzCEnlacHjLT2Xq1uG8E6gE6ZG",
+    "role": "customer",
+    "id": "84c3ce7b-5910-4279-81a9-6ef9cc7cbcd0",
+    "_id": "84c3ce7b-5910-4279-81a9-6ef9cc7cbcd0"
+  },
+  "b728ea0b-2698-4716-addc-01caafaad87b": {
+    "name": "Vehicle Owner",
+    "email": "veh_owner_432a6099@smart-ev.lk",
+    "password": "$2b$12$O934.Gn8BaBEBAtkBmAbV.7MeE3LDzN9lRz22tq5Hz2Cvrzn9HdHq",
+    "role": "customer",
+    "id": "b728ea0b-2698-4716-addc-01caafaad87b",
+    "_id": "b728ea0b-2698-4716-addc-01caafaad87b"
+  },
+  "97be0837-47d0-431e-aef7-b5a6da34249c": {
+    "name": "Jane Customer",
+    "email": "customer_c3e4e6@smartev.lk",
+    "password": "$2b$12$CSbrNqFt1gE3bYrXGppMT.GCAJ6CnpKW.oSR0TaJr5W7ttiZZRkT6",
+    "role": "customer",
+    "id": "97be0837-47d0-431e-aef7-b5a6da34249c",
+    "_id": "97be0837-47d0-431e-aef7-b5a6da34249c"
+  },
+  "225a0b75-9d77-46b8-bbbf-e080e7f3f831": {
+    "name": "Refresh Tester",
+    "email": "refresh_user_41d08858@smart-ev.lk",
+    "password": "$2b$12$n/hc3YrrSf0LrWNikOdfgegRzivJlR/u3RzhuwXO.OudIZK5/FuGW",
+    "role": "customer",
+    "id": "225a0b75-9d77-46b8-bbbf-e080e7f3f831",
+    "_id": "225a0b75-9d77-46b8-bbbf-e080e7f3f831"
+  },
+  "8d0c52d1-c500-4123-8604-892f447589ba": {
+    "name": "Vehicle Owner",
+    "email": "veh_owner_ebce11d1@smart-ev.lk",
+    "password": "$2b$12$fnU.//yQaPCtwtFKgsgIguJxvOlg8iq.RBnrMZQNima.2jt7QEnc.",
+    "role": "customer",
+    "id": "8d0c52d1-c500-4123-8604-892f447589ba",
+    "_id": "8d0c52d1-c500-4123-8604-892f447589ba"
+  },
+  "b26bd448-24c4-487c-90bf-ad50d8213e0e": {
+    "name": "Jane Customer",
+    "email": "customer_f4e005@smartev.lk",
+    "password": "$2b$12$aNDfGskTSW1T.nJlmQTqNuK4CihvZNTjeqE3b1ldgmwxuhyso7Gv.",
+    "role": "customer",
+    "id": "b26bd448-24c4-487c-90bf-ad50d8213e0e",
+    "_id": "b26bd448-24c4-487c-90bf-ad50d8213e0e"
+  },
+  "8c65f2d3-6482-4601-881b-59aad1e7b823": {
+    "name": "Refresh Tester",
+    "email": "refresh_user_38401e3e@smart-ev.lk",
+    "password": "$2b$12$udp5i7zXlX8zG4IxmUHkA..1gX.mvJIbQSFMfSfQJGnz.8rJHZNYm",
+    "role": "customer",
+    "id": "8c65f2d3-6482-4601-881b-59aad1e7b823",
+    "_id": "8c65f2d3-6482-4601-881b-59aad1e7b823"
+  },
+  "a4f640d9-3741-4575-b94b-53945bb9c49b": {
+    "name": "Vehicle Owner",
+    "email": "veh_owner_092eb831@smart-ev.lk",
+    "password": "$2b$12$UOBGvDgcS03AqnBrX2NWB.AzSsg1k4wsj.21hET7I9pX.6rOYVrjK",
+    "role": "customer",
+    "id": "a4f640d9-3741-4575-b94b-53945bb9c49b",
+    "_id": "a4f640d9-3741-4575-b94b-53945bb9c49b"
+  },
+  "b75e644c-2954-437a-b5e1-d43407a23a4c": {
+    "name": "Jane Customer",
+    "email": "customer_705040@smartev.lk",
+    "password": "$2b$12$hEr.V3a3aprEDxUpg7J1Ae7WIpzs9Owj7QONpNp1oiU.diVKoH4uq",
+    "role": "customer",
+    "id": "b75e644c-2954-437a-b5e1-d43407a23a4c",
+    "_id": "b75e644c-2954-437a-b5e1-d43407a23a4c"
+  },
+  "c111ba0f-f5a0-40ed-b845-5688bb22b6b9": {
+    "name": "Refresh Tester",
+    "email": "refresh_user_a94029f7@smart-ev.lk",
+    "password": "$2b$12$16faAtat/JhgaoEi4sTEdO.EnFJyO8NOTL6sDsJGXNZgde0VJQUKq",
+    "role": "customer",
+    "id": "c111ba0f-f5a0-40ed-b845-5688bb22b6b9",
+    "_id": "c111ba0f-f5a0-40ed-b845-5688bb22b6b9"
+  },
+  "3f436ca8-4029-4dc0-94f9-ad1f0d31d5a6": {
+    "name": "Vehicle Owner",
+    "email": "veh_owner_b4058bea@smart-ev.lk",
+    "password": "$2b$12$UjfMI.WSlJxUJ3.e./kx6eOV947WhTZe/rDjKJBn1gfbzuHpduq9K",
+    "role": "customer",
+    "id": "3f436ca8-4029-4dc0-94f9-ad1f0d31d5a6",
+    "_id": "3f436ca8-4029-4dc0-94f9-ad1f0d31d5a6"
+  },
+  "9825257c-75ff-4312-97a3-a104aa5b9b48": {
+    "name": "Jane Customer",
+    "email": "customer_1cce9c@smartev.lk",
+    "password": "$2b$12$n7GyVK4OszIFfd/q3F7szeoE9iAn3nQH9fU7CwXAae6OgX47Zlu7q",
+    "role": "customer",
+    "id": "9825257c-75ff-4312-97a3-a104aa5b9b48",
+    "_id": "9825257c-75ff-4312-97a3-a104aa5b9b48"
+  },
+  "fc299234-c5cc-4373-ba38-dd9c27677aa3": {
+    "name": "Refresh Tester",
+    "email": "refresh_user_071825ab@smart-ev.lk",
+    "password": "$2b$12$VRMpT7vOPVngjrQ7DZIqyekxd4rBVM6dvJUF4bPXBD9Rx7I30mMZm",
+    "role": "customer",
+    "id": "fc299234-c5cc-4373-ba38-dd9c27677aa3",
+    "_id": "fc299234-c5cc-4373-ba38-dd9c27677aa3"
+  },
+  "8584c8fa-cc2b-4431-a170-75fc780ed7f9": {
+    "name": "Vehicle Owner",
+    "email": "veh_owner_fc411847@smart-ev.lk",
+    "password": "$2b$12$/ggsC.T6C4XzSDJqulSMuuDz7Rry9050m9w.v3yXL/ARx6Rbmlwr2",
+    "role": "customer",
+    "id": "8584c8fa-cc2b-4431-a170-75fc780ed7f9",
+    "_id": "8584c8fa-cc2b-4431-a170-75fc780ed7f9"
+  },
+  "ab18750f-3025-409c-84c8-1fc6bc8aaad7": {
+    "name": "Jane Customer",
+    "email": "customer_9d49b9@smartev.lk",
+    "password": "$2b$12$jrKAWiKa/65Pi.wORyH7HeGyZPxuXl.lVvIOZyg0PAl1HlC8sfDBu",
+    "role": "customer",
+    "id": "ab18750f-3025-409c-84c8-1fc6bc8aaad7",
+    "_id": "ab18750f-3025-409c-84c8-1fc6bc8aaad7"
+  },
+  "7e3d2d02-a4ff-46fe-a804-956b9a3118c5": {
+    "name": "Refresh Tester",
+    "email": "refresh_user_475821e3@smart-ev.lk",
+    "password": "$2b$12$rzo6j0tiRlDcdX8OKOJ2fu2QXaGmxqAgzi3.jA9FwNQLHIQJ.ygaW",
+    "role": "customer",
+    "id": "7e3d2d02-a4ff-46fe-a804-956b9a3118c5",
+    "_id": "7e3d2d02-a4ff-46fe-a804-956b9a3118c5"
+  },
+  "291274e5-0dd6-49b2-896d-1bc0c25095d5": {
+    "name": "Vehicle Owner",
+    "email": "veh_owner_1cef74fa@smart-ev.lk",
+    "password": "$2b$12$ly9R2OYgUz9LPH65XBlx6OwJMeRHgU0sfX9vwwcWayjZlPY1JHzfC",
+    "role": "customer",
+    "id": "291274e5-0dd6-49b2-896d-1bc0c25095d5",
+    "_id": "291274e5-0dd6-49b2-896d-1bc0c25095d5"
+  },
+  "5bb57846-6c97-4d66-a43a-ea67ba46f905": {
+    "name": "Jane Customer",
+    "email": "customer_c8cdb8@smartev.lk",
+    "password": "$2b$12$FA7ztdCWYG7CKsxl2DyEh.JMoRbH5F4oxYLYeTu.iV5.zSy32bdWy",
+    "role": "customer",
+    "id": "5bb57846-6c97-4d66-a43a-ea67ba46f905",
+    "_id": "5bb57846-6c97-4d66-a43a-ea67ba46f905"
+  },
+  "c45a3bf3-49ed-4227-9f4f-afa94ecb9ab0": {
+    "name": "Refresh Tester",
+    "email": "refresh_user_26e04a37@smart-ev.lk",
+    "password": "$2b$12$i2HVSf6c5TcyVHoHPoL8xOmh2ejeLJiuA5ADbr4ldC7/7V9cWwvqG",
+    "role": "customer",
+    "id": "c45a3bf3-49ed-4227-9f4f-afa94ecb9ab0",
+    "_id": "c45a3bf3-49ed-4227-9f4f-afa94ecb9ab0"
+  },
+  "cddca17b-3796-4b1c-a331-4ab85717201a": {
+    "name": "Vehicle Owner",
+    "email": "veh_owner_6a782282@smart-ev.lk",
+    "password": "$2b$12$lsxkc3o9XoJN0UTCmTNI2u83svmIvtmly059wAQBJknAzsRlkfjvS",
+    "role": "customer",
+    "id": "cddca17b-3796-4b1c-a331-4ab85717201a",
+    "_id": "cddca17b-3796-4b1c-a331-4ab85717201a"
+  },
+  "3620d555-a4bf-4f54-9cfa-43405e183139": {
+    "name": "Jane Customer",
+    "email": "customer_d8eddd@smartev.lk",
+    "password": "$2b$12$QPIoMLdnJTA28agTpG5bwOBVS9Bk1hCWlw0WV1xhHVLZfi3INDrLC",
+    "role": "customer",
+    "id": "3620d555-a4bf-4f54-9cfa-43405e183139",
+    "_id": "3620d555-a4bf-4f54-9cfa-43405e183139"
+  },
+  "9144ce7c-ce68-4673-9f55-910d8db61424": {
+    "name": "Refresh Tester",
+    "email": "refresh_user_5640d48c@smart-ev.lk",
+    "password": "$2b$12$nYp7sIP9Jb3fmSXqgWLQWuDpjqblv9TAVQ0.NRStOoF/nu4iDuifa",
+    "role": "customer",
+    "id": "9144ce7c-ce68-4673-9f55-910d8db61424",
+    "_id": "9144ce7c-ce68-4673-9f55-910d8db61424"
+  },
+  "98304c04-4044-4e0c-ac82-cb9c0bc3288b": {
+    "name": "Vehicle Owner",
+    "email": "veh_owner_db769013@smart-ev.lk",
+    "password": "$2b$12$dlrmN./wszhaGqNW37U9kulmB8WUz7uKFUdB10sFkBq1ZhPDxARP.",
+    "role": "customer",
+    "id": "98304c04-4044-4e0c-ac82-cb9c0bc3288b",
+    "_id": "98304c04-4044-4e0c-ac82-cb9c0bc3288b"
+  },
+  "c00b161f-0230-4370-a4ef-511d3843e5b1": {
+    "name": "Jane Customer",
+    "email": "customer_f395d7@smartev.lk",
+    "password": "$2b$12$iZ6Im0wtFBSG.yq/J1QfF.8V4Y9GXamfp8NKVdBlMoRQ7dEP/kmdm",
+    "role": "customer",
+    "id": "c00b161f-0230-4370-a4ef-511d3843e5b1",
+    "_id": "c00b161f-0230-4370-a4ef-511d3843e5b1"
+  },
+  "dfb1f11f-d89e-4482-b223-fcd2c93138e8": {
+    "name": "Refresh Tester",
+    "email": "refresh_user_a155334f@smart-ev.lk",
+    "password": "$2b$12$bu7w26COfTmMY/KVHPlnseTLdIAwrtQ5CMBWm/HL4k.bVng4FeLWy",
+    "role": "customer",
+    "id": "dfb1f11f-d89e-4482-b223-fcd2c93138e8",
+    "_id": "dfb1f11f-d89e-4482-b223-fcd2c93138e8"
+  },
+  "88561a52-5306-4413-a3f2-3b81c73bfaa1": {
+    "name": "Vehicle Owner",
+    "email": "veh_owner_2d6b67aa@smart-ev.lk",
+    "password": "$2b$12$AzfguGS7S0M/DRF53NqmquPw0Uv.nFnVPBbBKjgJyXNqN3b9PCzg.",
+    "role": "customer",
+    "id": "88561a52-5306-4413-a3f2-3b81c73bfaa1",
+    "_id": "88561a52-5306-4413-a3f2-3b81c73bfaa1"
+  },
+  "cbe50f5c-f20c-49b3-9beb-b077a37c7339": {
+    "name": "Test Driver",
+    "email": "testdriver@smartev.lk",
+    "password": "$2b$12$NOpbDpl.ni3dJf1EL33PquZC26pcUuTRB4PKHPw7qan9LSslVEB9y",
+    "role": "customer",
+    "_id": "cbe50f5c-f20c-49b3-9beb-b077a37c7339",
+    "id": "cbe50f5c-f20c-49b3-9beb-b077a37c7339"
+  },
+  "de25fe81-d418-472b-b8a3-26f21328c53f": {
+    "name": "Isuru Edirisinghe",
+    "email": "isuru@gmail.com",
+    "password": "$2b$12$rq5StAjF2VyAfWfEAKVC4O1gWcFwImyH/u2ADQ9rjI2x9E/xNdnrK",
+    "role": "customer",
+    "_id": "de25fe81-d418-472b-b8a3-26f21328c53f",
+    "id": "de25fe81-d418-472b-b8a3-26f21328c53f"
+  },
+  "c193bd91-2541-494a-9411-efcceeaa3e88": {
+    "name": "Isuru Udara",
+    "email": "isuru2001@gmai.com",
+    "password": "$2b$12$.dCIRZots7Fr.uK03rR9P.V2.8zNv5OFk.m4VNK9kN6J7eEQCPjeS",
+    "role": "customer",
+    "_id": "c193bd91-2541-494a-9411-efcceeaa3e88",
+    "id": "c193bd91-2541-494a-9411-efcceeaa3e88"
+  }
+}

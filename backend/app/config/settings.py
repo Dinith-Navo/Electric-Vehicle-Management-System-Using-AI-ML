@@ -1,0 +1,15 @@
+from app.core.config import (
+    BASE_DIR,
+    FIREBASE_CREDENTIALS,
+    FIREBASE_CREDENTIAL_PATH,
+    MODEL_VERSION,
+    MODEL_DIR
+)
+
+__all__ = [
+    "BASE_DIR",
+    "FIREBASE_CREDENTIALS",
+    "FIREBASE_CREDENTIAL_PATH",
+    "MODEL_VERSION",
+    "MODEL_DIR"
+]

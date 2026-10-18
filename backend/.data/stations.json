@@ -1,0 +1,2106 @@
+{
+  "CS-CMB-001": {
+    "stationId": "CS-CMB-001",
+    "name": "Colombo Fort Supercharge Hub",
+    "operator": "ChargeNET Demo",
+    "ownerId": "aafa22d3-db0c-40f6-b507-ad38dc34c228",
+    "enrollmentSecretHash": "$2b$12$Bs1njXbMx96ZXo2XNg.wf.3MLTs9wlvNzB9PnZ0TcrGgeIc6qkDa6",
+    "location": {
+      "address": "Lotus Road, Colombo 01",
+      "city": "Colombo",
+      "latitude": 6.9344,
+      "longitude": 79.8428
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 180,
+        "total": 4,
+        "available": 3,
+        "priceLkrPerKwh": 125,
+        "pricePerKWh": 0.4
+      },
+      {
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "total": 2,
+        "available": 1,
+        "priceLkrPerKwh": 100,
+        "pricePerKWh": 0.32
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-CMB-001-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "available",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125,
+        "lastUpdated": "2026-10-17T14:56:00.920763+00:00"
+      },
+      {
+        "connectorId": "CS-CMB-001-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "available",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125,
+        "lastUpdated": "2026-10-17T14:56:00.933529+00:00"
+      },
+      {
+        "connectorId": "CS-CMB-001-CCS2-3",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "available",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125
+      },
+      {
+        "connectorId": "CS-CMB-001-CCS2-4",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "occupied",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125
+      },
+      {
+        "connectorId": "CS-CMB-001-CHAdeMO-1",
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "status": "available",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-CMB-001-CHAdeMO-2",
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "status": "occupied",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-CMB-001-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-CMB-001-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      }
+    ],
+    "rating": 4.8,
+    "totalReviews": 56,
+    "isOperational": true,
+    "amenities": [
+      "Restroom",
+      "Coffee Shop",
+      "Free WiFi",
+      "24/7 Security"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache",
+    "distanceKm": 2.19,
+    "recommendationReason": "\ud83d\udccd Nearest hub with open stalls (2.2 km) \u2022 5/8 free",
+    "suitabilityScore": 86.0
+  },
+  "CS-KOL-002": {
+    "stationId": "CS-KOL-002",
+    "name": "Kollupitiya Marine Drive Express",
+    "operator": "Vega Demo Network",
+    "ownerId": "38fd4be5-2009-4e4b-9f89-d2210421c077",
+    "enrollmentSecretHash": "$2b$12$d/e0KHA1TUKDhHTkAdeuRej5Uyvt7MVnit1dKk0PehcYymeiJAez2",
+    "location": {
+      "address": "Marine Drive, Kollupitiya, Colombo 03",
+      "city": "Colombo",
+      "latitude": 6.9015,
+      "longitude": 79.851
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 120,
+        "total": 2,
+        "available": 1,
+        "priceLkrPerKwh": 112.5,
+        "pricePerKWh": 0.36
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 1,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-KOL-002-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-KOL-002-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "occupied",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-KOL-002-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-KOL-002-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "occupied",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      }
+    ],
+    "rating": 4.6,
+    "totalReviews": 34,
+    "isOperational": true,
+    "amenities": [
+      "Ocean View Cafe",
+      "Restroom"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache",
+    "distanceKm": 3.06,
+    "recommendationReason": "\u26a1 Ultra-fast 120 kW charging \u2022 2/4 stalls ready \u2022 3.1 km away",
+    "suitabilityScore": 79.3
+  },
+  "CS-RAJ-003": {
+    "stationId": "CS-RAJ-003",
+    "name": "Rajagiriya EcoCharge Center",
+    "operator": "LECO EcoCharge Demo",
+    "ownerId": "6b139f13-5757-412e-b04a-400630e2fae2",
+    "enrollmentSecretHash": "$2b$12$3Nns/A604RiHoqtDVgO2G.eZwTDSVjEX5tphUmqtxNRKJbgDFekjG",
+    "location": {
+      "address": "Parliament Road, Rajagiriya",
+      "city": "Sri Jayawardenepura Kotte",
+      "latitude": 6.909,
+      "longitude": 79.894
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 175.0,
+        "total": 3,
+        "available": 1,
+        "priceLkrPerKwh": 112.5,
+        "pricePerKWh": 0.42
+      },
+      {
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "total": 1,
+        "available": 1,
+        "priceLkrPerKwh": 100,
+        "pricePerKWh": 0.32
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-RAJ-003-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 175.0,
+        "status": "faulted",
+        "pricePerKWh": 0.42,
+        "priceLkrPerKwh": 112.5,
+        "lastUpdated": "2026-10-17T14:56:00.066619+00:00"
+      },
+      {
+        "connectorId": "CS-RAJ-003-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-RAJ-003-CCS2-3",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "occupied",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-RAJ-003-CHAdeMO-1",
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "status": "available",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-RAJ-003-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-RAJ-003-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      }
+    ],
+    "rating": 4.5,
+    "totalReviews": 28,
+    "isOperational": true,
+    "amenities": [
+      "Supermarket",
+      "Restroom",
+      "ATM"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache",
+    "distanceKm": 4.14,
+    "recommendationReason": "\u26a1 Ultra-fast 175 kW charging \u2022 4/6 stalls ready \u2022 4.1 km away",
+    "suitabilityScore": 85.8
+  },
+  "CS-BAT-007": {
+    "stationId": "CS-BAT-007",
+    "name": "Battaramulla Administrative Fast Charger",
+    "operator": "CEB Grid Demo",
+    "ownerId": null,
+    "enrollmentSecretHash": "$2b$12$Bs1njXbMx96ZXo2XNg.wf.3MLTs9wlvNzB9PnZ0TcrGgeIc6qkDa6",
+    "location": {
+      "address": "Sethsiripaya Complex, Denzil Kobbekaduwa Mawatha, Battaramulla",
+      "city": "Battaramulla",
+      "latitude": 6.8995,
+      "longitude": 79.9168
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 120,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 112.5,
+        "pricePerKWh": 0.36
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 1,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 7,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 65,
+        "pricePerKWh": 0.21
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-BAT-007-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-BAT-007-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-BAT-007-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-BAT-007-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "occupied",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-BAT-007-Type2-1",
+        "type": "Type 2",
+        "powerKw": 7,
+        "status": "available",
+        "pricePerKWh": 0.21,
+        "priceLkrPerKwh": 65
+      },
+      {
+        "connectorId": "CS-BAT-007-Type2-2",
+        "type": "Type 2",
+        "powerKw": 7,
+        "status": "available",
+        "pricePerKWh": 0.21,
+        "priceLkrPerKwh": 65
+      }
+    ],
+    "rating": 4.4,
+    "totalReviews": 22,
+    "isOperational": true,
+    "amenities": [
+      "Government Complex",
+      "Restroom",
+      "Cafeteria"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache"
+  },
+  "CS-DEH-008": {
+    "stationId": "CS-DEH-008",
+    "name": "Dehiwala Coastal Charging Hub",
+    "operator": "ChargeNET Demo",
+    "ownerId": null,
+    "enrollmentSecretHash": "$2b$12$Bs1njXbMx96ZXo2XNg.wf.3MLTs9wlvNzB9PnZ0TcrGgeIc6qkDa6",
+    "location": {
+      "address": "Galle Road, Dehiwala Junction",
+      "city": "Dehiwala",
+      "latitude": 6.852,
+      "longitude": 79.8654
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 120,
+        "total": 2,
+        "available": 1,
+        "priceLkrPerKwh": 112.5,
+        "pricePerKWh": 0.36
+      },
+      {
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "total": 1,
+        "available": 1,
+        "priceLkrPerKwh": 100,
+        "pricePerKWh": 0.32
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-DEH-008-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-DEH-008-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "occupied",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-DEH-008-CHAdeMO-1",
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "status": "available",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-DEH-008-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-DEH-008-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      }
+    ],
+    "rating": 4.5,
+    "totalReviews": 31,
+    "isOperational": true,
+    "amenities": [
+      "Pharmacy",
+      "Fast Food",
+      "Restroom"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache"
+  },
+  "CS-MTL-009": {
+    "stationId": "CS-MTL-009",
+    "name": "Mount Lavinia Beachside Station",
+    "operator": "Vega Demo Network",
+    "ownerId": null,
+    "enrollmentSecretHash": "$2b$12$Bs1njXbMx96ZXo2XNg.wf.3MLTs9wlvNzB9PnZ0TcrGgeIc6qkDa6",
+    "location": {
+      "address": "Hotel Road, Mount Lavinia",
+      "city": "Mount Lavinia",
+      "latitude": 6.8364,
+      "longitude": 79.8642
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 60,
+        "total": 2,
+        "available": 1,
+        "priceLkrPerKwh": 100,
+        "pricePerKWh": 0.32
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 7,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 65,
+        "pricePerKWh": 0.21
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-MTL-009-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 60,
+        "status": "available",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-MTL-009-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 60,
+        "status": "occupied",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-MTL-009-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-MTL-009-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-MTL-009-Type2-1",
+        "type": "Type 2",
+        "powerKw": 7,
+        "status": "available",
+        "pricePerKWh": 0.21,
+        "priceLkrPerKwh": 65
+      },
+      {
+        "connectorId": "CS-MTL-009-Type2-2",
+        "type": "Type 2",
+        "powerKw": 7,
+        "status": "available",
+        "pricePerKWh": 0.21,
+        "priceLkrPerKwh": 65
+      }
+    ],
+    "rating": 4.6,
+    "totalReviews": 29,
+    "isOperational": true,
+    "amenities": [
+      "Beach Access",
+      "Seafood Restaurant",
+      "Restroom"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache"
+  },
+  "CS-NEG-010": {
+    "stationId": "CS-NEG-010",
+    "name": "Negombo Beach Road EV Station",
+    "operator": "Lanka EV Charge Demo",
+    "ownerId": null,
+    "enrollmentSecretHash": "$2b$12$Bs1njXbMx96ZXo2XNg.wf.3MLTs9wlvNzB9PnZ0TcrGgeIc6qkDa6",
+    "location": {
+      "address": "Porutota Road, Negombo Beach",
+      "city": "Negombo",
+      "latitude": 7.2083,
+      "longitude": 79.8358
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 120,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 112.5,
+        "pricePerKWh": 0.36
+      },
+      {
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "total": 1,
+        "available": 1,
+        "priceLkrPerKwh": 100,
+        "pricePerKWh": 0.32
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 1,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-NEG-010-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-NEG-010-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-NEG-010-CHAdeMO-1",
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "status": "available",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-NEG-010-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-NEG-010-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "occupied",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      }
+    ],
+    "rating": 4.7,
+    "totalReviews": 42,
+    "isOperational": true,
+    "amenities": [
+      "Hotel Strip",
+      "Restroom",
+      "Tourist Center"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache"
+  },
+  "CS-NEG-004": {
+    "stationId": "CS-NEG-004",
+    "name": "Katunayake Airport Highway Fast Charger",
+    "operator": "ChargeNET Demo",
+    "ownerId": "6600813a-d9b7-4bfd-bd79-d4877817c63e",
+    "enrollmentSecretHash": "$2b$12$HZv9gMzOOfnmCxO4Zp0hJeju5pl223zMUaOHJGisxjy6V9sWtquHK",
+    "location": {
+      "address": "Expressway Interchange Gate B",
+      "city": "Katunayake",
+      "latitude": 7.185,
+      "longitude": 79.889
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 180,
+        "total": 6,
+        "available": 4,
+        "priceLkrPerKwh": 125,
+        "pricePerKWh": 0.4
+      },
+      {
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 100,
+        "pricePerKWh": 0.32
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-NEG-004-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "available",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125
+      },
+      {
+        "connectorId": "CS-NEG-004-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "available",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125
+      },
+      {
+        "connectorId": "CS-NEG-004-CCS2-3",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "available",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125
+      },
+      {
+        "connectorId": "CS-NEG-004-CCS2-4",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "available",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125
+      },
+      {
+        "connectorId": "CS-NEG-004-CCS2-5",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "occupied",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125
+      },
+      {
+        "connectorId": "CS-NEG-004-CCS2-6",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "occupied",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125
+      },
+      {
+        "connectorId": "CS-NEG-004-CHAdeMO-1",
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "status": "available",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-NEG-004-CHAdeMO-2",
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "status": "available",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-NEG-004-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-NEG-004-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      }
+    ],
+    "rating": 4.9,
+    "totalReviews": 88,
+    "isOperational": true,
+    "amenities": [
+      "24/7 Dining",
+      "EV Lounge",
+      "Restroom",
+      "WiFi",
+      "Airport Shuttle"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache",
+    "distanceKm": 28.84,
+    "recommendationReason": "\u26a1 Ultra-fast 180 kW charging \u2022 8/10 stalls ready \u2022 28.8 km away",
+    "suitabilityScore": 77.2
+  },
+  "CS-GAM-011": {
+    "stationId": "CS-GAM-011",
+    "name": "Gampaha Miriswatta Expressway EV Point",
+    "operator": "CEB Grid Demo",
+    "ownerId": null,
+    "enrollmentSecretHash": "$2b$12$Bs1njXbMx96ZXo2XNg.wf.3MLTs9wlvNzB9PnZ0TcrGgeIc6qkDa6",
+    "location": {
+      "address": "Miriswatta Junction, Kandy Road, Gampaha",
+      "city": "Gampaha",
+      "latitude": 7.0917,
+      "longitude": 79.9997
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 120,
+        "total": 2,
+        "available": 1,
+        "priceLkrPerKwh": 112.5,
+        "pricePerKWh": 0.36
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-GAM-011-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-GAM-011-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "occupied",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-GAM-011-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-GAM-011-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      }
+    ],
+    "rating": 4.4,
+    "totalReviews": 25,
+    "isOperational": true,
+    "amenities": [
+      "Fuel Station",
+      "Restroom",
+      "Snack Bar"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache"
+  },
+  "CS-KAL-012": {
+    "stationId": "CS-KAL-012",
+    "name": "Kalutara Bodhi Junction Fast Charger",
+    "operator": "Southern EV Demo",
+    "ownerId": null,
+    "enrollmentSecretHash": "$2b$12$Bs1njXbMx96ZXo2XNg.wf.3MLTs9wlvNzB9PnZ0TcrGgeIc6qkDa6",
+    "location": {
+      "address": "Main Street, Kalutara North",
+      "city": "Kalutara",
+      "latitude": 6.5854,
+      "longitude": 79.9607
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 120,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 112.5,
+        "pricePerKWh": 0.36
+      },
+      {
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "total": 1,
+        "available": 1,
+        "priceLkrPerKwh": 100,
+        "pricePerKWh": 0.32
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 1,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-KAL-012-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-KAL-012-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-KAL-012-CHAdeMO-1",
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "status": "available",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-KAL-012-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-KAL-012-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "occupied",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      }
+    ],
+    "rating": 4.5,
+    "totalReviews": 36,
+    "isOperational": true,
+    "amenities": [
+      "Restroom",
+      "Temple View",
+      "Grocery Store"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache"
+  },
+  "CS-PAN-013": {
+    "stationId": "CS-PAN-013",
+    "name": "Panadura Town Center Rapid Hub",
+    "operator": "ChargeNET Demo",
+    "ownerId": null,
+    "enrollmentSecretHash": "$2b$12$Bs1njXbMx96ZXo2XNg.wf.3MLTs9wlvNzB9PnZ0TcrGgeIc6qkDa6",
+    "location": {
+      "address": "Galle Road, Panadura Clock Tower",
+      "city": "Panadura",
+      "latitude": 6.7132,
+      "longitude": 79.9074
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 120,
+        "total": 2,
+        "available": 1,
+        "priceLkrPerKwh": 112.5,
+        "pricePerKWh": 0.36
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-PAN-013-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-PAN-013-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "occupied",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-PAN-013-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-PAN-013-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      }
+    ],
+    "rating": 4.5,
+    "totalReviews": 33,
+    "isOperational": true,
+    "amenities": [
+      "Shopping Mall",
+      "Restroom",
+      "ATM"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache"
+  },
+  "CS-GAL-005": {
+    "stationId": "CS-GAL-005",
+    "name": "Galle Fort Highway Station",
+    "operator": "Southern EV Demo",
+    "ownerId": null,
+    "enrollmentSecretHash": "$2b$12$cUm5tJdpqFVdFKiPiMtKv.dn60GF1d9s.LFPCtHczQ0Eym/NtSPEu",
+    "location": {
+      "address": "Southern Expressway Pinnaduwa Interchange, Galle",
+      "city": "Galle",
+      "latitude": 6.0535,
+      "longitude": 80.221
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 120,
+        "total": 4,
+        "available": 3,
+        "priceLkrPerKwh": 112.5,
+        "pricePerKWh": 0.36
+      },
+      {
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "total": 2,
+        "available": 1,
+        "priceLkrPerKwh": 100,
+        "pricePerKWh": 0.32
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-GAL-005-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-GAL-005-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-GAL-005-CCS2-3",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-GAL-005-CCS2-4",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "occupied",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-GAL-005-CHAdeMO-1",
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "status": "available",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-GAL-005-CHAdeMO-2",
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "status": "occupied",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-GAL-005-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-GAL-005-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      }
+    ],
+    "rating": 4.7,
+    "totalReviews": 49,
+    "isOperational": true,
+    "amenities": [
+      "Food Court",
+      "Restroom",
+      "Playground",
+      "Expressway Service Area"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache"
+  },
+  "CS-MAT-014": {
+    "stationId": "CS-MAT-014",
+    "name": "Matara Godagama Expressway Terminal",
+    "operator": "Southern EV Demo",
+    "ownerId": null,
+    "enrollmentSecretHash": "$2b$12$Bs1njXbMx96ZXo2XNg.wf.3MLTs9wlvNzB9PnZ0TcrGgeIc6qkDa6",
+    "location": {
+      "address": "Godagama Southern Expressway Exit, Matara",
+      "city": "Matara",
+      "latitude": 5.9496,
+      "longitude": 80.5469
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 180,
+        "total": 4,
+        "available": 3,
+        "priceLkrPerKwh": 125,
+        "pricePerKWh": 0.4
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-MAT-014-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "available",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125
+      },
+      {
+        "connectorId": "CS-MAT-014-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "available",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125
+      },
+      {
+        "connectorId": "CS-MAT-014-CCS2-3",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "available",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125
+      },
+      {
+        "connectorId": "CS-MAT-014-CCS2-4",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "occupied",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125
+      },
+      {
+        "connectorId": "CS-MAT-014-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-MAT-014-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      }
+    ],
+    "rating": 4.6,
+    "totalReviews": 38,
+    "isOperational": true,
+    "amenities": [
+      "Expressway Service Area",
+      "Restaurant",
+      "Restroom"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache"
+  },
+  "CS-HAM-015": {
+    "stationId": "CS-HAM-015",
+    "name": "Hambantota Port & International Hub",
+    "operator": "CEB Grid Demo",
+    "ownerId": null,
+    "enrollmentSecretHash": "$2b$12$Bs1njXbMx96ZXo2XNg.wf.3MLTs9wlvNzB9PnZ0TcrGgeIc6qkDa6",
+    "location": {
+      "address": "Mirijjawila Interchange, Hambantota",
+      "city": "Hambantota",
+      "latitude": 6.1248,
+      "longitude": 81.1185
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 180,
+        "total": 4,
+        "available": 4,
+        "priceLkrPerKwh": 125,
+        "pricePerKWh": 0.4
+      },
+      {
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 100,
+        "pricePerKWh": 0.32
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-HAM-015-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "available",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125
+      },
+      {
+        "connectorId": "CS-HAM-015-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "available",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125
+      },
+      {
+        "connectorId": "CS-HAM-015-CCS2-3",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "available",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125
+      },
+      {
+        "connectorId": "CS-HAM-015-CCS2-4",
+        "type": "CCS2",
+        "powerKw": 180,
+        "status": "available",
+        "pricePerKWh": 0.4,
+        "priceLkrPerKwh": 125
+      },
+      {
+        "connectorId": "CS-HAM-015-CHAdeMO-1",
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "status": "available",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-HAM-015-CHAdeMO-2",
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "status": "available",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-HAM-015-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-HAM-015-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      }
+    ],
+    "rating": 4.5,
+    "totalReviews": 24,
+    "isOperational": true,
+    "amenities": [
+      "Port Complex",
+      "Restroom",
+      "Solar EV Canopy"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache"
+  },
+  "CS-KAN-006": {
+    "stationId": "CS-KAN-006",
+    "name": "Kandy City Center Rapid Charge",
+    "operator": "ChargeNET Demo",
+    "ownerId": "b1351c6d-133f-454b-81da-b9a8b79366a5",
+    "enrollmentSecretHash": "$2b$12$tFIG69AJO7af1ZpSaUxq/u9JT8L02hyu7W7hZXccpMvAXCJXLRQCO",
+    "location": {
+      "address": "Dalada Veediya, Kandy City Centre, Kandy",
+      "city": "Kandy",
+      "latitude": 7.2906,
+      "longitude": 80.6337
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 60,
+        "total": 2,
+        "available": 0,
+        "priceLkrPerKwh": 100,
+        "pricePerKWh": 0.32
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 3,
+        "available": 2,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-KAN-006-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 60,
+        "status": "occupied",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100,
+        "lastUpdated": "2026-10-17T14:56:08.158004+00:00"
+      },
+      {
+        "connectorId": "CS-KAN-006-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 60,
+        "status": "occupied",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-KAN-006-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-KAN-006-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-KAN-006-Type2-3",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "occupied",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      }
+    ],
+    "rating": 4.5,
+    "totalReviews": 31,
+    "isOperational": true,
+    "amenities": [
+      "Shopping Mall",
+      "Restroom",
+      "Cinema",
+      "Food Court"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache",
+    "distanceKm": 94.34,
+    "recommendationReason": "\ud83d\udcb0 Budget rate ($0.23/kWh) \u2022 2/5 stalls ready \u2022 94.3 km away",
+    "suitabilityScore": 47.2
+  },
+  "CS-KUR-016": {
+    "stationId": "CS-KUR-016",
+    "name": "Kurunegala Central Expressway Junction",
+    "operator": "Lanka EV Charge Demo",
+    "ownerId": null,
+    "enrollmentSecretHash": "$2b$12$Bs1njXbMx96ZXo2XNg.wf.3MLTs9wlvNzB9PnZ0TcrGgeIc6qkDa6",
+    "location": {
+      "address": "Central Expressway Interchange, Kurunegala",
+      "city": "Kurunegala",
+      "latitude": 7.4863,
+      "longitude": 80.3647
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 120,
+        "total": 4,
+        "available": 3,
+        "priceLkrPerKwh": 112.5,
+        "pricePerKWh": 0.36
+      },
+      {
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "total": 1,
+        "available": 1,
+        "priceLkrPerKwh": 100,
+        "pricePerKWh": 0.32
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-KUR-016-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-KUR-016-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-KUR-016-CCS2-3",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-KUR-016-CCS2-4",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "occupied",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-KUR-016-CHAdeMO-1",
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "status": "available",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-KUR-016-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-KUR-016-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      }
+    ],
+    "rating": 4.6,
+    "totalReviews": 35,
+    "isOperational": true,
+    "amenities": [
+      "Expressway Food Court",
+      "Restroom",
+      "EV Charging Lounge"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache"
+  },
+  "CS-ANU-017": {
+    "stationId": "CS-ANU-017",
+    "name": "Anuradhapura Sacred City Fast Charger",
+    "operator": "CEB Grid Demo",
+    "ownerId": null,
+    "enrollmentSecretHash": "$2b$12$Bs1njXbMx96ZXo2XNg.wf.3MLTs9wlvNzB9PnZ0TcrGgeIc6qkDa6",
+    "location": {
+      "address": "Maithripala Senanayake Mawatha, Anuradhapura",
+      "city": "Anuradhapura",
+      "latitude": 8.3114,
+      "longitude": 80.4037
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 120,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 112.5,
+        "pricePerKWh": 0.36
+      },
+      {
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "total": 1,
+        "available": 1,
+        "priceLkrPerKwh": 100,
+        "pricePerKWh": 0.32
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-ANU-017-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-ANU-017-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-ANU-017-CHAdeMO-1",
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "status": "available",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-ANU-017-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-ANU-017-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      }
+    ],
+    "rating": 4.4,
+    "totalReviews": 27,
+    "isOperational": true,
+    "amenities": [
+      "Heritage Site Parking",
+      "Restroom",
+      "Information Center"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache"
+  },
+  "CS-JAF-018": {
+    "stationId": "CS-JAF-018",
+    "name": "Jaffna Town Northern Supercharger",
+    "operator": "ChargeNET Demo",
+    "ownerId": null,
+    "enrollmentSecretHash": "$2b$12$Bs1njXbMx96ZXo2XNg.wf.3MLTs9wlvNzB9PnZ0TcrGgeIc6qkDa6",
+    "location": {
+      "address": "Hospital Road, Jaffna Town",
+      "city": "Jaffna",
+      "latitude": 9.6615,
+      "longitude": 80.0255
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 120,
+        "total": 3,
+        "available": 2,
+        "priceLkrPerKwh": 112.5,
+        "pricePerKWh": 0.36
+      },
+      {
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "total": 1,
+        "available": 1,
+        "priceLkrPerKwh": 100,
+        "pricePerKWh": 0.32
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-JAF-018-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-JAF-018-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-JAF-018-CCS2-3",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "occupied",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-JAF-018-CHAdeMO-1",
+        "type": "CHAdeMO",
+        "powerKw": 60,
+        "status": "available",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-JAF-018-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-JAF-018-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      }
+    ],
+    "rating": 4.7,
+    "totalReviews": 39,
+    "isOperational": true,
+    "amenities": [
+      "City Centre Access",
+      "Restroom",
+      "Vegetarian Cafe"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache"
+  },
+  "CS-TRI-019": {
+    "stationId": "CS-TRI-019",
+    "name": "Trincomalee Harbour Bay Charging Point",
+    "operator": "Lanka EV Charge Demo",
+    "ownerId": null,
+    "enrollmentSecretHash": "$2b$12$Bs1njXbMx96ZXo2XNg.wf.3MLTs9wlvNzB9PnZ0TcrGgeIc6qkDa6",
+    "location": {
+      "address": "Dockyard Road, Trincomalee Harbour",
+      "city": "Trincomalee",
+      "latitude": 8.5874,
+      "longitude": 81.2152
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 120,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 112.5,
+        "pricePerKWh": 0.36
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 1,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 7,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 65,
+        "pricePerKWh": 0.21
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-TRI-019-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-TRI-019-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 120,
+        "status": "available",
+        "pricePerKWh": 0.36,
+        "priceLkrPerKwh": 112.5
+      },
+      {
+        "connectorId": "CS-TRI-019-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-TRI-019-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "occupied",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-TRI-019-Type2-1",
+        "type": "Type 2",
+        "powerKw": 7,
+        "status": "available",
+        "pricePerKWh": 0.21,
+        "priceLkrPerKwh": 65
+      },
+      {
+        "connectorId": "CS-TRI-019-Type2-2",
+        "type": "Type 2",
+        "powerKw": 7,
+        "status": "available",
+        "pricePerKWh": 0.21,
+        "priceLkrPerKwh": 65
+      }
+    ],
+    "rating": 4.5,
+    "totalReviews": 26,
+    "isOperational": true,
+    "amenities": [
+      "Harbour View",
+      "Restroom",
+      "Coffee Shop"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache"
+  },
+  "CS-NUW-020": {
+    "stationId": "CS-NUW-020",
+    "name": "Nuwara Eliya Lake Gregory Alpine Charger",
+    "operator": "Vega Demo Network",
+    "ownerId": null,
+    "enrollmentSecretHash": "$2b$12$Bs1njXbMx96ZXo2XNg.wf.3MLTs9wlvNzB9PnZ0TcrGgeIc6qkDa6",
+    "location": {
+      "address": "Queen Elizabeth Drive, Lake Gregory, Nuwara Eliya",
+      "city": "Nuwara Eliya",
+      "latitude": 6.9497,
+      "longitude": 80.7891
+    },
+    "ports": [
+      {
+        "type": "CCS2",
+        "powerKw": 60,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 100,
+        "pricePerKWh": 0.32
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 22,
+        "total": 2,
+        "available": 1,
+        "priceLkrPerKwh": 72.5,
+        "pricePerKWh": 0.23
+      },
+      {
+        "type": "Type 2",
+        "powerKw": 7,
+        "total": 2,
+        "available": 2,
+        "priceLkrPerKwh": 65,
+        "pricePerKWh": 0.21
+      }
+    ],
+    "connectors": [
+      {
+        "connectorId": "CS-NUW-020-CCS2-1",
+        "type": "CCS2",
+        "powerKw": 60,
+        "status": "available",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-NUW-020-CCS2-2",
+        "type": "CCS2",
+        "powerKw": 60,
+        "status": "available",
+        "pricePerKWh": 0.32,
+        "priceLkrPerKwh": 100
+      },
+      {
+        "connectorId": "CS-NUW-020-Type2-1",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "available",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-NUW-020-Type2-2",
+        "type": "Type 2",
+        "powerKw": 22,
+        "status": "occupied",
+        "pricePerKWh": 0.23,
+        "priceLkrPerKwh": 72.5
+      },
+      {
+        "connectorId": "CS-NUW-020-Type2-1",
+        "type": "Type 2",
+        "powerKw": 7,
+        "status": "available",
+        "pricePerKWh": 0.21,
+        "priceLkrPerKwh": 65
+      },
+      {
+        "connectorId": "CS-NUW-020-Type2-2",
+        "type": "Type 2",
+        "powerKw": 7,
+        "status": "available",
+        "pricePerKWh": 0.21,
+        "priceLkrPerKwh": 65
+      }
+    ],
+    "rating": 4.8,
+    "totalReviews": 45,
+    "isOperational": true,
+    "amenities": [
+      "Lake View Cafe",
+      "Walking Track",
+      "Restroom",
+      "Heated Waiting Lounge"
+    ],
+    "isDemo": true,
+    "telemetryType": "DEMO TELEMETRY",
+    "pricingType": "DEMO PRICING",
+    "dataSource": "DEMO TELEMETRY",
+    "sourceAttribution": "Demonstration Data - Illustrative Tariffs (Simulated Sri Lanka EV Hub)",
+    "disclaimer": "Simulated demonstration data, not verified live charging stations or official tariffs.",
+    "tariffCurrency": "LKR",
+    "lastVerifiedDate": "2026-10-17",
+    "liveStatusMode": "simulated_cache"
+  }
+}
