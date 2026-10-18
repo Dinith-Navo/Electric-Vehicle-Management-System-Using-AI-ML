@@ -1,0 +1,130 @@
+# ==============================================================================
+# SmartEV - Global Git Ignore
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Environment & Secret Credentials (NEVER COMMIT)
+# ------------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.env
+*.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ------------------------------------------------------------------------------
+# 2. Python Virtual Environments
+# ------------------------------------------------------------------------------
+venv/
+env/
+ENV/
+.venv/
+*/venv/
+*/env/
+*/ENV/
+*/*-env/
+env.bak/
+venv.bak/
+
+# ------------------------------------------------------------------------------
+# 3. Node Modules & NPM / Yarn / PNPM Caches
+# ------------------------------------------------------------------------------
+node_modules/
+*/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# ------------------------------------------------------------------------------
+# 4. Python Cache, Bytecode & Build Artifacts
+# ------------------------------------------------------------------------------
+__pycache__/
+*/__pycache__/
+*/**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Unit test & coverage caches
+.pytest_cache/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# ------------------------------------------------------------------------------
+# 5. Expo, React Native & Web Build Caches
+# ------------------------------------------------------------------------------
+.expo/
+*/.expo/
+web-build/
+dist/
+.metro-health-check*
+*.bundle
+*.jsbundle
+
+# ------------------------------------------------------------------------------
+# 6. Operating System & Local Editor Files
+# ------------------------------------------------------------------------------
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Editors & IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-workspace
+*.sublime-project
+
+# ------------------------------------------------------------------------------
+# 7. Temporary Files & Local Logs
+# ------------------------------------------------------------------------------
+logs/
+*.log
+tmp/
+temp/
+scratch/
+.system_generated/
