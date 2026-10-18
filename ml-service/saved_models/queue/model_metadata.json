@@ -1,0 +1,28 @@
+{
+  "model_name": "MultiOutputGradientBoostingRegressor",
+  "features": [
+    "total_chargers",
+    "currently_occupied",
+    "arrival_hour",
+    "day_of_week",
+    "charging_speed_kw",
+    "avg_session_minutes"
+  ],
+  "targets": [
+    "queue_length",
+    "wait_minutes"
+  ],
+  "metrics": {
+    "queue_length_mae": 0.6667,
+    "queue_length_rmse": 0.8165,
+    "wait_minutes_mae": 7.8805,
+    "wait_minutes_rmse": 9.4747,
+    "overall_rmse": 5.1456
+  },
+  "author": "IT22134080",
+  "sample_size": 11,
+  "test_split_ratio": 0.25,
+  "random_state": 42,
+  "experiment_date": "2026-08-29",
+  "note": "Evaluated on initial sample dataset (N=11) with 25% holdout test set."
+}
