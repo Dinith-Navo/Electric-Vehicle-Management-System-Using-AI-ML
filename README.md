@@ -23,7 +23,7 @@ SmartEV helps EV users and service providers make better decisions through real-
 
 # 🧠 Research Components
 
-## 1️⃣ Post-Sale EV Performance Intelligence & Failure Prediction
+## 1️⃣ AI-Based EV Anomaly Detection System 
 
 * Vehicle performance monitoring
 * EV efficiency analysis
